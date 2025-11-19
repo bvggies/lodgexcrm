@@ -1,0 +1,294 @@
+import React, { useState } from 'react';
+import {
+  Card,
+  Typography,
+  Button,
+  Upload,
+  Select,
+  Space,
+  Alert,
+  Table,
+  Tag,
+  message,
+  Spin,
+  Divider,
+  Descriptions,
+} from 'antd';
+import {
+  UploadOutlined,
+  DownloadOutlined,
+  FileExcelOutlined,
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+} from '@ant-design/icons';
+import { motion } from 'framer-motion';
+import { importApi, ImportResult } from '../../services/api/importApi';
+import FadeIn from '../../components/animations/FadeIn';
+import type { UploadFile } from 'antd/es/upload/interface';
+
+const { Title, Text } = Typography;
+const { Option } = Select;
+
+type ImportType = 'properties' | 'guests' | 'bookings' | 'finance' | 'owners' | 'staff';
+
+const ImportPage: React.FC = () => {
+  const [importType, setImportType] = useState<ImportType>('properties');
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [importResult, setImportResult] = useState<ImportResult | null>(null);
+
+  const handleDownloadTemplate = async () => {
+    try {
+      setLoading(true);
+      const response = await importApi.downloadTemplate(importType);
+      
+      // Create blob and download
+      const blob = new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `lodgexcrm-${importType}-template.xlsx`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      message.success('Template downloaded successfully');
+    } catch (error: any) {
+      message.error(error.response?.data?.message || 'Failed to download template');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImport = async () => {
+    if (fileList.length === 0) {
+      message.error('Please select a file to upload');
+      return;
+    }
+
+    const file = fileList[0].originFileObj;
+    if (!file) {
+      message.error('Invalid file');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setImportResult(null);
+
+      const response = await importApi.importData(file, importType);
+      setImportResult(response.data.data);
+
+      if (response.data.data.failed === 0) {
+        message.success(`Successfully imported ${response.data.data.imported} records`);
+      } else {
+        message.warning(
+          `Imported ${response.data.data.imported} records, ${response.data.data.failed} failed`
+        );
+      }
+    } catch (error: any) {
+      message.error(error.response?.data?.message || 'Failed to import data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const uploadProps = {
+    accept: '.xlsx,.xls',
+    fileList,
+    beforeUpload: (file: File) => {
+      const isExcel =
+        file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
+        file.type === 'application/vnd.ms-excel';
+      if (!isExcel) {
+        message.error('You can only upload Excel files!');
+        return false;
+      }
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        message.error('File must be smaller than 10MB!');
+        return false;
+      }
+      setFileList([{ uid: '-1', name: file.name, status: 'done', originFileObj: file }]);
+      return false; // Prevent auto upload
+    },
+    onRemove: () => {
+      setFileList([]);
+      setImportResult(null);
+    },
+  };
+
+  const errorColumns = [
+    {
+      title: 'Error',
+      dataIndex: 'error',
+      key: 'error',
+    },
+  ];
+
+  const warningColumns = [
+    {
+      title: 'Warning',
+      dataIndex: 'warning',
+      key: 'warning',
+    },
+  ];
+
+  return (
+    <div>
+      <FadeIn>
+        <Title level={2}>Data Import</Title>
+        <Text type="secondary">
+          Import historical data from Excel files. Download a template, fill it with your data, and upload it.
+        </Text>
+      </FadeIn>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2 }}
+      >
+        <Card style={{ marginTop: 24 }}>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <div>
+              <Text strong>Step 1: Select Data Type</Text>
+              <Select
+                value={importType}
+                onChange={setImportType}
+                style={{ width: 200, marginLeft: 16 }}
+              >
+                <Option value="properties">Properties</Option>
+                <Option value="guests">Guests</Option>
+                <Option value="bookings">Bookings</Option>
+                <Option value="finance">Finance Records</Option>
+                <Option value="owners">Owners</Option>
+                <Option value="staff">Staff</Option>
+              </Select>
+            </div>
+
+            <Divider />
+
+            <div>
+              <Text strong>Step 2: Download Template</Text>
+              <br />
+              <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
+                Download the Excel template for {importType}, fill it with your data, then upload it.
+              </Text>
+              <Button
+                type="primary"
+                icon={<DownloadOutlined />}
+                onClick={handleDownloadTemplate}
+                loading={loading}
+                style={{ marginTop: 8 }}
+              >
+                Download Template
+              </Button>
+            </div>
+
+            <Divider />
+
+            <div>
+              <Text strong>Step 3: Upload Filled Excel File</Text>
+              <br />
+              <Upload {...uploadProps} style={{ marginTop: 8 }}>
+                <Button icon={<UploadOutlined />}>Select Excel File</Button>
+              </Upload>
+              {fileList.length > 0 && (
+                <div style={{ marginTop: 8 }}>
+                  <FileExcelOutlined style={{ marginRight: 8 }} />
+                  <Text>{fileList[0].name}</Text>
+                </div>
+              )}
+            </div>
+
+            <Divider />
+
+            <Button
+              type="primary"
+              size="large"
+              onClick={handleImport}
+              loading={loading}
+              disabled={fileList.length === 0}
+              icon={<UploadOutlined />}
+            >
+              Import Data
+            </Button>
+          </Space>
+        </Card>
+
+        {importResult && (
+          <Card style={{ marginTop: 24 }}>
+            <Title level={4}>Import Results</Title>
+            <Descriptions bordered column={2} style={{ marginBottom: 24 }}>
+              <Descriptions.Item label="Total Records">
+                {importResult.total}
+              </Descriptions.Item>
+              <Descriptions.Item label="Successfully Imported">
+                <Tag color="green" icon={<CheckCircleOutlined />}>
+                  {importResult.imported}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Failed">
+                <Tag color="red" icon={<CloseCircleOutlined />}>
+                  {importResult.failed}
+                </Tag>
+              </Descriptions.Item>
+              <Descriptions.Item label="Warnings">
+                <Tag color="orange">{importResult.warnings.length}</Tag>
+              </Descriptions.Item>
+            </Descriptions>
+
+            {importResult.errors.length > 0 && (
+              <div style={{ marginTop: 24 }}>
+                <Title level={5}>Errors ({importResult.errors.length})</Title>
+                <Table
+                  dataSource={importResult.errors.map((error, index) => ({ key: index, error }))}
+                  columns={errorColumns}
+                  pagination={{ pageSize: 10 }}
+                  size="small"
+                />
+              </div>
+            )}
+
+            {importResult.warnings.length > 0 && (
+              <div style={{ marginTop: 24 }}>
+                <Title level={5}>Warnings ({importResult.warnings.length})</Title>
+                <Table
+                  dataSource={importResult.warnings.map((warning, index) => ({ key: index, warning }))}
+                  columns={warningColumns}
+                  pagination={{ pageSize: 10 }}
+                  size="small"
+                />
+              </div>
+            )}
+          </Card>
+        )}
+
+        <Card style={{ marginTop: 24 }}>
+          <Alert
+            message="Import Guidelines"
+            description={
+              <ul style={{ margin: 0, paddingLeft: 20 }}>
+                <li>Download the template for the data type you want to import</li>
+                <li>Fill in the template with your data (keep the header row)</li>
+                <li>Ensure required fields are filled</li>
+                <li>Dates should be in YYYY-MM-DD format</li>
+                <li>JSON fields (like address) should be valid JSON strings</li>
+                <li>Duplicate records (by email/code) will be skipped</li>
+                <li>Maximum file size: 10MB</li>
+              </ul>
+            }
+            type="info"
+            showIcon
+          />
+        </Card>
+      </motion.div>
+    </div>
+  );
+};
+
+export default ImportPage;
+

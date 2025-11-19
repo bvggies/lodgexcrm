@@ -1,0 +1,433 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PropertyStatus {
+  active
+  inactive
+}
+
+enum BookingChannel {
+  airbnb
+  booking_com
+  direct
+  other
+}
+
+enum PaymentStatus {
+  paid
+  pending
+  partial
+  refunded
+}
+
+enum CleaningTaskStatus {
+  not_started
+  in_progress
+  completed
+}
+
+enum MaintenanceTaskPriority {
+  low
+  medium
+  high
+  urgent
+}
+
+enum MaintenanceTaskStatus {
+  open
+  in_progress
+  completed
+}
+
+enum MaintenanceTaskType {
+  ac
+  plumbing
+  electrical
+  appliance
+  other
+}
+
+enum FinanceRecordType {
+  revenue
+  expense
+}
+
+enum FinanceCategory {
+  cleaning
+  maintenance
+  utilities
+  guest_payment
+  owner_payout
+  other
+}
+
+enum FinanceStatus {
+  paid
+  pending
+}
+
+enum StaffRole {
+  admin
+  assistant
+  cleaner
+  maintenance
+  owner_view
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  passwordHash  String
+  firstName     String
+  lastName      String
+  role          StaffRole @default(assistant)
+  phone         String?
+  isActive      Boolean  @default(true)
+  lastLogin     DateTime?
+  refreshToken  String?
+  refreshTokenExpiry DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  auditLogs     AuditLog[]
+  assignedCleaningTasks CleaningTask[]
+  assignedMaintenanceTasks MaintenanceTask[]
+
+  @@map("users")
+}
+
+model Property {
+  id              String         @id @default(uuid())
+  name            String
+  code            String         @unique
+  unitType        String
+  address         Json
+  locationLat     Float?
+  locationLng     Float?
+  ownerId         String
+  status          PropertyStatus @default(active)
+  dewaNumber      String?
+  dtcmPermitNumber String?
+  amenities       Json?
+  pricingHistory  Json?
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  owner           Owner          @relation(fields: [ownerId], references: [id])
+  units           Unit[]
+  bookings        Booking[]
+  cleaningTasks   CleaningTask[]
+  maintenanceTasks MaintenanceTask[]
+  financeRecords  FinanceRecord[]
+
+  @@index([ownerId])
+  @@index([status])
+  @@index([code])
+  @@map("properties")
+}
+
+model Unit {
+  id                String   @id @default(uuid())
+  propertyId        String
+  unitCode          String
+  floor             Int?
+  size              Float?
+  currentPrice      Decimal?
+  availabilityStatus String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  // Relations
+  property          Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  bookings          Booking[]
+  cleaningTasks     CleaningTask[]
+  maintenanceTasks  MaintenanceTask[]
+
+  @@unique([propertyId, unitCode])
+  @@index([propertyId])
+  @@map("units")
+}
+
+model Guest {
+  id            String   @id @default(uuid())
+  firstName     String
+  lastName      String
+  email         String?
+  phone         String?
+  nationality   String?
+  passportScanUrl String?
+  documents     Json?
+  blacklist     Boolean  @default(false)
+  totalSpend    Decimal  @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  bookings      Booking[]
+  financeRecords FinanceRecord[]
+
+  @@index([email])
+  @@index([blacklist])
+  @@map("guests")
+}
+
+model Booking {
+  id                String         @id @default(uuid())
+  reference         String         @unique
+  propertyId        String
+  unitId            String?
+  guestId           String
+  channel           BookingChannel
+  checkinDate       DateTime
+  checkoutDate      DateTime
+  nights            Int
+  totalAmount       Decimal
+  currency          String         @default("AED")
+  paymentStatus     PaymentStatus  @default(pending)
+  depositAmount     Decimal?
+  bookingDocuments  Json?
+  notes             String?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  // Relations
+  property          Property       @relation(fields: [propertyId], references: [id])
+  unit              Unit?          @relation(fields: [unitId], references: [id])
+  guest             Guest          @relation(fields: [guestId], references: [id])
+  cleaningTasks     CleaningTask[]
+  maintenanceTasks  MaintenanceTask[]
+  financeRecords    FinanceRecord[]
+
+  @@index([propertyId])
+  @@index([guestId])
+  @@index([checkinDate])
+  @@index([checkoutDate])
+  @@index([paymentStatus])
+  @@index([reference])
+  @@map("bookings")
+}
+
+model Owner {
+  id            String   @id @default(uuid())
+  name          String
+  email         String?
+  phone         String?
+  bankDetails   String?  // Encrypted JSON
+  paymentMethod String?
+  idDocuments   Json?
+  notes         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  properties    Property[]
+
+  @@index([email])
+  @@map("owners")
+}
+
+model CleaningTask {
+  id            String            @id @default(uuid())
+  cleaningId    String            @unique
+  propertyId    String
+  unitId        String?
+  bookingId     String?
+  scheduledDate DateTime
+  cleanerId     String?
+  status        CleaningTaskStatus @default(not_started)
+  beforePhotos  Json?
+  afterPhotos   Json?
+  checklist     Json?
+  cost          Decimal?
+  notes         String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  // Relations
+  property      Property          @relation(fields: [propertyId], references: [id])
+  unit          Unit?             @relation(fields: [unitId], references: [id])
+  booking       Booking?          @relation(fields: [bookingId], references: [id])
+  cleaner       User?             @relation(fields: [cleanerId], references: [id])
+
+  @@index([propertyId])
+  @@index([scheduledDate])
+  @@index([status])
+  @@index([cleanerId])
+  @@map("cleaning_tasks")
+}
+
+model MaintenanceTask {
+  id            String                 @id @default(uuid())
+  title         String
+  propertyId    String
+  unitId        String?
+  description   String?
+  type          MaintenanceTaskType
+  priority      MaintenanceTaskPriority @default(medium)
+  assignedToId  String?
+  status        MaintenanceTaskStatus  @default(open)
+  photos        Json?
+  cost          Decimal?
+  invoiceFile   String?
+  notes         String?
+  completedAt   DateTime?
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+
+  // Relations
+  property      Property               @relation(fields: [propertyId], references: [id])
+  unit          Unit?                  @relation(fields: [unitId], references: [id])
+  booking       Booking?               @relation(fields: [bookingId], references: [id])
+  assignedTo    User?                  @relation(fields: [assignedToId], references: [id])
+
+  @@index([propertyId])
+  @@index([status])
+  @@index([priority])
+  @@index([assignedToId])
+  @@map("maintenance_tasks")
+}
+
+model FinanceRecord {
+  id            String          @id @default(uuid())
+  type          FinanceRecordType
+  propertyId    String?
+  bookingId    String?
+  amount        Decimal
+  category      FinanceCategory
+  invoiceFile  String?
+  date         DateTime
+  paymentMethod String?
+  status       FinanceStatus   @default(pending)
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  // Relations
+  property     Property?       @relation(fields: [propertyId], references: [id])
+  booking      Booking?        @relation(fields: [bookingId], references: [id])
+  guest        Guest?          @relation(fields: [guestId], references: [id])
+  guestId      String?
+
+  @@index([propertyId])
+  @@index([bookingId])
+  @@index([date])
+  @@index([type])
+  @@index([category])
+  @@map("finance_records")
+}
+
+model Staff {
+  id            String   @id @default(uuid())
+  name          String
+  role          StaffRole
+  phone         String?
+  email         String?
+  documents     Json?
+  paymentInfo   Json?
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([role])
+  @@index([isActive])
+  @@map("staff")
+}
+
+model AuditLog {
+  id            String   @id @default(uuid())
+  action        String   // create, update, delete
+  tableName     String
+  recordId      String
+  userId        String
+  changeSummary Json?
+  timestamp     DateTime @default(now())
+
+  // Relations
+  user          User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([tableName])
+  @@index([timestamp])
+  @@index([recordId])
+  @@map("audit_logs")
+}
+
+enum IntegrationType {
+  airbnb
+  booking_com
+}
+
+enum IntegrationStatus {
+  not_configured
+  configured
+  connected
+  error
+}
+
+model Integration {
+  id            String            @id @default(uuid())
+  type          IntegrationType   @unique
+  name          String
+  isActive      Boolean           @default(false)
+  status        IntegrationStatus @default(not_configured)
+  apiKey        String?           // Encrypted
+  apiSecret     String?           // Encrypted
+  webhookUrl    String?
+  config        Json?             // Additional configuration
+  lastSyncAt    DateTime?
+  lastSyncStatus String?          // success, error
+  lastSyncError String?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  // Relations
+  syncHistory   IntegrationSyncHistory[]
+
+  @@map("integrations")
+}
+
+model IntegrationSyncHistory {
+  id            String   @id @default(uuid())
+  integrationId String
+  startedAt     DateTime @default(now())
+  completedAt   DateTime?
+  status        String   // success, error, partial
+  created       Int      @default(0)
+  updated       Int      @default(0)
+  errors        Json?
+  details       Json?
+
+  // Relations
+  integration   Integration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@index([integrationId])
+  @@index([startedAt])
+  @@map("integration_sync_history")
+}
+
+model Automation {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  trigger     String   // booking.created, booking.checkin, booking.checkout, scheduled.daily, scheduled.monthly
+  conditions  Json?    // Condition evaluation rules
+  actions     Json     // Array of actions to execute
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([trigger])
+  @@index([enabled])
+  @@map("automations")
+}
+

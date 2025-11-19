@@ -1,0 +1,244 @@
+import React, { useEffect, useState } from 'react';
+import {
+  Table,
+  Button,
+  Space,
+  Tag,
+  Typography,
+  Input,
+  Select,
+  Modal,
+  Form,
+  message,
+  Popconfirm,
+  Switch,
+} from 'antd';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import { motion } from 'framer-motion';
+import type { ColumnsType } from 'antd/es/table';
+import { staffApi, Staff } from '../../services/api/staffApi';
+import FadeIn from '../../components/animations/FadeIn';
+
+const { Title } = Typography;
+const { Option } = Select;
+
+const StaffPage: React.FC = () => {
+  const [staff, setStaff] = useState<Staff[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [searchText, setSearchText] = useState('');
+  const [roleFilter, setRoleFilter] = useState<string | undefined>();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
+  const [form] = Form.useForm();
+
+  useEffect(() => {
+    loadStaff();
+  }, [searchText, roleFilter]);
+
+  const loadStaff = async () => {
+    try {
+      setLoading(true);
+      const params: any = {};
+      if (searchText) params.search = searchText;
+      if (roleFilter) params.role = roleFilter;
+
+      const response = await staffApi.getAll(params);
+      setStaff(response.data.data.staff);
+    } catch (error) {
+      message.error('Failed to load staff');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const columns: ColumnsType<Staff> = [
+    {
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+    },
+    {
+      title: 'Phone',
+      dataIndex: 'phone',
+      key: 'phone',
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+      render: (role: string) => {
+        const colors: Record<string, string> = {
+          admin: 'red',
+          assistant: 'blue',
+          cleaner: 'green',
+          maintenance: 'orange',
+          owner_view: 'purple',
+        };
+        return <Tag color={colors[role] || 'default'}>{role.toUpperCase()}</Tag>;
+      },
+    },
+    {
+      title: 'Status',
+      dataIndex: 'isActive',
+      key: 'isActive',
+      render: (isActive: boolean) => (
+        <Tag color={isActive ? 'green' : 'red'}>{isActive ? 'Active' : 'Inactive'}</Tag>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Space>
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
+            Edit
+          </Button>
+          <Popconfirm
+            title="Are you sure you want to delete this staff member?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="link" danger icon={<DeleteOutlined />}>
+              Delete
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ];
+
+  const handleCreate = () => {
+    setEditingStaff(null);
+    form.resetFields();
+    setIsModalVisible(true);
+  };
+
+  const handleEdit = (staffMember: Staff) => {
+    setEditingStaff(staffMember);
+    form.setFieldsValue(staffMember);
+    setIsModalVisible(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await staffApi.delete(id);
+      message.success('Staff member deleted successfully');
+      loadStaff();
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to delete staff member');
+    }
+  };
+
+  const handleSubmit = async (values: any) => {
+    try {
+      if (editingStaff) {
+        await staffApi.update(editingStaff.id, values);
+        message.success('Staff member updated successfully');
+      } else {
+        await staffApi.create(values);
+        message.success('Staff member created successfully');
+      }
+      setIsModalVisible(false);
+      loadStaff();
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Operation failed');
+    }
+  };
+
+  return (
+    <div>
+      <FadeIn>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+          <Title level={2} style={{ margin: 0 }}>Staff</Title>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            Add Staff
+          </Button>
+        </div>
+
+        <Space style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search staff..."
+          prefix={<SearchOutlined />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300 }}
+          allowClear
+        />
+        <Select
+          placeholder="Filter by role"
+          style={{ width: 200 }}
+          allowClear
+          value={roleFilter}
+          onChange={setRoleFilter}
+        >
+          <Option value="admin">Admin</Option>
+          <Option value="assistant">Assistant</Option>
+          <Option value="cleaner">Cleaner</Option>
+          <Option value="maintenance">Maintenance</Option>
+          <Option value="owner_view">Owner View</Option>
+        </Select>
+      </Space>
+
+      <Table
+        columns={columns}
+        dataSource={staff}
+        loading={loading}
+        rowKey="id"
+        pagination={{ pageSize: 10 }}
+      />
+
+      <Modal
+        title={editingStaff ? 'Edit Staff Member' : 'Create Staff Member'}
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        onOk={() => form.submit()}
+        width={600}
+      >
+        <Form form={form} layout="vertical" onFinish={handleSubmit}>
+          <Form.Item
+            name="name"
+            label="Name"
+            rules={[{ required: true, message: 'Please enter name' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            name="role"
+            label="Role"
+            rules={[{ required: true }]}
+          >
+            <Select>
+              <Option value="admin">Admin</Option>
+              <Option value="assistant">Assistant</Option>
+              <Option value="cleaner">Cleaner</Option>
+              <Option value="maintenance">Maintenance</Option>
+              <Option value="owner_view">Owner View</Option>
+            </Select>
+          </Form.Item>
+          <Form.Item
+            name="email"
+            label="Email"
+            rules={[{ type: 'email', message: 'Please enter a valid email' }]}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item name="phone" label="Phone">
+            <Input />
+          </Form.Item>
+          <Form.Item name="isActive" label="Active" valuePropName="checked" initialValue={true}>
+            <Switch />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
+
+export default StaffPage;
