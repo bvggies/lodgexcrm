@@ -29,14 +29,17 @@ import importRoutes from './routes/import.routes';
 // Load environment variables
 dotenv.config();
 
-// Validate environment variables
+// Validate environment variables (non-blocking in production)
 import { validateEnv } from './utils/envValidation';
 try {
   validateEnv();
 } catch (error: any) {
   console.error('❌ Environment validation failed:');
   console.error(error.message);
-  process.exit(1);
+  // Don't exit in production/Vercel - let it fail gracefully
+  if (process.env.NODE_ENV === 'development' && !process.env.VERCEL) {
+    process.exit(1);
+  }
 }
 
 const app = express();
@@ -151,13 +154,19 @@ async function initializeJobs() {
 }
 
 // Start server
-app.listen(PORT, async () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
-  
-  // Initialize scheduled jobs
-  await initializeJobs();
-});
+// Only start server if not in serverless environment (Vercel)
+if (process.env.VERCEL !== '1' && !process.env.VERCEL_ENV) {
+  app.listen(PORT, async () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+    
+    // Initialize scheduled jobs
+    await initializeJobs();
+  });
+} else {
+  // In serverless environment, initialize jobs without listening
+  initializeJobs().catch(console.error);
+}
 
 export default app;
 
