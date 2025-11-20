@@ -174,6 +174,7 @@ const AnalyticsPage: React.FC = () => {
           </Button>
         </Space>
       </div>
+      </FadeIn>
 
       <Tabs defaultActiveKey="financial">
         <TabPane tab="Financial Analytics" key="financial">
