@@ -14,7 +14,6 @@ import {
   message,
   Popconfirm,
   Descriptions,
-  FormList,
   Alert,
 } from 'antd';
 import { motion } from 'framer-motion';
@@ -145,7 +144,9 @@ const AutomationsPage: React.FC = () => {
       render: (actions: Array<{ type: string; params?: any }>) => (
         <Space wrap>
           {actions.map((action, idx) => (
-            <Tag key={idx} color="green">{action.type}</Tag>
+            <Tag key={idx} color="green">
+              {action.type}
+            </Tag>
           ))}
         </Space>
       ),
@@ -155,9 +156,7 @@ const AutomationsPage: React.FC = () => {
       dataIndex: 'enabled',
       key: 'enabled',
       render: (enabled: boolean) => (
-        <Tag color={enabled ? 'green' : 'default'}>
-          {enabled ? 'Active' : 'Inactive'}
-        </Tag>
+        <Tag color={enabled ? 'green' : 'default'}>{enabled ? 'Active' : 'Inactive'}</Tag>
       ),
     },
     {
@@ -177,9 +176,9 @@ const AutomationsPage: React.FC = () => {
             checkedChildren={<PlayCircleOutlined />}
             unCheckedChildren={<PauseCircleOutlined />}
           />
-          <Button 
-            type="link" 
-            icon={<ThunderboltOutlined />} 
+          <Button
+            type="link"
+            icon={<ThunderboltOutlined />}
             onClick={() => handleTestTrigger(record.trigger)}
             size="small"
           >
@@ -224,7 +223,14 @@ const AutomationsPage: React.FC = () => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
         <Title level={2} style={{ margin: 0 }}>
           <RobotOutlined /> Automations
         </Title>
@@ -308,11 +314,15 @@ const AutomationsPage: React.FC = () => {
             label="Actions"
             rules={[{ required: true, message: 'Please add at least one action' }]}
           >
-            <FormList name="actions" initialValue={[{ type: '', params: {} }]}>
+            <Form.List name="actions" initialValue={[{ type: '', params: {} }]}>
               {(fields, { add, remove }) => (
                 <>
                   {fields.map((field, index) => (
-                    <Space key={field.key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+                    <Space
+                      key={field.key}
+                      style={{ display: 'flex', marginBottom: 8 }}
+                      align="baseline"
+                    >
                       <Form.Item
                         {...field}
                         name={[field.name, 'type']}
@@ -324,7 +334,9 @@ const AutomationsPage: React.FC = () => {
                           <Option value="send_email">Send Email</Option>
                           <Option value="send_checkin_email">Send Check-in Email</Option>
                           <Option value="send_checkout_email">Send Check-out Email</Option>
-                          <Option value="create_maintenance_reminder">Create Maintenance Reminder</Option>
+                          <Option value="create_maintenance_reminder">
+                            Create Maintenance Reminder
+                          </Option>
                         </Select>
                       </Form.Item>
                       <Form.Item
@@ -349,8 +361,8 @@ const AutomationsPage: React.FC = () => {
                           }
                         }}
                       >
-                        <Input 
-                          placeholder='Params (JSON, e.g. {"key": "value"})' 
+                        <Input
+                          placeholder='Params (JSON, e.g. {"key": "value"})'
                           style={{ width: 250 }}
                         />
                       </Form.Item>
@@ -369,7 +381,7 @@ const AutomationsPage: React.FC = () => {
                   </Button>
                 </>
               )}
-            </FormList>
+            </Form.List>
           </Form.Item>
           <Alert
             message="Note"
@@ -388,4 +400,3 @@ const AutomationsPage: React.FC = () => {
 };
 
 export default AutomationsPage;
-

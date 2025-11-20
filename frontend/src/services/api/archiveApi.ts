@@ -25,11 +25,13 @@ export const archiveApi = {
     const queryParams = new URLSearchParams();
     if (params?.limit) queryParams.append('limit', params.limit.toString());
     if (params?.offset) queryParams.append('offset', params.offset.toString());
-    
+
     const query = queryParams.toString();
-    return apiClient.get<{ success: boolean; data: { bookings: ArchivedBooking[] }; count: number }>(
-      `/archive/bookings${query ? `?${query}` : ''}`
-    );
+    return apiClient.get<{
+      success: boolean;
+      data: { bookings: ArchivedBooking[] };
+      count: number;
+    }>(`/archive/bookings${query ? `?${query}` : ''}`);
   },
 
   archiveBooking: (id: string) => {
@@ -54,4 +56,3 @@ export const archiveApi = {
     );
   },
 };
-

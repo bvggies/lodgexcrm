@@ -20,4 +20,3 @@ const AnimatedButton: React.FC<AnimatedButtonProps> = ({ children, ...buttonProp
 };
 
 export default AnimatedButton;
-

@@ -7,11 +7,7 @@ interface AnimatedCardProps extends CardProps {
   index?: number;
 }
 
-const AnimatedCard: React.FC<AnimatedCardProps> = ({
-  children,
-  index = 0,
-  ...cardProps
-}) => {
+const AnimatedCard: React.FC<AnimatedCardProps> = ({ children, index = 0, ...cardProps }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,4 +21,3 @@ const AnimatedCard: React.FC<AnimatedCardProps> = ({
 };
 
 export default AnimatedCard;
-

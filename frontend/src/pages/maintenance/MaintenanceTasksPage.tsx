@@ -131,14 +131,16 @@ const MaintenanceTasksPage: React.FC = () => {
           in_progress: 'processing',
           completed: 'success',
         };
-        return <Tag color={colors[status] || 'default'}>{status.replace('_', ' ').toUpperCase()}</Tag>;
+        return (
+          <Tag color={colors[status] || 'default'}>{status.replace('_', ' ').toUpperCase()}</Tag>
+        );
       },
     },
     {
       title: 'Cost',
       dataIndex: 'cost',
       key: 'cost',
-      render: (cost?: number) => cost ? `${cost.toFixed(2)} AED` : '-',
+      render: (cost?: number) => (cost ? `${cost.toFixed(2)} AED` : '-'),
     },
     {
       title: 'Actions',
@@ -225,8 +227,17 @@ const MaintenanceTasksPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Maintenance Tasks</Title>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Maintenance Tasks
+          </Title>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Add Task
           </Button>
@@ -259,11 +270,7 @@ const MaintenanceTasksPage: React.FC = () => {
         </Space>
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Table
           columns={columns}
           dataSource={tasks}
@@ -281,11 +288,7 @@ const MaintenanceTasksPage: React.FC = () => {
         width={600}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
-            name="title"
-            label="Title"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="title" label="Title" rules={[{ required: true }]}>
             <Input />
           </Form.Item>
           <Form.Item
@@ -327,11 +330,7 @@ const MaintenanceTasksPage: React.FC = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item
-            name="type"
-            label="Type"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="type" label="Type" rules={[{ required: true }]}>
             <Select>
               <Option value="ac">AC</Option>
               <Option value="plumbing">Plumbing</Option>
@@ -340,11 +339,7 @@ const MaintenanceTasksPage: React.FC = () => {
               <Option value="other">Other</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="priority"
-            label="Priority"
-            initialValue="medium"
-          >
+          <Form.Item name="priority" label="Priority" initialValue="medium">
             <Select>
               <Option value="low">Low</Option>
               <Option value="medium">Medium</Option>

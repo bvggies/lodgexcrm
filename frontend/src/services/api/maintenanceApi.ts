@@ -57,12 +57,15 @@ export const maintenanceApi = {
     return apiClient.delete<{ success: boolean; message: string }>(`/maintenance/${id}`);
   },
 
-  resolve: (id: string, data: {
-    photos?: string[];
-    cost?: number;
-    invoiceFile?: string;
-    notes?: string;
-  }) => {
+  resolve: (
+    id: string,
+    data: {
+      photos?: string[];
+      cost?: number;
+      invoiceFile?: string;
+      notes?: string;
+    }
+  ) => {
     return apiClient.post<{ success: boolean; data: { task: MaintenanceTask } }>(
       `/maintenance/${id}/resolve`,
       data
@@ -76,4 +79,3 @@ export const maintenanceApi = {
     );
   },
 };
-

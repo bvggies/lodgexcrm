@@ -69,10 +69,7 @@ export const bookingsApi = {
   },
 
   update: (id: string, data: Partial<CreateBookingData>) => {
-    return apiClient.put<{ success: boolean; data: { booking: Booking } }>(
-      `/bookings/${id}`,
-      data
-    );
+    return apiClient.put<{ success: boolean; data: { booking: Booking } }>(`/bookings/${id}`, data);
   },
 
   delete: (id: string) => {
@@ -87,4 +84,3 @@ export const bookingsApi = {
     return apiClient.post<{ success: boolean; message: string }>(`/bookings/${id}/checkout`);
   },
 };
-

@@ -58,4 +58,3 @@ export const propertiesApi = {
     return apiClient.delete<{ success: boolean; message: string }>(`/properties/${id}`);
   },
 };
-

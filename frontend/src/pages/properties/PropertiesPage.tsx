@@ -132,17 +132,10 @@ const PropertiesPage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Button
-            type="link"
-            onClick={() => navigate(`/properties/${record.id}`)}
-          >
+          <Button type="link" onClick={() => navigate(`/properties/${record.id}`)}>
             View
           </Button>
           <Popconfirm
@@ -163,12 +156,22 @@ const PropertiesPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Properties</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Add Property
-        </Button>
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Properties
+          </Title>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            Add Property
+          </Button>
+        </div>
+      </FadeIn>
 
       <Space style={{ marginBottom: 16, width: '100%', justifyContent: 'space-between' }}>
         <Input

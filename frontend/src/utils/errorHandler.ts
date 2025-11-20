@@ -43,4 +43,3 @@ export const isNetworkError = (error: any): boolean => {
 export const isTimeoutError = (error: any): boolean => {
   return error.code === 'ECONNABORTED' || error.message?.includes('timeout');
 };
-

@@ -7,7 +7,10 @@ interface AnimatedTableProps<T> extends TableProps<T> {
   delay?: number;
 }
 
-function AnimatedTable<T extends object = any>({ delay = 0.2, ...tableProps }: AnimatedTableProps<T>) {
+function AnimatedTable<T extends object = any>({
+  delay = 0.2,
+  ...tableProps
+}: AnimatedTableProps<T>) {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -20,4 +23,3 @@ function AnimatedTable<T extends object = any>({ delay = 0.2, ...tableProps }: A
 }
 
 export default AnimatedTable;
-

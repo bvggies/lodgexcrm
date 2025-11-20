@@ -51,4 +51,3 @@ export const ownersApi = {
     return apiClient.get<{ success: boolean; data: any }>(`/owners/${id}/statements`, { params });
   },
 };
-

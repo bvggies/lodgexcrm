@@ -23,4 +23,3 @@ const AnimatedModal: React.FC<AnimatedModalProps> = ({ children, ...modalProps }
 };
 
 export default AnimatedModal;
-

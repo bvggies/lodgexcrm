@@ -41,7 +41,7 @@ const ImportPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await importApi.downloadTemplate(importType);
-      
+
       // Create blob and download
       const blob = new Blob([response.data], {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -142,15 +142,12 @@ const ImportPage: React.FC = () => {
       <FadeIn>
         <Title level={2}>Data Import</Title>
         <Text type="secondary">
-          Import historical data from Excel files. Download a template, fill it with your data, and upload it.
+          Import historical data from Excel files. Download a template, fill it with your data, and
+          upload it.
         </Text>
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Card style={{ marginTop: 24 }}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <div>
@@ -175,7 +172,8 @@ const ImportPage: React.FC = () => {
               <Text strong>Step 2: Download Template</Text>
               <br />
               <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-                Download the Excel template for {importType}, fill it with your data, then upload it.
+                Download the Excel template for {importType}, fill it with your data, then upload
+                it.
               </Text>
               <Button
                 type="primary"
@@ -223,9 +221,7 @@ const ImportPage: React.FC = () => {
           <Card style={{ marginTop: 24 }}>
             <Title level={4}>Import Results</Title>
             <Descriptions bordered column={2} style={{ marginBottom: 24 }}>
-              <Descriptions.Item label="Total Records">
-                {importResult.total}
-              </Descriptions.Item>
+              <Descriptions.Item label="Total Records">{importResult.total}</Descriptions.Item>
               <Descriptions.Item label="Successfully Imported">
                 <Tag color="green" icon={<CheckCircleOutlined />}>
                   {importResult.imported}
@@ -257,7 +253,10 @@ const ImportPage: React.FC = () => {
               <div style={{ marginTop: 24 }}>
                 <Title level={5}>Warnings ({importResult.warnings.length})</Title>
                 <Table
-                  dataSource={importResult.warnings.map((warning, index) => ({ key: index, warning }))}
+                  dataSource={importResult.warnings.map((warning, index) => ({
+                    key: index,
+                    warning,
+                  }))}
                   columns={warningColumns}
                   pagination={{ pageSize: 10 }}
                   size="small"
@@ -291,4 +290,3 @@ const ImportPage: React.FC = () => {
 };
 
 export default ImportPage;
-

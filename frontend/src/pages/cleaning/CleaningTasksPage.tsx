@@ -135,14 +135,16 @@ const CleaningTasksPage: React.FC = () => {
           in_progress: 'processing',
           completed: 'success',
         };
-        return <Tag color={colors[status] || 'default'}>{status.replace('_', ' ').toUpperCase()}</Tag>;
+        return (
+          <Tag color={colors[status] || 'default'}>{status.replace('_', ' ').toUpperCase()}</Tag>
+        );
       },
     },
     {
       title: 'Cost',
       dataIndex: 'cost',
       key: 'cost',
-      render: (cost?: number) => cost ? `${cost.toFixed(2)} AED` : '-',
+      render: (cost?: number) => (cost ? `${cost.toFixed(2)} AED` : '-'),
     },
     {
       title: 'Actions',
@@ -237,8 +239,17 @@ const CleaningTasksPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Cleaning Tasks</Title>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Cleaning Tasks
+          </Title>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Add Task
           </Button>
@@ -257,11 +268,7 @@ const CleaningTasksPage: React.FC = () => {
         </Select>
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Table
           columns={columns}
           dataSource={tasks}

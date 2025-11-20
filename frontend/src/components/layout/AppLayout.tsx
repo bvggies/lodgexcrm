@@ -164,13 +164,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={setCollapsed}
-        theme="dark"
-        width={250}
-      >
+      <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed} theme="dark" width={250}>
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -188,9 +182,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <span style={{ fontSize: 20, fontWeight: 'bold' }}>LC</span>
           ) : (
             <>
-              <img 
-                src="/logo.svg" 
-                alt="Lodgex CRM" 
+              <img
+                src="/logo.svg"
+                alt="Lodgex CRM"
                 style={{ height: 32, width: 'auto', filter: 'brightness(0) invert(1)' }}
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
@@ -252,4 +246,3 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 };
 
 export default AppLayout;
-

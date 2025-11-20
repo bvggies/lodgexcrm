@@ -34,7 +34,7 @@ export const automationsApi = {
     const queryParams = new URLSearchParams();
     if (params?.trigger) queryParams.append('trigger', params.trigger);
     if (params?.enabled !== undefined) queryParams.append('enabled', params.enabled.toString());
-    
+
     const query = queryParams.toString();
     return apiClient.get<{ success: boolean; data: Automation[] }>(
       `/automations${query ? `?${query}` : ''}`
@@ -64,10 +64,10 @@ export const automationsApi = {
   },
 
   trigger: (trigger: string, data?: Record<string, any>) => {
-    return apiClient.post<{ success: boolean; data: { triggered: number; errors: string[] }; message: string }>(
-      '/automations/trigger',
-      { trigger, data }
-    );
+    return apiClient.post<{
+      success: boolean;
+      data: { triggered: number; errors: string[] };
+      message: string;
+    }>('/automations/trigger', { trigger, data });
   },
 };
-

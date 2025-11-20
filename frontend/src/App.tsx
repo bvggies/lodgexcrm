@@ -33,158 +33,157 @@ function App() {
 
   return (
     <ErrorBoundary>
-    <Routes>
-      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
-      <Route
-        path="/*"
-        element={
-          isAuthenticated ? (
-            <AppLayout>
-              <Content style={{ padding: '24px', minHeight: '100vh' }}>
+      <Routes>
+        <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/" />} />
+        <Route
+          path="/*"
+          element={
+            isAuthenticated ? (
+              <AppLayout>
+                <Content style={{ padding: '24px', minHeight: '100vh' }}>
                   <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
-                    <Route
-                      path="/"
-                      element={
-                        <PageTransition>
-                          <DashboardPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/properties"
-                      element={
-                        <PageTransition>
-                          <PropertiesPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/units"
-                      element={
-                        <PageTransition>
-                          <UnitsPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/guests"
-                      element={
-                        <PageTransition>
-                          <GuestsPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/bookings"
-                      element={
-                        <PageTransition>
-                          <BookingsPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/owners"
-                      element={
-                        <PageTransition>
-                          <OwnersPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/cleaning"
-                      element={
-                        <PageTransition>
-                          <CleaningTasksPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/maintenance"
-                      element={
-                        <PageTransition>
-                          <MaintenanceTasksPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/finance"
-                      element={
-                        <PageTransition>
-                          <FinancePage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/staff"
-                      element={
-                        <PageTransition>
-                          <StaffPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/analytics"
-                      element={
-                        <PageTransition>
-                          <AnalyticsPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/audit"
-                      element={
-                        <PageTransition>
-                          <AuditLogPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/integrations"
-                      element={
-                        <PageTransition>
-                          <IntegrationsPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/automations"
-                      element={
-                        <PageTransition>
-                          <AutomationsPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/archive"
-                      element={
-                        <PageTransition>
-                          <ArchivePage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route
-                      path="/import"
-                      element={
-                        <PageTransition>
-                          <ImportPage />
-                        </PageTransition>
-                      }
-                    />
-                    <Route path="*" element={<NotFound />} />
-                </Routes>
+                      <Route
+                        path="/"
+                        element={
+                          <PageTransition>
+                            <DashboardPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/properties"
+                        element={
+                          <PageTransition>
+                            <PropertiesPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/units"
+                        element={
+                          <PageTransition>
+                            <UnitsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/guests"
+                        element={
+                          <PageTransition>
+                            <GuestsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/bookings"
+                        element={
+                          <PageTransition>
+                            <BookingsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/owners"
+                        element={
+                          <PageTransition>
+                            <OwnersPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/cleaning"
+                        element={
+                          <PageTransition>
+                            <CleaningTasksPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/maintenance"
+                        element={
+                          <PageTransition>
+                            <MaintenanceTasksPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/finance"
+                        element={
+                          <PageTransition>
+                            <FinancePage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/staff"
+                        element={
+                          <PageTransition>
+                            <StaffPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/analytics"
+                        element={
+                          <PageTransition>
+                            <AnalyticsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/audit"
+                        element={
+                          <PageTransition>
+                            <AuditLogPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/integrations"
+                        element={
+                          <PageTransition>
+                            <IntegrationsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/automations"
+                        element={
+                          <PageTransition>
+                            <AutomationsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/archive"
+                        element={
+                          <PageTransition>
+                            <ArchivePage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/import"
+                        element={
+                          <PageTransition>
+                            <ImportPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route path="*" element={<NotFound />} />
+                    </Routes>
                   </AnimatePresence>
-              </Content>
-            </AppLayout>
-          ) : (
-            <Navigate to="/login" />
-          )
-        }
-      />
-    </Routes>
+                </Content>
+              </AppLayout>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+      </Routes>
     </ErrorBoundary>
   );
 }
 
 export default App;
-

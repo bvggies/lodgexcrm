@@ -16,7 +16,14 @@ import {
   Tabs,
   Checkbox,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, CalendarOutlined, InboxOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  CalendarOutlined,
+  InboxOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
@@ -210,7 +217,8 @@ const BookingsPage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
-      render: (amount: number, record: Booking) => `${amount.toFixed(2)} ${record.currency || 'AED'}`,
+      render: (amount: number, record: Booking) =>
+        `${amount.toFixed(2)} ${record.currency || 'AED'}`,
     },
     {
       title: 'Status',
@@ -232,7 +240,7 @@ const BookingsPage: React.FC = () => {
       render: (_, record) => {
         const isOldEnough = dayjs().diff(dayjs(record.checkoutDate), 'days') >= 90;
         const isArchived = record.notes?.includes('[ARCHIVED]');
-        
+
         return (
           <Space>
             <Button type="link" onClick={() => navigate(`/bookings/${record.id}`)}>
@@ -268,9 +276,7 @@ const BookingsPage: React.FC = () => {
                 </Popconfirm>
               </>
             )}
-            {isArchived && (
-              <Tag color="default">Archived</Tag>
-            )}
+            {isArchived && <Tag color="default">Archived</Tag>}
           </Space>
         );
       },
@@ -280,65 +286,70 @@ const BookingsPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Bookings</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Add Booking
-        </Button>
-      </div>
-
-      <Space style={{ marginBottom: 16 }}>
-        <Input
-          placeholder="Search bookings..."
-          prefix={<SearchOutlined />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 300 }}
-          allowClear
-        />
-        <Select
-          placeholder="Filter by status"
-          style={{ width: 200 }}
-          allowClear
-          value={statusFilter}
-          onChange={setStatusFilter}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
         >
-          <Option value="paid">Paid</Option>
-          <Option value="pending">Pending</Option>
-          <Option value="partial">Partial</Option>
-          <Option value="refunded">Refunded</Option>
-        </Select>
-      </Space>
+          <Title level={2} style={{ margin: 0 }}>
+            Bookings
+          </Title>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            Add Booking
+          </Button>
+        </div>
+
+        <Space style={{ marginBottom: 16 }}>
+          <Input
+            placeholder="Search bookings..."
+            prefix={<SearchOutlined />}
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            style={{ width: 300 }}
+            allowClear
+          />
+          <Select
+            placeholder="Filter by status"
+            style={{ width: 200 }}
+            allowClear
+            value={statusFilter}
+            onChange={setStatusFilter}
+          >
+            <Option value="paid">Paid</Option>
+            <Option value="pending">Pending</Option>
+            <Option value="partial">Partial</Option>
+            <Option value="refunded">Refunded</Option>
+          </Select>
+        </Space>
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Tabs activeKey={activeTab} onChange={setActiveTab}>
-        <Tabs.TabPane tab="Table View" key="table">
-          <Table
-            columns={columns}
-            dataSource={bookings}
-            loading={loading}
-            rowKey="id"
-            pagination={{ pageSize: 10 }}
-          />
-        </Tabs.TabPane>
-        <Tabs.TabPane tab="Calendar View" key="calendar">
-          <div style={{ height: 600 }}>
-            <Calendar
-              localizer={localizer}
-              events={calendarEvents}
-              startAccessor="start"
-              endAccessor="end"
-              style={{ height: '100%' }}
-              onSelectEvent={(event) => navigate(`/bookings/${event.resource.bookingId}`)}
+          <Tabs.TabPane tab="Table View" key="table">
+            <Table
+              columns={columns}
+              dataSource={bookings}
+              loading={loading}
+              rowKey="id"
+              pagination={{ pageSize: 10 }}
             />
-          </div>
-        </Tabs.TabPane>
-      </Tabs>
+          </Tabs.TabPane>
+          <Tabs.TabPane tab="Calendar View" key="calendar">
+            <div style={{ height: 600 }}>
+              <Calendar
+                localizer={localizer}
+                events={calendarEvents}
+                startAccessor="start"
+                endAccessor="end"
+                style={{ height: '100%' }}
+                onSelectEvent={(event) => navigate(`/bookings/${event.resource.bookingId}`)}
+              />
+            </div>
+          </Tabs.TabPane>
+        </Tabs>
       </motion.div>
 
       <Modal
@@ -391,25 +402,13 @@ const BookingsPage: React.FC = () => {
               <Option value="other">Other</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="checkinDate"
-            label="Check-in Date"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="checkinDate" label="Check-in Date" rules={[{ required: true }]}>
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item
-            name="checkoutDate"
-            label="Check-out Date"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="checkoutDate" label="Check-out Date" rules={[{ required: true }]}>
             <DatePicker style={{ width: '100%' }} />
           </Form.Item>
-          <Form.Item
-            name="totalAmount"
-            label="Total Amount"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="totalAmount" label="Total Amount" rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} />
           </Form.Item>
           <Form.Item name="currency" label="Currency" initialValue="AED">

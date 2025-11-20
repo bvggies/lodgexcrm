@@ -23,4 +23,3 @@ export const setMultipleLoading = (
 ): LoadingState => {
   return { ...state, ...updates };
 };
-

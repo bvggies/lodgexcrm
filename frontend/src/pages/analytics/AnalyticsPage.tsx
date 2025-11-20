@@ -120,7 +120,7 @@ const AnalyticsPage: React.FC = () => {
         endDate: dateRange.endDate,
         format: 'csv',
       });
-      
+
       // Create blob and download
       const blob = new Blob([response.data], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -131,7 +131,7 @@ const AnalyticsPage: React.FC = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       message.success('Analytics exported successfully');
     } catch (error: any) {
       message.error(error.response?.data?.message || 'Failed to export analytics');
@@ -141,39 +141,48 @@ const AnalyticsPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Analytics</Title>
-        <Space>
-          <Select
-            value={timeRange}
-            onChange={(value) => {
-              setTimeRange(value);
-              if (value !== 'custom') {
-                setCustomDateRange(null);
-              }
-            }}
-            style={{ width: 150 }}
-          >
-            <Option value="1m">Last Month</Option>
-            <Option value="3m">Last 3 Months</Option>
-            <Option value="6m">Last 6 Months</Option>
-            <Option value="1y">Last Year</Option>
-            <Option value="custom">Custom Range</Option>
-          </Select>
-          {timeRange === 'custom' && (
-            <RangePicker
-              value={customDateRange}
-              onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-            />
-          )}
-          <Button icon={<ReloadOutlined />} onClick={loadAnalytics} loading={loading}>
-            Refresh
-          </Button>
-          <Button icon={<DownloadOutlined />} onClick={handleExport}>
-            Export
-          </Button>
-        </Space>
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Analytics
+          </Title>
+          <Space>
+            <Select
+              value={timeRange}
+              onChange={(value) => {
+                setTimeRange(value);
+                if (value !== 'custom') {
+                  setCustomDateRange(null);
+                }
+              }}
+              style={{ width: 150 }}
+            >
+              <Option value="1m">Last Month</Option>
+              <Option value="3m">Last 3 Months</Option>
+              <Option value="6m">Last 6 Months</Option>
+              <Option value="1y">Last Year</Option>
+              <Option value="custom">Custom Range</Option>
+            </Select>
+            {timeRange === 'custom' && (
+              <RangePicker
+                value={customDateRange}
+                onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
+              />
+            )}
+            <Button icon={<ReloadOutlined />} onClick={loadAnalytics} loading={loading}>
+              Refresh
+            </Button>
+            <Button icon={<DownloadOutlined />} onClick={handleExport}>
+              Export
+            </Button>
+          </Space>
+        </div>
       </FadeIn>
 
       <Tabs defaultActiveKey="financial">
@@ -220,7 +229,13 @@ const AnalyticsPage: React.FC = () => {
                       fill="url(#colorExpense)"
                       name="Expenses"
                     />
-                    <Line type="monotone" dataKey="netIncome" stroke="#1890ff" strokeWidth={2} name="Net Income" />
+                    <Line
+                      type="monotone"
+                      dataKey="netIncome"
+                      stroke="#1890ff"
+                      strokeWidth={2}
+                      name="Net Income"
+                    />
                   </AreaChart>
                 </ResponsiveContainer>
               </Card>
@@ -288,7 +303,13 @@ const AnalyticsPage: React.FC = () => {
                       {(occupancyData?.properties || []).map((entry: any, index: number) => (
                         <Cell
                           key={`cell-${index}`}
-                          fill={entry.occupancyRate > 70 ? '#3f8600' : entry.occupancyRate > 50 ? '#ffa940' : '#cf1322'}
+                          fill={
+                            entry.occupancyRate > 70
+                              ? '#3f8600'
+                              : entry.occupancyRate > 50
+                                ? '#ffa940'
+                                : '#cf1322'
+                          }
                         />
                       ))}
                     </Bar>
@@ -327,7 +348,10 @@ const AnalyticsPage: React.FC = () => {
                         <Pie
                           data={[
                             { name: 'Repeat', value: repeatGuestsData.summary?.repeatGuests || 0 },
-                            { name: 'One-time', value: repeatGuestsData.summary?.oneTimeGuests || 0 },
+                            {
+                              name: 'One-time',
+                              value: repeatGuestsData.summary?.oneTimeGuests || 0,
+                            },
                           ]}
                           cx="50%"
                           cy="50%"
@@ -352,29 +376,32 @@ const AnalyticsPage: React.FC = () => {
               <Card title="Top Repeat Guests" loading={loading}>
                 {repeatGuestsData?.topRepeatGuests && (
                   <div>
-                    {repeatGuestsData.topRepeatGuests.slice(0, 10).map((guest: any, index: number) => (
-                      <div
-                        key={guest.id}
-                        style={{
-                          marginBottom: 12,
-                          padding: 12,
-                          background: '#f5f5f5',
-                          borderRadius: 4,
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          alignItems: 'center',
-                        }}
-                      >
-                        <div>
-                          <strong>
-                            {index + 1}. {guest.firstName} {guest.lastName}
-                          </strong>
-                          <div style={{ fontSize: 12, color: '#666' }}>
-                            {guest.totalBookings} bookings • {guest.totalSpend.toFixed(2)} AED total
+                    {repeatGuestsData.topRepeatGuests
+                      .slice(0, 10)
+                      .map((guest: any, index: number) => (
+                        <div
+                          key={guest.id}
+                          style={{
+                            marginBottom: 12,
+                            padding: 12,
+                            background: '#f5f5f5',
+                            borderRadius: 4,
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <strong>
+                              {index + 1}. {guest.firstName} {guest.lastName}
+                            </strong>
+                            <div style={{ fontSize: 12, color: '#666' }}>
+                              {guest.totalBookings} bookings • {guest.totalSpend.toFixed(2)} AED
+                              total
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
                   </div>
                 )}
               </Card>

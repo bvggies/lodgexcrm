@@ -37,80 +37,57 @@ const LoginPage: React.FC = () => {
         transition={{ duration: 0.5 }}
       >
         <Card style={{ width: 400, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ marginBottom: 16 }}>
-            <img 
-              src="/logo.svg" 
-              alt="Lodgex CRM" 
-              style={{ height: 50, width: 'auto' }}
-              onError={(e) => {
-                // Fallback if logo doesn't load
-                (e.target as HTMLImageElement).style.display = 'none';
-              }}
-            />
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <div style={{ marginBottom: 16 }}>
+              <img
+                src="/logo.svg"
+                alt="Lodgex CRM"
+                style={{ height: 50, width: 'auto' }}
+                onError={(e) => {
+                  // Fallback if logo doesn't load
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+            <Title level={2} style={{ marginTop: 16 }}>
+              Lodgex CRM
+            </Title>
+            <p style={{ color: '#666' }}>Sign in to your account</p>
           </div>
-          <Title level={2} style={{ marginTop: 16 }}>Lodgex CRM</Title>
-          <p style={{ color: '#666' }}>Sign in to your account</p>
-        </div>
 
-        {error && (
-          <Alert
-            message={error}
-            type="error"
-            showIcon
-            closable
-            style={{ marginBottom: 24 }}
-          />
-        )}
+          {error && (
+            <Alert message={error} type="error" showIcon closable style={{ marginBottom: 24 }} />
+          )}
 
-        <Form
-          form={form}
-          name="login"
-          onFinish={onFinish}
-          layout="vertical"
-          size="large"
-        >
-          <Form.Item
-            name="email"
-            rules={[
-              { required: true, message: 'Please input your email!' },
-              { type: 'email', message: 'Please enter a valid email!' },
-            ]}
-          >
-            <Input
-              prefix={<UserOutlined />}
-              placeholder="Email"
-            />
-          </Form.Item>
-
-          <Form.Item
-            name="password"
-            rules={[{ required: true, message: 'Please input your password!' }]}
-          >
-            <Input.Password
-              prefix={<LockOutlined />}
-              placeholder="Password"
-            />
-          </Form.Item>
-
-          <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              block
-              loading={isLoading}
+          <Form form={form} name="login" onFinish={onFinish} layout="vertical" size="large">
+            <Form.Item
+              name="email"
+              rules={[
+                { required: true, message: 'Please input your email!' },
+                { type: 'email', message: 'Please enter a valid email!' },
+              ]}
             >
-              Sign In
-            </Button>
-          </Form.Item>
-        </Form>
+              <Input prefix={<UserOutlined />} placeholder="Email" />
+            </Form.Item>
 
-        <div style={{ textAlign: 'center', marginTop: 16, color: '#666' }}>
-          <p>Demo credentials:</p>
-          <p style={{ fontSize: 12 }}>
-            admin@lodgexcrm.com / admin123
-          </p>
-        </div>
+            <Form.Item
+              name="password"
+              rules={[{ required: true, message: 'Please input your password!' }]}
+            >
+              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" block loading={isLoading}>
+                Sign In
+              </Button>
+            </Form.Item>
+          </Form>
+
+          <div style={{ textAlign: 'center', marginTop: 16, color: '#666' }}>
+            <p>Demo credentials:</p>
+            <p style={{ fontSize: 12 }}>admin@lodgexcrm.com / admin123</p>
+          </div>
         </Card>
       </motion.div>
     </div>
@@ -118,4 +95,3 @@ const LoginPage: React.FC = () => {
 };
 
 export default LoginPage;
-

@@ -55,4 +55,3 @@ export const auditApi = {
     }>(`/audit/history/${tableName}/${recordId}`);
   },
 };
-

@@ -1,5 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Typography, Select, DatePicker, Input, Tag, Space, Button, Modal, Descriptions } from 'antd';
+import {
+  Table,
+  Typography,
+  Select,
+  DatePicker,
+  Input,
+  Tag,
+  Space,
+  Button,
+  Modal,
+  Descriptions,
+} from 'antd';
 import { SearchOutlined, ReloadOutlined, EyeOutlined } from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
@@ -118,42 +129,43 @@ const AuditLogPage: React.FC = () => {
         <Title level={2}>Audit Log</Title>
 
         <Space style={{ marginBottom: 16 }}>
-        <Select
-          placeholder="Filter by action"
-          style={{ width: 150 }}
-          allowClear
-          value={actionFilter}
-          onChange={setActionFilter}
-        >
-          <Option value="create">Create</Option>
-          <Option value="update">Update</Option>
-          <Option value="delete">Delete</Option>
-        </Select>
-        <Select
-          placeholder="Filter by table"
-          style={{ width: 200 }}
-          allowClear
-          value={tableFilter}
-          onChange={setTableFilter}
-        >
-          <Option value="bookings">Bookings</Option>
-          <Option value="guests">Guests</Option>
-          <Option value="properties">Properties</Option>
-          <Option value="owners">Owners</Option>
-          <Option value="units">Units</Option>
-          <Option value="staff">Staff</Option>
-          <Option value="cleaningTask">Cleaning Tasks</Option>
-          <Option value="maintenanceTask">Maintenance Tasks</Option>
-          <Option value="financeRecord">Finance Records</Option>
-        </Select>
-        <RangePicker
-          value={dateRange}
-          onChange={(dates) => setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-        />
-        <Button icon={<ReloadOutlined />} onClick={loadLogs}>
-          Refresh
-        </Button>
-      </Space>
+          <Select
+            placeholder="Filter by action"
+            style={{ width: 150 }}
+            allowClear
+            value={actionFilter}
+            onChange={setActionFilter}
+          >
+            <Option value="create">Create</Option>
+            <Option value="update">Update</Option>
+            <Option value="delete">Delete</Option>
+          </Select>
+          <Select
+            placeholder="Filter by table"
+            style={{ width: 200 }}
+            allowClear
+            value={tableFilter}
+            onChange={setTableFilter}
+          >
+            <Option value="bookings">Bookings</Option>
+            <Option value="guests">Guests</Option>
+            <Option value="properties">Properties</Option>
+            <Option value="owners">Owners</Option>
+            <Option value="units">Units</Option>
+            <Option value="staff">Staff</Option>
+            <Option value="cleaningTask">Cleaning Tasks</Option>
+            <Option value="maintenanceTask">Maintenance Tasks</Option>
+            <Option value="financeRecord">Finance Records</Option>
+          </Select>
+          <RangePicker
+            value={dateRange}
+            onChange={(dates) => setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
+          />
+          <Button icon={<ReloadOutlined />} onClick={loadLogs}>
+            Refresh
+          </Button>
+        </Space>
+      </FadeIn>
 
       <Table
         columns={columns}
@@ -200,8 +212,8 @@ const AuditLogPage: React.FC = () => {
                   selectedLog.action === 'create'
                     ? 'green'
                     : selectedLog.action === 'update'
-                    ? 'blue'
-                    : 'red'
+                      ? 'blue'
+                      : 'red'
                 }
               >
                 {selectedLog.action.toUpperCase()}
@@ -210,7 +222,15 @@ const AuditLogPage: React.FC = () => {
             <Descriptions.Item label="Table">{selectedLog.tableName}</Descriptions.Item>
             <Descriptions.Item label="Record ID">{selectedLog.recordId}</Descriptions.Item>
             <Descriptions.Item label="Change Summary">
-              <pre style={{ background: '#f5f5f5', padding: 12, borderRadius: 4, maxHeight: 300, overflow: 'auto' }}>
+              <pre
+                style={{
+                  background: '#f5f5f5',
+                  padding: 12,
+                  borderRadius: 4,
+                  maxHeight: 300,
+                  overflow: 'auto',
+                }}
+              >
                 {JSON.stringify(selectedLog.changeSummary, null, 2)}
               </pre>
             </Descriptions.Item>

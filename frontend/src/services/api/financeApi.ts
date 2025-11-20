@@ -41,16 +41,11 @@ export const financeApi = {
   },
 
   getById: (id: string) => {
-    return apiClient.get<{ success: boolean; data: { record: FinanceRecord } }>(
-      `/finance/${id}`
-    );
+    return apiClient.get<{ success: boolean; data: { record: FinanceRecord } }>(`/finance/${id}`);
   },
 
   create: (data: Partial<FinanceRecord>) => {
-    return apiClient.post<{ success: boolean; data: { record: FinanceRecord } }>(
-      '/finance',
-      data
-    );
+    return apiClient.post<{ success: boolean; data: { record: FinanceRecord } }>('/finance', data);
   },
 
   update: (id: string, data: Partial<FinanceRecord>) => {
@@ -70,11 +65,16 @@ export const financeApi = {
     });
   },
 
-  export: (params: { format: 'csv' | 'pdf'; propertyId?: string; startDate?: string; endDate?: string; month?: string }) => {
+  export: (params: {
+    format: 'csv' | 'pdf';
+    propertyId?: string;
+    startDate?: string;
+    endDate?: string;
+    month?: string;
+  }) => {
     return apiClient.get('/finance/export', {
       params,
       responseType: 'blob',
     });
   },
 };
-

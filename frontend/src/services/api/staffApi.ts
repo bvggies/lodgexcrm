@@ -20,15 +20,10 @@ export interface CreateStaffData {
 }
 
 export const staffApi = {
-  getAll: (params?: {
-    role?: string;
-    isActive?: boolean;
-    search?: string;
-  }) => {
-    return apiClient.get<{ success: boolean; data: { staff: Staff[] }; count: number }>(
-      '/staff',
-      { params }
-    );
+  getAll: (params?: { role?: string; isActive?: boolean; search?: string }) => {
+    return apiClient.get<{ success: boolean; data: { staff: Staff[] }; count: number }>('/staff', {
+      params,
+    });
   },
 
   getById: (id: string) => {
@@ -51,4 +46,3 @@ export const staffApi = {
     return apiClient.get<{ success: boolean; data: any }>(`/staff/${id}/tasks`);
   },
 };
-

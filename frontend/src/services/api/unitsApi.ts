@@ -28,14 +28,10 @@ export interface CreateUnitData {
 }
 
 export const unitsApi = {
-  getAll: (params?: {
-    propertyId?: string;
-    availabilityStatus?: string;
-  }) => {
-    return apiClient.get<{ success: boolean; data: { units: Unit[] }; count: number }>(
-      '/units',
-      { params }
-    );
+  getAll: (params?: { propertyId?: string; availabilityStatus?: string }) => {
+    return apiClient.get<{ success: boolean; data: { units: Unit[] }; count: number }>('/units', {
+      params,
+    });
   },
 
   getById: (id: string) => {
@@ -54,4 +50,3 @@ export const unitsApi = {
     return apiClient.delete<{ success: boolean; message: string }>(`/units/${id}`);
   },
 };
-

@@ -9,4 +9,3 @@ export interface User {
   lastLogin?: string;
   createdAt: string;
 }
-

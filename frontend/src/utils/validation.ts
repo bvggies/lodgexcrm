@@ -43,4 +43,3 @@ export const validateNumberRange = (value: number, min: number, max: number): bo
 export const validateDateRange = (startDate: Date, endDate: Date): boolean => {
   return endDate >= startDate;
 };
-

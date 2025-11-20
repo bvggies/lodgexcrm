@@ -155,14 +155,24 @@ const StaffPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Staff</Title>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Staff
+          </Title>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Add Staff
           </Button>
         </div>
+      </FadeIn>
 
-        <Space style={{ marginBottom: 16 }}>
+      <Space style={{ marginBottom: 16 }}>
         <Input
           placeholder="Search staff..."
           prefix={<SearchOutlined />}
@@ -209,11 +219,7 @@ const StaffPage: React.FC = () => {
           >
             <Input />
           </Form.Item>
-          <Form.Item
-            name="role"
-            label="Role"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="role" label="Role" rules={[{ required: true }]}>
             <Select>
               <Option value="admin">Admin</Option>
               <Option value="assistant">Assistant</Option>

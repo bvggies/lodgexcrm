@@ -92,7 +92,8 @@ const GuestsPage: React.FC = () => {
       title: 'Name',
       key: 'name',
       render: (_, record) => `${record.firstName} ${record.lastName}`,
-      sorter: (a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
+      sorter: (a, b) =>
+        `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
     },
     {
       title: 'Email',
@@ -116,9 +117,7 @@ const GuestsPage: React.FC = () => {
       dataIndex: 'blacklist',
       key: 'blacklist',
       render: (blacklist: boolean) => (
-        <Tag color={blacklist ? 'red' : 'green'}>
-          {blacklist ? 'Yes' : 'No'}
-        </Tag>
+        <Tag color={blacklist ? 'red' : 'green'}>{blacklist ? 'Yes' : 'No'}</Tag>
       ),
     },
     {
@@ -126,17 +125,10 @@ const GuestsPage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Button
-            type="link"
-            onClick={() => navigate(`/guests/${record.id}`)}
-          >
+          <Button type="link" onClick={() => navigate(`/guests/${record.id}`)}>
             View
           </Button>
           <Popconfirm
@@ -157,8 +149,17 @@ const GuestsPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Guests</Title>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Guests
+          </Title>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Add Guest
           </Button>
@@ -174,11 +175,7 @@ const GuestsPage: React.FC = () => {
         />
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Table
           columns={columns}
           dataSource={guests}

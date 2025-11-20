@@ -51,4 +51,3 @@ const Logo: React.FC<LogoProps> = ({ height = 40, showText = true, style }) => {
 };
 
 export default Logo;
-

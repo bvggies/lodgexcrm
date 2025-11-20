@@ -43,4 +43,3 @@ export const authApi = {
     return apiClient.get<{ success: boolean; data: { user: any } }>('/auth/me');
   },
 };
-

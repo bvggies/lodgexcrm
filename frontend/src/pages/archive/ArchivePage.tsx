@@ -12,12 +12,7 @@ import {
   Pagination,
 } from 'antd';
 import { motion } from 'framer-motion';
-import {
-  InboxOutlined,
-  RestoreOutlined,
-  DeleteOutlined,
-  FileTextOutlined,
-} from '@ant-design/icons';
+import { InboxOutlined, UndoOutlined, DeleteOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { archiveApi, ArchivedBooking } from '../../services/api/archiveApi';
 import dayjs from 'dayjs';
@@ -123,11 +118,7 @@ const ArchivePage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            icon={<RestoreOutlined />}
-            onClick={() => handleRestore(record.id)}
-          >
+          <Button type="link" icon={<UndoOutlined />} onClick={() => handleRestore(record.id)}>
             Restore
           </Button>
           <Popconfirm
@@ -150,7 +141,14 @@ const ArchivePage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
           <Title level={2} style={{ margin: 0 }}>
             <InboxOutlined /> Archive
           </Title>
@@ -160,58 +158,54 @@ const ArchivePage: React.FC = () => {
         </div>
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Card>
-        <Table
-          columns={columns}
-          dataSource={bookings}
-          loading={loading}
-          rowKey="id"
-          pagination={false}
-          expandable={{
-            expandedRowRender: (record) => (
-              <Descriptions column={1} size="small" bordered>
-                <Descriptions.Item label="Booking ID">{record.id}</Descriptions.Item>
-                <Descriptions.Item label="Property">
-                  {record.property.name} ({record.property.code})
-                </Descriptions.Item>
-                <Descriptions.Item label="Guest">
-                  {record.guest.firstName} {record.guest.lastName}
-                </Descriptions.Item>
-                <Descriptions.Item label="Check-in Date">
-                  {dayjs(record.checkinDate).format('DD MMM YYYY HH:mm')}
-                </Descriptions.Item>
-                <Descriptions.Item label="Check-out Date">
-                  {dayjs(record.checkoutDate).format('DD MMM YYYY HH:mm')}
-                </Descriptions.Item>
-                <Descriptions.Item label="Total Amount">
-                  {record.totalAmount.toFixed(2)} {record.currency}
-                </Descriptions.Item>
-                {record.notes && (
-                  <Descriptions.Item label="Notes">
-                    <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{record.notes}</pre>
+          <Table
+            columns={columns}
+            dataSource={bookings}
+            loading={loading}
+            rowKey="id"
+            pagination={false}
+            expandable={{
+              expandedRowRender: (record) => (
+                <Descriptions column={1} size="small" bordered>
+                  <Descriptions.Item label="Booking ID">{record.id}</Descriptions.Item>
+                  <Descriptions.Item label="Property">
+                    {record.property.name} ({record.property.code})
                   </Descriptions.Item>
-                )}
-              </Descriptions>
-            ),
-          }}
-        />
-        <div style={{ marginTop: 16, textAlign: 'right' }}>
-          <Pagination
-            current={pagination.current}
-            pageSize={pagination.pageSize}
-            total={total}
-            onChange={(page, pageSize) => {
-              setPagination({ current: page, pageSize: pageSize || 20 });
+                  <Descriptions.Item label="Guest">
+                    {record.guest.firstName} {record.guest.lastName}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Check-in Date">
+                    {dayjs(record.checkinDate).format('DD MMM YYYY HH:mm')}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Check-out Date">
+                    {dayjs(record.checkoutDate).format('DD MMM YYYY HH:mm')}
+                  </Descriptions.Item>
+                  <Descriptions.Item label="Total Amount">
+                    {record.totalAmount.toFixed(2)} {record.currency}
+                  </Descriptions.Item>
+                  {record.notes && (
+                    <Descriptions.Item label="Notes">
+                      <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>{record.notes}</pre>
+                    </Descriptions.Item>
+                  )}
+                </Descriptions>
+              ),
             }}
-            showSizeChanger
-            showTotal={(total) => `Total ${total} archived bookings`}
           />
-        </div>
+          <div style={{ marginTop: 16, textAlign: 'right' }}>
+            <Pagination
+              current={pagination.current}
+              pageSize={pagination.pageSize}
+              total={total}
+              onChange={(page, pageSize) => {
+                setPagination({ current: page, pageSize: pageSize || 20 });
+              }}
+              showSizeChanger
+              showTotal={(total) => `Total ${total} archived bookings`}
+            />
+          </div>
         </Card>
       </motion.div>
     </div>
@@ -219,4 +213,3 @@ const ArchivePage: React.FC = () => {
 };
 
 export default ArchivePage;
-

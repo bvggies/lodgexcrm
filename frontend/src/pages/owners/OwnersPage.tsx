@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { Table, Button, Space, Typography, Input, Modal, Form, message, Popconfirm } from 'antd';
 import {
-  Table,
-  Button,
-  Space,
-  Typography,
-  Input,
-  Modal,
-  Form,
-  message,
-  Popconfirm,
-} from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined, FileTextOutlined } from '@ant-design/icons';
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  FileTextOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import type { ColumnsType } from 'antd/es/table';
@@ -69,11 +65,7 @@ const OwnersPage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            icon={<EditOutlined />}
-            onClick={() => handleEdit(record)}
-          >
+          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Edit
           </Button>
           <Button
@@ -139,8 +131,17 @@ const OwnersPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Owners</Title>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Owners
+          </Title>
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
             Add Owner
           </Button>
@@ -156,11 +157,7 @@ const OwnersPage: React.FC = () => {
         />
       </FadeIn>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
         <Table
           columns={columns}
           dataSource={owners}

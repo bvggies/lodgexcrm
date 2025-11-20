@@ -16,20 +16,12 @@ const containerVariants = {
   },
 };
 
-const StaggerContainer: React.FC<StaggerContainerProps> = ({
-  children,
-  staggerDelay = 0.1,
-}) => {
+const StaggerContainer: React.FC<StaggerContainerProps> = ({ children, staggerDelay = 0.1 }) => {
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
-    >
+    <motion.div variants={containerVariants} initial="hidden" animate="visible">
       {children}
     </motion.div>
   );
 };
 
 export default StaggerContainer;
-

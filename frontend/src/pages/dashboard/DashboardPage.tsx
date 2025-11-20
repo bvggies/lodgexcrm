@@ -28,7 +28,7 @@ import {
   UserOutlined,
   PlusOutlined,
   ReloadOutlined,
-  TrendingUpOutlined,
+  RiseOutlined,
   PieChartOutlined,
   BarChartOutlined,
 } from '@ant-design/icons';
@@ -280,45 +280,55 @@ const DashboardPage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Dashboard</Title>
-        <Space>
-          <Select
-            value={timeRange}
-            onChange={(value) => {
-              setTimeRange(value);
-              if (value !== 'custom') {
-                setCustomDateRange(null);
-              }
-            }}
-            style={{ width: 150 }}
-          >
-            <Option value="7d">Last 7 Days</Option>
-            <Option value="30d">Last 30 Days</Option>
-            <Option value="90d">Last 90 Days</Option>
-            <Option value="1y">Last Year</Option>
-            <Option value="custom">Custom Range</Option>
-          </Select>
-          {timeRange === 'custom' && (
-            <RangePicker
-              value={customDateRange}
-              onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-            />
-          )}
-          <Tooltip title="Refresh Data">
-            <Button
-              icon={<ReloadOutlined spin={refreshing} />}
-              onClick={handleRefresh}
-              loading={refreshing}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Dashboard
+          </Title>
+          <Space>
+            <Select
+              value={timeRange}
+              onChange={(value) => {
+                setTimeRange(value);
+                if (value !== 'custom') {
+                  setCustomDateRange(null);
+                }
+              }}
+              style={{ width: 150 }}
             >
-              Refresh
+              <Option value="7d">Last 7 Days</Option>
+              <Option value="30d">Last 30 Days</Option>
+              <Option value="90d">Last 90 Days</Option>
+              <Option value="1y">Last Year</Option>
+              <Option value="custom">Custom Range</Option>
+            </Select>
+            {timeRange === 'custom' && (
+              <RangePicker
+                value={customDateRange}
+                onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
+              />
+            )}
+            <Tooltip title="Refresh Data">
+              <Button
+                icon={<ReloadOutlined spin={refreshing} />}
+                onClick={handleRefresh}
+                loading={refreshing}
+              >
+                Refresh
+              </Button>
+            </Tooltip>
+            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/bookings')}>
+              Add Booking
             </Button>
-          </Tooltip>
-          <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/bookings')}>
-            Add Booking
-          </Button>
-        </Space>
-      </div>
+          </Space>
+        </div>
+      </FadeIn>
 
       {/* Summary Statistics */}
       <StaggerContainer>
@@ -363,7 +373,9 @@ const DashboardPage: React.FC = () => {
                 suffix="%"
                 precision={1}
                 loading={loading}
-                valueStyle={{ color: data?.occupancy.rate && data.occupancy.rate > 70 ? '#3f8600' : '#cf1322' }}
+                valueStyle={{
+                  color: data?.occupancy.rate && data.occupancy.rate > 70 ? '#3f8600' : '#cf1322',
+                }}
               />
             </AnimatedCard>
           </Col>
@@ -389,7 +401,9 @@ const DashboardPage: React.FC = () => {
                 value={data?.financial.monthlyNetIncome || 0}
                 prefix={<DollarOutlined />}
                 precision={2}
-                valueStyle={{ color: (data?.financial.monthlyNetIncome || 0) >= 0 ? '#3f8600' : '#cf1322' }}
+                valueStyle={{
+                  color: (data?.financial.monthlyNetIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
+                }}
                 loading={loading}
               />
             </AnimatedCard>
@@ -490,7 +504,13 @@ const DashboardPage: React.FC = () => {
                   fill="url(#colorExpense)"
                   name="Expenses"
                 />
-                <Line type="monotone" dataKey="netIncome" stroke="#1890ff" strokeWidth={2} name="Net Income" />
+                <Line
+                  type="monotone"
+                  dataKey="netIncome"
+                  stroke="#1890ff"
+                  strokeWidth={2}
+                  name="Net Income"
+                />
               </AreaChart>
             </ResponsiveContainer>
           </Card>
@@ -533,7 +553,7 @@ const DashboardPage: React.FC = () => {
           <Card
             title={
               <Space>
-                <TrendingUpOutlined />
+                <RiseOutlined />
                 <span>Top Properties by Occupancy</span>
               </Space>
             }
@@ -542,18 +562,19 @@ const DashboardPage: React.FC = () => {
               <BarChart data={occupancyData} layout="vertical">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[0, 100]} />
-                <YAxis
-                  dataKey="propertyName"
-                  type="category"
-                  width={120}
-                  tick={{ fontSize: 12 }}
-                />
+                <YAxis dataKey="propertyName" type="category" width={120} tick={{ fontSize: 12 }} />
                 <RechartsTooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
                 <Bar dataKey="occupancyRate" name="Occupancy Rate (%)">
                   {occupancyData.map((entry, index) => (
                     <Cell
                       key={`cell-${index}`}
-                      fill={entry.occupancyRate > 70 ? '#3f8600' : entry.occupancyRate > 50 ? '#ffa940' : '#cf1322'}
+                      fill={
+                        entry.occupancyRate > 70
+                          ? '#3f8600'
+                          : entry.occupancyRate > 50
+                            ? '#ffa940'
+                            : '#cf1322'
+                      }
                     />
                   ))}
                 </Bar>
@@ -660,7 +681,11 @@ const DashboardPage: React.FC = () => {
                   <span>Upcoming Check-outs</span>
                 </Space>
               }
-              extra={<Button type="link" onClick={() => navigate('/bookings')}>View All</Button>}
+              extra={
+                <Button type="link" onClick={() => navigate('/bookings')}>
+                  View All
+                </Button>
+              }
             >
               <Table
                 columns={[
@@ -697,7 +722,11 @@ const DashboardPage: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card
             title="Upcoming Check-ins (Next 7 Days)"
-            extra={<Button type="link" onClick={() => navigate('/bookings')}>View All</Button>}
+            extra={
+              <Button type="link" onClick={() => navigate('/bookings')}>
+                View All
+              </Button>
+            }
             style={{ height: 400 }}
           >
             <Table
@@ -713,7 +742,11 @@ const DashboardPage: React.FC = () => {
         <Col xs={24} lg={12}>
           <Card
             title="Unpaid Bookings"
-            extra={<Button type="link" onClick={() => navigate('/bookings')}>View All</Button>}
+            extra={
+              <Button type="link" onClick={() => navigate('/bookings')}>
+                View All
+              </Button>
+            }
             style={{ height: 400 }}
           >
             <Table

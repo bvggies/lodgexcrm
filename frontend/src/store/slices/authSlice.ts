@@ -34,7 +34,10 @@ export const loginUser = createAsyncThunk(
 
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async (userData: { email: string; password: string; firstName: string; lastName: string }, { rejectWithValue }) => {
+  async (
+    userData: { email: string; password: string; firstName: string; lastName: string },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await authApi.register(userData);
       return response.data;
@@ -50,7 +53,7 @@ export const refreshAccessToken = createAsyncThunk(
     try {
       const state = getState() as { auth: AuthState };
       const refreshToken = state.auth.refreshToken;
-      
+
       if (!refreshToken) {
         throw new Error('No refresh token available');
       }
@@ -63,17 +66,14 @@ export const refreshAccessToken = createAsyncThunk(
   }
 );
 
-export const getCurrentUser = createAsyncThunk(
-  'auth/me',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await authApi.getMe();
-      return response.data.user;
-    } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error?.message || 'Failed to get user');
-    }
+export const getCurrentUser = createAsyncThunk('auth/me', async (_, { rejectWithValue }) => {
+  try {
+    const response = await authApi.getMe();
+    return response.data.user;
+  } catch (error: any) {
+    return rejectWithValue(error.response?.data?.error?.message || 'Failed to get user');
   }
-);
+});
 
 const authSlice = createSlice({
   name: 'auth',
@@ -137,4 +137,3 @@ const authSlice = createSlice({
 
 export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;
-

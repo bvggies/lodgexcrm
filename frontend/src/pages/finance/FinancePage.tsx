@@ -20,7 +20,16 @@ import {
 } from 'antd';
 import { motion } from 'framer-motion';
 import { PlusOutlined, DownloadOutlined, DollarOutlined } from '@ant-design/icons';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from 'recharts';
 import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 import { financeApi, FinanceRecord } from '../../services/api/financeApi';
@@ -73,7 +82,7 @@ const FinancePage: React.FC = () => {
       const response = await financeApi.getAll(params);
       setRecords(response.data.data.records);
       setSummary(response.data.data.summary);
-      
+
       // Generate chart data from records
       generateChartData(response.data.data.records);
     } catch (error) {
@@ -104,7 +113,7 @@ const FinancePage: React.FC = () => {
   const generateChartData = (records: FinanceRecord[]) => {
     // Group by month
     const monthlyData: Record<string, { revenue: number; expense: number }> = {};
-    
+
     records.forEach((record) => {
       const month = dayjs(record.date).format('MMM YYYY');
       if (!monthlyData[month]) {
@@ -154,7 +163,8 @@ const FinancePage: React.FC = () => {
       key: 'amount',
       render: (amount: number, record) => (
         <span style={{ color: record.type === 'revenue' ? '#3f8600' : '#cf1322' }}>
-          {record.type === 'revenue' ? '+' : '-'}{amount.toFixed(2)} AED
+          {record.type === 'revenue' ? '+' : '-'}
+          {amount.toFixed(2)} AED
         </span>
       ),
     },
@@ -189,7 +199,7 @@ const FinancePage: React.FC = () => {
       if (typeFilter) params.type = typeFilter;
 
       const response = await financeApi.export(params);
-      
+
       // Create blob and download
       const blob = new Blob([response.data], {
         type: format === 'csv' ? 'text/csv' : 'application/pdf',
@@ -202,10 +212,12 @@ const FinancePage: React.FC = () => {
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
-      
+
       message.success(`Export ${format.toUpperCase()} downloaded successfully`);
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || `Failed to export ${format.toUpperCase()}`);
+      message.error(
+        error.response?.data?.error?.message || `Failed to export ${format.toUpperCase()}`
+      );
     }
   };
 
@@ -215,7 +227,7 @@ const FinancePage: React.FC = () => {
         ...values,
         date: values.date ? values.date.toISOString() : new Date().toISOString(),
       };
-      
+
       await financeApi.create(submitData);
       message.success('Finance record created successfully');
       setIsModalVisible(false);
@@ -228,56 +240,66 @@ const FinancePage: React.FC = () => {
   return (
     <div>
       <FadeIn>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-          <Title level={2} style={{ margin: 0 }}>Finance</Title>
-        <Space>
-          <Button icon={<DownloadOutlined />} onClick={() => handleExport('csv')}>
-            Export CSV
-          </Button>
-          <Button icon={<DownloadOutlined />} onClick={() => handleExport('pdf')}>
-            Export PDF
-          </Button>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Record
-          </Button>
-        </Space>
-      </div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 24,
+          }}
+        >
+          <Title level={2} style={{ margin: 0 }}>
+            Finance
+          </Title>
+          <Space>
+            <Button icon={<DownloadOutlined />} onClick={() => handleExport('csv')}>
+              Export CSV
+            </Button>
+            <Button icon={<DownloadOutlined />} onClick={() => handleExport('pdf')}>
+              Export PDF
+            </Button>
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+              Add Record
+            </Button>
+          </Space>
+        </div>
+      </FadeIn>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={8}>
           <Card>
-              <Statistic
-                title="Total Revenue"
-                value={summary.revenue}
-                prefix="AED "
-                precision={2}
-                valueStyle={{ color: '#3f8600' }}
-                loading={loading}
-              />
+            <Statistic
+              title="Total Revenue"
+              value={summary.revenue}
+              prefix="AED "
+              precision={2}
+              valueStyle={{ color: '#3f8600' }}
+              loading={loading}
+            />
           </Card>
         </Col>
         <Col xs={24} sm={8}>
           <Card>
-              <Statistic
-                title="Total Expenses"
-                value={summary.expenses}
-                prefix="AED "
-                precision={2}
-                valueStyle={{ color: '#cf1322' }}
-                loading={loading}
-              />
+            <Statistic
+              title="Total Expenses"
+              value={summary.expenses}
+              prefix="AED "
+              precision={2}
+              valueStyle={{ color: '#cf1322' }}
+              loading={loading}
+            />
           </Card>
         </Col>
         <Col xs={24} sm={8}>
           <Card>
-              <Statistic
-                title="Net Income"
-                value={summary.netIncome}
-                prefix="AED "
-                precision={2}
-                valueStyle={{ color: summary.netIncome >= 0 ? '#3f8600' : '#cf1322' }}
-                loading={loading}
-              />
+            <Statistic
+              title="Net Income"
+              value={summary.netIncome}
+              prefix="AED "
+              precision={2}
+              valueStyle={{ color: summary.netIncome >= 0 ? '#3f8600' : '#cf1322' }}
+              loading={loading}
+            />
           </Card>
         </Col>
       </Row>
@@ -334,28 +356,16 @@ const FinancePage: React.FC = () => {
         width={600}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item
-            name="type"
-            label="Type"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="type" label="Type" rules={[{ required: true }]}>
             <Select>
               <Option value="revenue">Revenue</Option>
               <Option value="expense">Expense</Option>
             </Select>
           </Form.Item>
-          <Form.Item
-            name="amount"
-            label="Amount"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="amount" label="Amount" rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} />
           </Form.Item>
-          <Form.Item
-            name="category"
-            label="Category"
-            rules={[{ required: true }]}
-          >
+          <Form.Item name="category" label="Category" rules={[{ required: true }]}>
             <Select>
               <Option value="guest_payment">Guest Payment</Option>
               <Option value="cleaning">Cleaning</Option>
