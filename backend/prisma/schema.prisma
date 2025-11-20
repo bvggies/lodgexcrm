@@ -272,6 +272,7 @@ model MaintenanceTask {
   title         String
   propertyId    String
   unitId        String?
+  bookingId     String?
   description   String?
   type          MaintenanceTaskType
   priority      MaintenanceTaskPriority @default(medium)
