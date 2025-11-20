@@ -283,13 +283,7 @@ export const createBooking = async (
     );
 
     if (conflictCheck.hasConflict) {
-      return res.status(409).json({
-        success: false,
-        error: {
-          message: 'Booking conflicts with existing bookings',
-          conflictingBookings: conflictCheck.conflictingBookings,
-        },
-      });
+      return next(createError('Booking conflicts with existing bookings', 409));
     }
 
     // Verify property exists

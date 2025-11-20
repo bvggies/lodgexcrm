@@ -159,8 +159,11 @@ export class ExcelImportService {
             email: row.email,
             phone: row.phone || '',
             nationality: row.nationality || undefined,
-            idNumber: row.idNumber || undefined,
             passportNumber: row.passportNumber || undefined,
+            documents: row.idNumber || row.passportNumber ? {
+              idNumber: row.idNumber,
+              passportNumber: row.passportNumber,
+            } : undefined,
             notes: row.notes || undefined,
             isVip: row.isVip === 'Yes' || row.isVip === true || row.isVip === 'true',
           },
@@ -361,8 +364,8 @@ export class ExcelImportService {
             name: row.name,
             email: row.email,
             phone: row.phone || '',
-            taxId: row.taxId || undefined,
-            bankAccount: row.bankAccount ? JSON.parse(row.bankAccount) : undefined,
+            idDocuments: row.taxId ? { taxId: row.taxId } : undefined,
+            bankDetails: row.bankAccount ? JSON.stringify(JSON.parse(row.bankAccount)) : undefined,
           },
         });
 

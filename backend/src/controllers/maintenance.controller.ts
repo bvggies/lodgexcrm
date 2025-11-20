@@ -59,7 +59,7 @@ export const getMaintenanceTasks = async (
         },
         _count: {
           select: {
-            bookings: true,
+            booking: true,
           },
         },
       },
@@ -101,9 +101,13 @@ export const getMaintenanceTask = async (
             phone: true,
           },
         },
-        bookings: {
-          take: 5,
-          orderBy: { checkinDate: 'desc' },
+        booking: {
+          select: {
+            id: true,
+            reference: true,
+            checkinDate: true,
+            checkoutDate: true,
+          },
           include: {
             guest: {
               select: {
