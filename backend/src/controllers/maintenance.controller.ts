@@ -57,11 +57,6 @@ export const getMaintenanceTasks = async (
             email: true,
           },
         },
-        _count: {
-          select: {
-            booking: true,
-          },
-        },
       },
       orderBy: [
         { priority: 'asc' }, // urgent, high, medium, low

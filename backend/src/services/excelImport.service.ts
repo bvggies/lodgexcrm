@@ -159,7 +159,7 @@ export class ExcelImportService {
             email: row.email,
             phone: row.phone || '',
             nationality: row.nationality || undefined,
-            passportNumber: row.passportNumber || undefined,
+            passportScanUrl: row.passportNumber ? undefined : undefined, // Store in documents if needed
             documents: row.idNumber || row.passportNumber ? {
               idNumber: row.idNumber,
               passportNumber: row.passportNumber,
