@@ -44,7 +44,7 @@ git push -u origin main
 5. **Build Command**: `npm run vercel-build`
 6. **Environment Variables**:
    ```
-   DATABASE_URL=your-neon-connection-string
+   DATABASE_URL=postgresql://neondb_owner:npg_0DZkHhcsNP7W@ep-royal-sky-ahp86q9n-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require
    JWT_SECRET=generate-32-char-random-string
    JWT_REFRESH_SECRET=generate-32-char-random-string
    ENCRYPTION_KEY=exactly-32-characters-long!!
