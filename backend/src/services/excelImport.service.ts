@@ -159,13 +159,11 @@ export class ExcelImportService {
             email: row.email,
             phone: row.phone || '',
             nationality: row.nationality || undefined,
-            passportScanUrl: row.passportNumber ? undefined : undefined, // Store in documents if needed
-            documents: row.idNumber || row.passportNumber ? {
+            documents: row.idNumber || row.passportNumber || row.notes ? {
               idNumber: row.idNumber,
               passportNumber: row.passportNumber,
+              notes: row.notes,
             } : undefined,
-            notes: row.notes || undefined,
-            isVip: row.isVip === 'Yes' || row.isVip === true || row.isVip === 'true',
           },
         });
 
