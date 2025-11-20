@@ -342,7 +342,7 @@ const CleaningTasksPage: React.FC = () => {
             >
               {bookings.map((b) => (
                 <Option key={b.id} value={b.id} label={b.reference}>
-                  {b.reference} - {b.guest ? `${b.guest.firstName} ${b.guest.lastName}` : 'N/A'}
+                  {b.reference} - {b.guestId || 'N/A'}
                 </Option>
               ))}
             </Select>

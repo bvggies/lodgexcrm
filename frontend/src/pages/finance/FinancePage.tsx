@@ -95,7 +95,7 @@ const FinancePage: React.FC = () => {
   const loadProperties = async () => {
     try {
       const response = await propertiesApi.getAll({ status: 'active' });
-      setProperties(response.data.data.properties);
+      setProperties(Array.isArray(response.data.data.properties) ? response.data.data.properties : []);
     } catch (error) {
       console.error('Failed to load properties');
     }

@@ -24,7 +24,7 @@ import {
 import { motion } from 'framer-motion';
 import { importApi, ImportResult } from '../../services/api/importApi';
 import FadeIn from '../../components/animations/FadeIn';
-import type { UploadFile } from 'antd/es/upload/interface';
+import type { UploadFile, RcFile } from 'antd/es/upload/interface';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -69,7 +69,7 @@ const ImportPage: React.FC = () => {
       return;
     }
 
-    const file = fileList[0].originFileObj;
+    const file = fileList[0].originFileObj as File;
     if (!file) {
       message.error('Invalid file');
       return;
@@ -99,7 +99,7 @@ const ImportPage: React.FC = () => {
   const uploadProps = {
     accept: '.xlsx,.xls',
     fileList,
-    beforeUpload: (file: File) => {
+    beforeUpload: (file: RcFile) => {
       const isExcel =
         file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' ||
         file.type === 'application/vnd.ms-excel';
