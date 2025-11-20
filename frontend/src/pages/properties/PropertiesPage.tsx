@@ -240,7 +240,9 @@ const PropertiesPage: React.FC = () => {
               placeholder="Select an owner"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               options={owners.map((o) => ({
                 value: o.id,

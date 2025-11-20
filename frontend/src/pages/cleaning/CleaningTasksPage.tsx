@@ -295,7 +295,9 @@ const CleaningTasksPage: React.FC = () => {
               placeholder="Select a property"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               onChange={(value) => {
                 setSelectedPropertyId(value);
@@ -314,7 +316,9 @@ const CleaningTasksPage: React.FC = () => {
               placeholder="Optional: Select a unit"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               disabled={!selectedPropertyId}
             >
@@ -330,7 +334,9 @@ const CleaningTasksPage: React.FC = () => {
               placeholder="Optional: Select a booking"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               disabled={!selectedPropertyId}
             >
@@ -353,7 +359,9 @@ const CleaningTasksPage: React.FC = () => {
               placeholder="Optional: Select a cleaner"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
             >
               {staff.map((s) => (

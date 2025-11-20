@@ -486,7 +486,9 @@ const IntegrationsPage: React.FC = () => {
                         placeholder="Select property"
                         showSearch
                         filterOption={(input, option) =>
-                          (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                          String(option?.label ?? '')
+                            .toLowerCase()
+                            .includes(input.toLowerCase())
                         }
                         options={properties.map((p) => ({
                           value: p.id,

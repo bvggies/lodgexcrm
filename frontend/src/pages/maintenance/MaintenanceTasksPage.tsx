@@ -300,7 +300,9 @@ const MaintenanceTasksPage: React.FC = () => {
               placeholder="Select a property"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               onChange={(value) => {
                 setSelectedPropertyId(value);
@@ -319,7 +321,9 @@ const MaintenanceTasksPage: React.FC = () => {
               placeholder="Optional: Select a unit"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               disabled={!selectedPropertyId}
             >
@@ -355,7 +359,9 @@ const MaintenanceTasksPage: React.FC = () => {
               placeholder="Optional: Select staff member"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
             >
               {staff.map((s) => (

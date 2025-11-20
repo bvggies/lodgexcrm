@@ -383,7 +383,9 @@ const FinancePage: React.FC = () => {
               placeholder="Optional: Select a property"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               allowClear
               onChange={(value) => {
@@ -403,14 +405,16 @@ const FinancePage: React.FC = () => {
               placeholder="Optional: Select a booking"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               disabled={!selectedPropertyId}
               allowClear
             >
               {bookings.map((b) => (
                 <Option key={b.id} value={b.id} label={b.reference}>
-                  {b.reference} - {b.guest ? `${b.guest.firstName} ${b.guest.lastName}` : 'N/A'}
+                  {b.reference} - {b.guestId || 'N/A'}
                 </Option>
               ))}
             </Select>
