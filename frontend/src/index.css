@@ -115,11 +115,11 @@ code {
 
 /* AOS custom animations */
 [data-aos] {
-  pointer-events: none;
+  pointer-events: auto !important;
 }
 
 [data-aos].aos-animate {
-  pointer-events: auto;
+  pointer-events: auto !important;
 }
 
 /* Custom scrollbar */

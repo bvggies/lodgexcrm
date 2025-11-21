@@ -147,15 +147,32 @@ const NotificationsDropdown: React.FC = () => {
 
   return (
     <Dropdown menu={menuItems} placement="bottomRight" trigger={['click']}>
-      <Badge count={unreadCount} size="small" offset={[-5, 5]}>
-        <BellOutlined
-          style={{
-            fontSize: 20,
-            cursor: 'pointer',
-            color: unreadCount > 0 ? '#1890ff' : undefined,
-          }}
-        />
-      </Badge>
+      <div
+        style={{
+          cursor: 'pointer',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          transition: 'background-color 0.2s',
+          display: 'inline-block',
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.backgroundColor = 'transparent';
+        }}
+      >
+        <Badge count={unreadCount} size="small" offset={[-5, 5]}>
+          <BellOutlined
+            style={{
+              fontSize: 20,
+              cursor: 'pointer',
+              color: unreadCount > 0 ? '#1890ff' : '#e2e8f0',
+              pointerEvents: 'none',
+            }}
+          />
+        </Badge>
+      </div>
     </Dropdown>
   );
 };

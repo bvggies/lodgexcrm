@@ -357,7 +357,7 @@ const DashboardPage: React.FC = () => {
     >
       {/* Simplified background - removed heavy animations for performance */}
 
-      <div style={{ position: 'relative', zIndex: 1 }}>
+      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh' }}>
         <FadeIn>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -635,7 +635,32 @@ const DashboardPage: React.FC = () => {
               data-aos="fade-right"
             >
               <ResponsiveContainer width="100%" height={300}>
-                <AreaChart data={revenueChartData}>
+                <AreaChart
+                  data={
+                    revenueChartData.length > 0
+                      ? revenueChartData
+                      : [
+                          {
+                            month: dayjs().subtract(2, 'month').format('YYYY-MM'),
+                            revenue: 0,
+                            expense: 0,
+                            netIncome: 0,
+                          },
+                          {
+                            month: dayjs().subtract(1, 'month').format('YYYY-MM'),
+                            revenue: 0,
+                            expense: 0,
+                            netIncome: 0,
+                          },
+                          {
+                            month: dayjs().format('YYYY-MM'),
+                            revenue: 0,
+                            expense: 0,
+                            netIncome: 0,
+                          },
+                        ]
+                  }
+                >
                   <defs>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#3f8600" stopOpacity={0.8} />
@@ -819,7 +844,7 @@ const DashboardPage: React.FC = () => {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {statusData.map((entry, index) => {
+                    {(statusData.length > 0 ? statusData : [{ name: 'No Data', value: 1 }]).map((entry, index) => {
                       const colorMap: Record<string, string> = {
                         Paid: '#3f8600',
                         Pending: '#ffa940',

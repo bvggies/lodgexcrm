@@ -167,8 +167,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (key === 'logout') {
       dispatch(logout());
       navigate('/login');
-    } else if (key === 'settings') {
+    } else if (key === '/settings' || key === 'settings') {
       navigate('/settings');
+    } else if (key === 'profile') {
+      // Navigate to profile page or show profile modal
+      navigate('/staff');
     }
   };
 
@@ -233,10 +236,27 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 onClick: handleUserMenuClick,
               }}
               placement="bottomRight"
+              trigger={['click']}
             >
-              <div style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: 8 }}>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  gap: 8,
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  transition: 'background-color 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                }}
+              >
                 <Avatar icon={<UserOutlined />} />
-                <span>
+                <span style={{ color: '#e2e8f0' }}>
                   {user?.firstName} {user?.lastName}
                 </span>
               </div>
