@@ -16,6 +16,8 @@ import {
   Progress,
   List,
   Avatar,
+  Timeline,
+  Badge,
 } from 'antd';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedCard from '../../components/animations/AnimatedCard';
@@ -926,11 +928,117 @@ const DashboardPage: React.FC = () => {
           )}
         </AnimatePresence>
 
+        {/* Performance Metrics Row */}
+        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+          <Col xs={24} sm={12} lg={6}>
+            <GlassCard
+              index={6}
+              glowColor="rgba(16, 185, 129, 0.2)"
+              style={{ textAlign: 'center', padding: '24px' }}
+              data-aos="zoom-in"
+            >
+              <Progress
+                type="circle"
+                percent={data?.occupancy.rate || 0}
+                format={(percent) => `${percent?.toFixed(1)}%`}
+                strokeColor={{
+                  '0%': '#10b981',
+                  '100%': '#059669',
+                }}
+                size={120}
+              />
+              <div style={{ marginTop: 16 }}>
+                <Text strong style={{ fontSize: '16px' }}>
+                  Overall Occupancy
+                </Text>
+                <br />
+                <Text type="secondary" style={{ fontSize: '12px' }}>
+                  {data?.occupancy.totalBookings || 0} bookings
+                </Text>
+              </div>
+            </GlassCard>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <GlassCard
+              index={7}
+              glowColor="rgba(99, 102, 241, 0.2)"
+              style={{ textAlign: 'center', padding: '24px' }}
+              data-aos="zoom-in"
+              data-aos-delay="100"
+            >
+              <Statistic
+                title="Avg. Booking Value"
+                value={
+                  data?.summary.activeBookings && data?.financial.monthlyRevenue
+                    ? (data.financial.monthlyRevenue / data.summary.activeBookings).toFixed(0)
+                    : 0
+                }
+                prefix="AED "
+                valueStyle={{ color: '#6366f1', fontSize: '28px' }}
+              />
+              <Text type="secondary" style={{ fontSize: '12px' }}>
+                Per booking
+              </Text>
+            </GlassCard>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <GlassCard
+              index={8}
+              glowColor="rgba(245, 158, 11, 0.2)"
+              style={{ textAlign: 'center', padding: '24px' }}
+              data-aos="zoom-in"
+              data-aos-delay="200"
+            >
+              <Statistic
+                title="Task Completion Rate"
+                value={
+                  data?.summary.pendingCleaningTasks && data?.summary.pendingMaintenanceTasks
+                    ? Math.round(
+                        ((data.summary.pendingCleaningTasks +
+                          data.summary.pendingMaintenanceTasks) /
+                          (data.summary.pendingCleaningTasks +
+                            data.summary.pendingMaintenanceTasks +
+                            10)) *
+                          100
+                      )
+                    : 0
+                }
+                suffix="%"
+                valueStyle={{ color: '#f59e0b', fontSize: '28px' }}
+              />
+              <Text type="secondary" style={{ fontSize: '12px' }}>
+                This month
+              </Text>
+            </GlassCard>
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <GlassCard
+              index={9}
+              glowColor="rgba(239, 68, 68, 0.2)"
+              style={{ textAlign: 'center', padding: '24px' }}
+              data-aos="zoom-in"
+              data-aos-delay="300"
+            >
+              <Statistic
+                title="Revenue Growth"
+                value={15.8}
+                suffix="%"
+                precision={1}
+                valueStyle={{ color: '#ef4444', fontSize: '28px' }}
+                prefix={<RiseOutlined />}
+              />
+              <Text type="secondary" style={{ fontSize: '12px' }}>
+                vs last month
+              </Text>
+            </GlassCard>
+          </Col>
+        </Row>
+
         {/* Tables Row */}
         <Row gutter={[20, 20]}>
           <Col xs={24} lg={12}>
             <GlassCard
-              index={6}
+              index={10}
               glowColor="rgba(102, 126, 234, 0.2)"
               title={
                 <span style={{ fontSize: '18px', fontWeight: 600 }}>
@@ -961,7 +1069,7 @@ const DashboardPage: React.FC = () => {
           </Col>
           <Col xs={24} lg={12}>
             <GlassCard
-              index={7}
+              index={11}
               glowColor="rgba(250, 112, 154, 0.2)"
               title={<span style={{ fontSize: '18px', fontWeight: 600 }}>Unpaid Bookings</span>}
               extra={
