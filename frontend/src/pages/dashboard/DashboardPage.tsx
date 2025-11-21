@@ -844,20 +844,22 @@ const DashboardPage: React.FC = () => {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {(statusData.length > 0 ? statusData : [{ name: 'No Data', value: 1 }]).map((entry, index) => {
-                      const colorMap: Record<string, string> = {
-                        Paid: '#3f8600',
-                        Pending: '#ffa940',
-                        Partial: '#1890ff',
-                        Refunded: '#cf1322',
-                      };
-                      return (
-                        <Cell
-                          key={`cell-${index}`}
-                          fill={colorMap[entry.name] || COLORS[index % COLORS.length]}
-                        />
-                      );
-                    })}
+                    {(statusData.length > 0 ? statusData : [{ name: 'No Data', value: 1 }]).map(
+                      (entry, index) => {
+                        const colorMap: Record<string, string> = {
+                          Paid: '#3f8600',
+                          Pending: '#ffa940',
+                          Partial: '#1890ff',
+                          Refunded: '#cf1322',
+                        };
+                        return (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={colorMap[entry.name] || COLORS[index % COLORS.length]}
+                          />
+                        );
+                      }
+                    )}
                   </Pie>
                   <RechartsTooltip />
                 </PieChart>
