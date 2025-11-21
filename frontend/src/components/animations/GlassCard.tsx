@@ -40,7 +40,18 @@ const GlassCard: React.FC<GlassCardProps> = ({
           border: '1px solid #334155',
           boxShadow: `0 8px 32px ${glowColor}`,
           overflow: 'hidden',
+          transition: 'all 0.2s ease',
           ...cardProps.style,
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-2px)';
+          e.currentTarget.style.boxShadow = `0 12px 40px ${glowColor}`;
+          e.currentTarget.style.borderColor = '#475569';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = `0 8px 32px ${glowColor}`;
+          e.currentTarget.style.borderColor = '#334155';
         }}
       >
         {children}

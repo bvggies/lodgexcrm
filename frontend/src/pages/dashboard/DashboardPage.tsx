@@ -95,7 +95,29 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
-  const [data, setData] = useState<DashboardData | null>(null);
+  const [data, setData] = useState<DashboardData>({
+    summary: {
+      totalProperties: 0,
+      activeBookings: 0,
+      totalGuests: 0,
+      pendingCleaningTasks: 0,
+      pendingMaintenanceTasks: 0,
+      unpaidBookingsCount: 0,
+    },
+    financial: {
+      monthlyRevenue: 0,
+      monthlyExpenses: 0,
+      monthlyNetIncome: 0,
+    },
+    occupancy: {
+      rate: 0,
+      totalBookings: 0,
+      totalNights: 0,
+    },
+    upcomingCheckins: [],
+    upcomingCheckouts: [],
+    unpaidBookings: [],
+  });
   const [revenueChartData, setRevenueChartData] = useState<any[]>([]);
   const [occupancyData, setOccupancyData] = useState<any[]>([]);
   const [channelData, setChannelData] = useState<any[]>([]);
@@ -113,9 +135,9 @@ const DashboardPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await analyticsApi.getDashboardSummary();
-      setData(response.data.data);
-    } catch (error) {
-      console.error('Failed to load dashboard data:', error);
+      if (response?.data?.data) {
+        setData(response.data.data);
+      }
     } finally {
       setLoading(false);
     }
@@ -128,29 +150,67 @@ const DashboardPage: React.FC = () => {
       const endDate = dateRange[1].toISOString();
 
       // Load revenue/expense chart
-      const revenueResponse = await analyticsApi.getRevenueExpenseChart({
-        startDate,
-        endDate,
-      });
-      setRevenueChartData(revenueResponse.data.data.chartData);
+      try {
+        const revenueResponse = await analyticsApi.getRevenueExpenseChart({
+          startDate,
+          endDate,
+        });
+        if (revenueResponse?.data?.data?.chartData) {
+          setRevenueChartData(revenueResponse.data.data.chartData);
+        } else {
+          setRevenueChartData([]);
+        }
+      } catch (e) {
+        console.error('Failed to load revenue chart:', e);
+        setRevenueChartData([]);
+      }
 
       // Load occupancy rates
-      const occupancyResponse = await analyticsApi.getOccupancyRates({
-        startDate,
-        endDate,
-      });
-      setOccupancyData(occupancyResponse.data.data.properties.slice(0, 10));
+      try {
+        const occupancyResponse = await analyticsApi.getOccupancyRates({
+          startDate,
+          endDate,
+        });
+        if (occupancyResponse?.data?.data?.properties) {
+          setOccupancyData(occupancyResponse.data.data.properties.slice(0, 10));
+        } else {
+          setOccupancyData([]);
+        }
+      } catch (e) {
+        console.error('Failed to load occupancy data:', e);
+        setOccupancyData([]);
+      }
 
       // Load bookings for channel and status breakdown
-      const bookingsResponse = await bookingsApi.getAll({
-        startDate,
-        endDate,
-      });
-      processBookingsData(bookingsResponse.data.data.bookings);
+      try {
+        const bookingsResponse = await bookingsApi.getAll({
+          startDate,
+          endDate,
+        });
+        if (bookingsResponse?.data?.data?.bookings) {
+          processBookingsData(bookingsResponse.data.data.bookings);
+        } else {
+          setChannelData([]);
+          setStatusData([]);
+        }
+      } catch (e) {
+        console.error('Failed to load bookings:', e);
+        setChannelData([]);
+        setStatusData([]);
+      }
 
       // Load repeat guests
-      const repeatGuestsResponse = await analyticsApi.getRepeatGuests();
-      setRepeatGuestsData(repeatGuestsResponse.data.data);
+      try {
+        const repeatGuestsResponse = await analyticsApi.getRepeatGuests();
+        if (repeatGuestsResponse?.data?.data) {
+          setRepeatGuestsData(repeatGuestsResponse.data.data);
+        } else {
+          setRepeatGuestsData(null);
+        }
+      } catch (e) {
+        console.error('Failed to load repeat guests:', e);
+        setRepeatGuestsData(null);
+      }
     } catch (error) {
       console.error('Failed to load charts data:', error);
     }
@@ -295,43 +355,7 @@ const DashboardPage: React.FC = () => {
         position: 'relative',
       }}
     >
-      {/* Animated background particles */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          overflow: 'hidden',
-          pointerEvents: 'none',
-          zIndex: 0,
-        }}
-      >
-        {[...Array(20)].map((_, i) => (
-          <motion.div
-            key={i}
-            style={{
-              position: 'absolute',
-              width: '4px',
-              height: '4px',
-              background: 'rgba(255, 255, 255, 0.5)',
-              borderRadius: '50%',
-              left: `${Math.random() * 100}%`,
-              top: `${Math.random() * 100}%`,
-            }}
-            animate={{
-              y: [0, -30, 0],
-              opacity: [0.3, 0.8, 0.3],
-            }}
-            transition={{
-              duration: 3 + Math.random() * 2,
-              repeat: Infinity,
-              delay: Math.random() * 2,
-            }}
-          />
-        ))}
-      </div>
+      {/* Simplified background - removed heavy animations for performance */}
 
       <div style={{ position: 'relative', zIndex: 1 }}>
         <FadeIn>
@@ -398,73 +422,70 @@ const DashboardPage: React.FC = () => {
                 />
               )}
               <Tooltip title="Refresh Data">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    icon={<ReloadOutlined spin={refreshing} />}
-                    onClick={handleRefresh}
-                    loading={refreshing}
-                    style={{
-                      background: 'rgba(255, 255, 255, 0.9)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 500,
-                    }}
-                  >
-                    Refresh
-                  </Button>
-                </motion.div>
+                <Button
+                  icon={<ReloadOutlined spin={refreshing} />}
+                  onClick={handleRefresh}
+                  loading={refreshing}
+                  style={{
+                    background: '#1e293b',
+                    border: '1px solid #334155',
+                    color: '#e2e8f0',
+                    borderRadius: '8px',
+                    fontWeight: 500,
+                    cursor: 'pointer',
+                  }}
+                >
+                  Refresh
+                </Button>
               </Tooltip>
               <Space>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    type="primary"
-                    icon={<PlusOutlined />}
-                    onClick={() => navigate('/bookings')}
-                    style={{
-                      background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
-                      border: 'none',
-                      borderRadius: '8px',
-                      fontWeight: 600,
-                      boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
-                    }}
-                  >
-                    Add Booking
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    type="default"
-                    icon={<ToolOutlined />}
-                    onClick={() => navigate('/cleaning')}
-                    style={{
-                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                      border: 'none',
-                      color: 'white',
-                      borderRadius: '8px',
-                      fontWeight: 600,
-                      boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
-                    }}
-                  >
-                    Add Cleaning Task
-                  </Button>
-                </motion.div>
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <Button
-                    type="default"
-                    icon={<CheckCircleOutlined />}
-                    onClick={() => navigate('/maintenance')}
-                    style={{
-                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                      border: 'none',
-                      color: 'white',
-                      borderRadius: '8px',
-                      fontWeight: 600,
-                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
-                    }}
-                  >
-                    Add Maintenance Task
-                  </Button>
-                </motion.div>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => navigate('/bookings')}
+                  style={{
+                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Add Booking
+                </Button>
+                <Button
+                  type="default"
+                  icon={<ToolOutlined />}
+                  onClick={() => navigate('/cleaning')}
+                  style={{
+                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                    border: 'none',
+                    color: 'white',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Add Cleaning Task
+                </Button>
+                <Button
+                  type="default"
+                  icon={<CheckCircleOutlined />}
+                  onClick={() => navigate('/maintenance')}
+                  style={{
+                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                    border: 'none',
+                    color: 'white',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
+                    cursor: 'pointer',
+                  }}
+                >
+                  Add Maintenance Task
+                </Button>
               </Space>
             </Space>
           </motion.div>

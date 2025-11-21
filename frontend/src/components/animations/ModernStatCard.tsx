@@ -48,8 +48,20 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
           boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           overflow: 'hidden',
           position: 'relative',
+          cursor: 'pointer',
+          transition: 'all 0.2s ease',
         }}
         bodyStyle={{ padding: '24px' }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+          e.currentTarget.style.boxShadow = '0 12px 40px rgba(99, 102, 241, 0.3)';
+          e.currentTarget.style.borderColor = '#475569';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+          e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
+          e.currentTarget.style.borderColor = '#334155';
+        }}
       >
         {/* Gradient overlay */}
         <div
