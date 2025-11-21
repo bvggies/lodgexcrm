@@ -109,8 +109,11 @@ const GuestsPage: React.FC = () => {
       title: 'Total Spend',
       dataIndex: 'totalSpend',
       key: 'totalSpend',
-      render: (amount: number) => `${amount.toFixed(2)} AED`,
-      sorter: (a, b) => Number(a.totalSpend) - Number(b.totalSpend),
+      render: (amount: any) => {
+        const numAmount = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
+        return `${numAmount.toFixed(2)} AED`;
+      },
+      sorter: (a, b) => Number(a.totalSpend || 0) - Number(b.totalSpend || 0),
     },
     {
       title: 'Blacklist',

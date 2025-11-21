@@ -209,7 +209,10 @@ const AnalyticsPage: React.FC = () => {
                     />
                     <YAxis />
                     <Tooltip
-                      formatter={(value: number) => `${value.toFixed(2)} AED`}
+                      formatter={(value: any) => {
+                        const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                        return `${numValue.toFixed(2)} AED`;
+                      }}
                       labelFormatter={(label) => dayjs(label, 'YYYY-MM').format('MMMM YYYY')}
                     />
                     <Legend />
@@ -298,7 +301,12 @@ const AnalyticsPage: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="propertyName" angle={-45} textAnchor="end" height={100} />
                     <YAxis domain={[0, 100]} />
-                    <Tooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
+                    <Tooltip
+                      formatter={(value: any) => {
+                        const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                        return `${numValue.toFixed(1)}%`;
+                      }}
+                    />
                     <Bar dataKey="occupancyRate" fill="#1890ff" name="Occupancy %">
                       {(occupancyData?.properties || []).map((entry: any, index: number) => (
                         <Cell
@@ -356,7 +364,11 @@ const AnalyticsPage: React.FC = () => {
                           cx="50%"
                           cy="50%"
                           labelLine={false}
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          label={({ name, percent }: any) => {
+                            const numPercent =
+                              typeof percent === 'number' ? percent : parseFloat(percent) || 0;
+                            return `${name}: ${(numPercent * 100).toFixed(0)}%`;
+                          }}
                           outerRadius={80}
                           fill="#8884d8"
                           dataKey="value"
@@ -396,8 +408,12 @@ const AnalyticsPage: React.FC = () => {
                               {index + 1}. {guest.firstName} {guest.lastName}
                             </strong>
                             <div style={{ fontSize: 12, color: '#666' }}>
-                              {guest.totalBookings} bookings • {guest.totalSpend.toFixed(2)} AED
-                              total
+                              {guest.totalBookings} bookings •{' '}
+                              {(typeof guest.totalSpend === 'number'
+                                ? guest.totalSpend
+                                : parseFloat(guest.totalSpend) || 0
+                              ).toFixed(2)}{' '}
+                              AED total
                             </div>
                           </div>
                         </div>

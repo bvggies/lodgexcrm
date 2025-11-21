@@ -166,7 +166,7 @@ const FinancePage: React.FC = () => {
       render: (amount: number, record) => (
         <span style={{ color: record.type === 'revenue' ? '#3f8600' : '#cf1322' }}>
           {record.type === 'revenue' ? '+' : '-'}
-          {amount.toFixed(2)} AED
+          {(typeof amount === 'number' ? amount : parseFloat(amount) || 0).toFixed(2)} AED
         </span>
       ),
     },

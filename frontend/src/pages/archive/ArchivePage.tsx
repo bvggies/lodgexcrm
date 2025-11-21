@@ -110,8 +110,10 @@ const ArchivePage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
-      render: (amount: number, record: ArchivedBooking) =>
-        `${amount.toFixed(2)} ${record.currency}`,
+      render: (amount: any, record: ArchivedBooking) => {
+        const numAmount = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
+        return `${numAmount.toFixed(2)} ${record.currency}`;
+      },
     },
     {
       title: 'Actions',
@@ -183,7 +185,11 @@ const ArchivePage: React.FC = () => {
                     {dayjs(record.checkoutDate).format('DD MMM YYYY HH:mm')}
                   </Descriptions.Item>
                   <Descriptions.Item label="Total Amount">
-                    {record.totalAmount.toFixed(2)} {record.currency}
+                    {(typeof record.totalAmount === 'number'
+                      ? record.totalAmount
+                      : parseFloat(record.totalAmount) || 0
+                    ).toFixed(2)}{' '}
+                    {record.currency}
                   </Descriptions.Item>
                   {record.notes && (
                     <Descriptions.Item label="Notes">

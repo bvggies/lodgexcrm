@@ -217,8 +217,10 @@ const BookingsPage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
-      render: (amount: number, record: Booking) =>
-        `${amount.toFixed(2)} ${record.currency || 'AED'}`,
+      render: (amount: any, record: Booking) => {
+        const numAmount = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
+        return `${numAmount.toFixed(2)} ${record.currency || 'AED'}`;
+      },
     },
     {
       title: 'Status',

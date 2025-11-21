@@ -140,7 +140,11 @@ const MaintenanceTasksPage: React.FC = () => {
       title: 'Cost',
       dataIndex: 'cost',
       key: 'cost',
-      render: (cost?: number) => (cost ? `${cost.toFixed(2)} AED` : '-'),
+      render: (cost?: any) => {
+        if (!cost) return '-';
+        const numCost = typeof cost === 'number' ? cost : parseFloat(cost) || 0;
+        return `${numCost.toFixed(2)} AED`;
+      },
     },
     {
       title: 'Actions',
