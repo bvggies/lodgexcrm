@@ -27,7 +27,12 @@ export const loginUser = createAsyncThunk(
       const response = await authApi.login(credentials);
       return response.data.data;
     } catch (error: any) {
-      return rejectWithValue(error.response?.data?.error?.message || 'Login failed');
+      const errorMessage =
+        error.response?.data?.error?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        'Login failed';
+      return rejectWithValue(errorMessage);
     }
   }
 );

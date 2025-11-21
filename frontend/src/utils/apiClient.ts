@@ -35,14 +35,18 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError<any>) => {
     if (error.response) {
-      const { status, data } = error.response;
+      const { status, data, config } = error.response;
+      const isLoginRequest = config?.url?.includes('/auth/login');
 
       switch (status) {
         case 401:
-          // Unauthorized - logout user
-          store.dispatch(logout());
-          message.error('Session expired. Please login again.');
-          window.location.href = '/login';
+          // Don't logout/redirect for login failures - let the login page handle the error
+          if (!isLoginRequest) {
+            // Unauthorized - logout user (only for authenticated requests)
+            store.dispatch(logout());
+            message.error('Session expired. Please login again.');
+            window.location.href = '/login';
+          }
           break;
 
         case 403:
