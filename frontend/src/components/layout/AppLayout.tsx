@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Badge, Input } from 'antd';
+import { Layout, Menu, Avatar, Dropdown } from 'antd';
 import { motion } from 'framer-motion';
 import {
   DashboardOutlined,
@@ -14,8 +14,6 @@ import {
   FileTextOutlined,
   LogoutOutlined,
   SettingOutlined,
-  BellOutlined,
-  SearchOutlined,
   RobotOutlined,
   InboxOutlined,
   AppstoreOutlined,
@@ -25,10 +23,11 @@ import {
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { logout } from '../../store/slices/authSlice';
+import NotificationsDropdown from '../NotificationsDropdown';
+import GlobalSearch from '../GlobalSearch';
 import type { MenuProps } from 'antd';
 
 const { Header, Sider, Content } = Layout;
-const { Search } = Input;
 
 interface AppLayoutProps {
   children: React.ReactNode;
@@ -68,6 +67,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       icon: <CalendarOutlined />,
       label: 'Bookings',
     },
+    ...(user?.role === 'owner_view' || user?.email
+      ? [
+          {
+            key: '/my-bookings',
+            icon: <CalendarOutlined />,
+            label: 'My Bookings',
+          },
+        ]
+      : []),
     {
       key: '/owners',
       icon: <TeamOutlined />,
@@ -213,16 +221,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
           }}
         >
-          <Search
-            placeholder="Search bookings, guests, properties..."
-            allowClear
-            style={{ width: 400 }}
-            prefix={<SearchOutlined />}
-          />
+          <GlobalSearch />
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <Badge count={5}>
-              <BellOutlined style={{ fontSize: 20, cursor: 'pointer' }} />
-            </Badge>
+            <NotificationsDropdown />
             <Dropdown
               menu={{
                 items: userMenuItems,

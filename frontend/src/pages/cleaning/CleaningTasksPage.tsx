@@ -24,11 +24,18 @@ import { unitsApi, Unit } from '../../services/api/unitsApi';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { staffApi } from '../../services/api/staffApi';
 import FadeIn from '../../components/animations/FadeIn';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { addNotification } from '../../store/slices/notificationsSlice';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const CleaningTasksPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
+  const isManagerOrAdmin = user?.role === 'admin' || user?.role === 'assistant';
+  const isCleaner = user?.role === 'cleaner';
+
   const [tasks, setTasks] = useState<CleaningTask[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
@@ -62,6 +69,11 @@ const CleaningTasksPage: React.FC = () => {
       setLoading(true);
       const params: any = {};
       if (statusFilter) params.status = statusFilter;
+
+      // If user is cleaner, only show their assigned tasks
+      if (isCleaner && user?.id) {
+        params.assignedToId = user.id;
+      }
 
       const response = await cleaningApi.getAll(params);
       setTasks(response.data.data.tasks);
@@ -153,32 +165,41 @@ const CleaningTasksPage: React.FC = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
-        <Space>
-          {record.status !== 'completed' && (
-            <Button
-              type="link"
-              icon={<CheckCircleOutlined />}
-              onClick={() => handleComplete(record.id)}
-            >
-              Complete
-            </Button>
-          )}
-          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Popconfirm
-            title="Are you sure you want to delete this task?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
+      render: (_, record) => {
+        const canEdit = isManagerOrAdmin || (isCleaner && record.cleanerId === user?.id);
+        const canDelete = isManagerOrAdmin;
+
+        return (
+          <Space>
+            {record.status !== 'completed' && canEdit && (
+              <Button
+                type="link"
+                icon={<CheckCircleOutlined />}
+                onClick={() => handleComplete(record.id)}
+              >
+                {record.status === 'not_started' ? 'Start' : 'Complete'}
+              </Button>
+            )}
+            {canEdit && (
+              <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
+                Edit
+              </Button>
+            )}
+            {canDelete && (
+              <Popconfirm
+                title="Are you sure you want to delete this task?"
+                onConfirm={() => handleDelete(record.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button type="link" danger icon={<DeleteOutlined />}>
+                  Delete
+                </Button>
+              </Popconfirm>
+            )}
+          </Space>
+        );
+      },
     },
   ];
 
@@ -201,11 +222,27 @@ const CleaningTasksPage: React.FC = () => {
 
   const handleComplete = async (id: string) => {
     try {
-      await cleaningApi.complete(id, {});
-      message.success('Cleaning task completed successfully');
+      const task = tasks.find((t) => t.id === id);
+      const newStatus = task?.status === 'not_started' ? 'in_progress' : 'completed';
+
+      await cleaningApi.update(id, { status: newStatus });
+      message.success(
+        `Cleaning task ${newStatus === 'in_progress' ? 'started' : 'completed'} successfully`
+      );
+
+      // Add notification
+      dispatch(
+        addNotification({
+          type: 'success',
+          title: 'Task Status Updated',
+          message: `Cleaning task has been ${newStatus === 'in_progress' ? 'started' : 'completed'}`,
+          link: '/cleaning',
+        })
+      );
+
       loadTasks();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to complete task');
+      message.error(error.response?.data?.error?.message || 'Failed to update task');
     }
   };
 
@@ -227,11 +264,34 @@ const CleaningTasksPage: React.FC = () => {
       };
 
       if (editingTask) {
+        const oldStatus = editingTask.status;
         await cleaningApi.update(editingTask.id, submitData);
         message.success('Cleaning task updated successfully');
+
+        // Add notification if status changed
+        if (values.status && values.status !== oldStatus) {
+          dispatch(
+            addNotification({
+              type: 'info',
+              title: 'Task Status Updated',
+              message: `Cleaning task status changed from ${oldStatus} to ${values.status}`,
+              link: '/cleaning',
+            })
+          );
+        }
       } else {
         await cleaningApi.create(submitData);
         message.success('Cleaning task created successfully');
+
+        // Add notification for new task
+        dispatch(
+          addNotification({
+            type: 'success',
+            title: 'New Cleaning Task',
+            message: `A new cleaning task has been created${values.cleanerId ? ' and assigned to you' : ''}`,
+            link: '/cleaning',
+          })
+        );
       }
       setIsModalVisible(false);
       loadTasks();
@@ -254,9 +314,11 @@ const CleaningTasksPage: React.FC = () => {
           <Title level={2} style={{ margin: 0 }}>
             Cleaning Tasks
           </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Task
-          </Button>
+          {isManagerOrAdmin && (
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+              Add Task
+            </Button>
+          )}
         </div>
 
         <Select
@@ -358,19 +420,24 @@ const CleaningTasksPage: React.FC = () => {
           >
             <DatePicker showTime style={{ width: '100%' }} format="YYYY-MM-DD HH:mm" />
           </Form.Item>
-          <Form.Item name="cleanerId" label="Assigned Cleaner">
+          <Form.Item
+            name="cleanerId"
+            label="Assigned Cleaner"
+            tooltip={!isManagerOrAdmin ? 'Only managers and admins can assign tasks' : undefined}
+          >
             <Select
               placeholder="Optional: Select a cleaner"
               showSearch
+              disabled={!isManagerOrAdmin}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
             >
-              {staff.map((s) => (
-                <Option key={s.id} value={s.id} label={s.name}>
-                  {s.name} ({s.role})
+              {staff.map((s: any) => (
+                <Option key={s.id} value={s.id} label={`${s.name} (Cleaner)`}>
+                  {s.name} (Cleaner)
                 </Option>
               ))}
             </Select>

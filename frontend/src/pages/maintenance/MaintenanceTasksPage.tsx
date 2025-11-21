@@ -21,11 +21,18 @@ import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { unitsApi, Unit } from '../../services/api/unitsApi';
 import { staffApi } from '../../services/api/staffApi';
 import FadeIn from '../../components/animations/FadeIn';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
+import { addNotification } from '../../store/slices/notificationsSlice';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const MaintenanceTasksPage: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { user } = useAppSelector((state) => state.auth);
+  const isManagerOrAdmin = user?.role === 'admin' || user?.role === 'assistant';
+  const isMaintenance = user?.role === 'maintenance';
+
   const [tasks, setTasks] = useState<MaintenanceTask[]>([]);
   const [loading, setLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
@@ -58,6 +65,11 @@ const MaintenanceTasksPage: React.FC = () => {
       const params: any = {};
       if (statusFilter) params.status = statusFilter;
       if (priorityFilter) params.priority = priorityFilter;
+
+      // If user is maintenance, only show their assigned tasks
+      if (isMaintenance && user?.id) {
+        params.assignedToId = user.id;
+      }
 
       const response = await maintenanceApi.getAll(params);
       setTasks(response.data.data.tasks);
@@ -149,32 +161,41 @@ const MaintenanceTasksPage: React.FC = () => {
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
-        <Space>
-          {record.status !== 'completed' && (
-            <Button
-              type="link"
-              icon={<CheckCircleOutlined />}
-              onClick={() => handleResolve(record.id)}
-            >
-              Resolve
-            </Button>
-          )}
-          <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
-          </Button>
-          <Popconfirm
-            title="Are you sure you want to delete this task?"
-            onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
-          >
-            <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
-            </Button>
-          </Popconfirm>
-        </Space>
-      ),
+      render: (_, record) => {
+        const canEdit = isManagerOrAdmin || (isMaintenance && record.assignedToId === user?.id);
+        const canDelete = isManagerOrAdmin;
+
+        return (
+          <Space>
+            {record.status !== 'completed' && canEdit && (
+              <Button
+                type="link"
+                icon={<CheckCircleOutlined />}
+                onClick={() => handleResolve(record.id)}
+              >
+                {record.status === 'open' ? 'Start' : 'Resolve'}
+              </Button>
+            )}
+            {canEdit && (
+              <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
+                Edit
+              </Button>
+            )}
+            {canDelete && (
+              <Popconfirm
+                title="Are you sure you want to delete this task?"
+                onConfirm={() => handleDelete(record.id)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Button type="link" danger icon={<DeleteOutlined />}>
+                  Delete
+                </Button>
+              </Popconfirm>
+            )}
+          </Space>
+        );
+      },
     },
   ];
 
@@ -194,11 +215,27 @@ const MaintenanceTasksPage: React.FC = () => {
 
   const handleResolve = async (id: string) => {
     try {
-      await maintenanceApi.resolve(id, {});
-      message.success('Maintenance task resolved successfully');
+      const task = tasks.find((t) => t.id === id);
+      const newStatus = task?.status === 'open' ? 'in_progress' : 'completed';
+
+      await maintenanceApi.update(id, { status: newStatus });
+      message.success(
+        `Maintenance task ${newStatus === 'in_progress' ? 'started' : 'resolved'} successfully`
+      );
+
+      // Add notification
+      dispatch(
+        addNotification({
+          type: 'success',
+          title: 'Task Status Updated',
+          message: `Maintenance task has been ${newStatus === 'in_progress' ? 'started' : 'resolved'}`,
+          link: '/maintenance',
+        })
+      );
+
       loadTasks();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to resolve task');
+      message.error(error.response?.data?.error?.message || 'Failed to update task');
     }
   };
 
@@ -215,11 +252,34 @@ const MaintenanceTasksPage: React.FC = () => {
   const handleSubmit = async (values: any) => {
     try {
       if (editingTask) {
+        const oldStatus = editingTask.status;
         await maintenanceApi.update(editingTask.id, values);
         message.success('Maintenance task updated successfully');
+
+        // Add notification if status changed
+        if (values.status && values.status !== oldStatus) {
+          dispatch(
+            addNotification({
+              type: 'info',
+              title: 'Task Status Updated',
+              message: `Maintenance task status changed from ${oldStatus} to ${values.status}`,
+              link: '/maintenance',
+            })
+          );
+        }
       } else {
         await maintenanceApi.create(values);
         message.success('Maintenance task created successfully');
+
+        // Add notification for new task
+        dispatch(
+          addNotification({
+            type: 'success',
+            title: 'New Maintenance Task',
+            message: `A new maintenance task has been created${values.assignedToId ? ' and assigned to you' : ''}`,
+            link: '/maintenance',
+          })
+        );
       }
       setIsModalVisible(false);
       loadTasks();
@@ -242,9 +302,11 @@ const MaintenanceTasksPage: React.FC = () => {
           <Title level={2} style={{ margin: 0 }}>
             Maintenance Tasks
           </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Task
-          </Button>
+          {isManagerOrAdmin && (
+            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+              Add Task
+            </Button>
+          )}
         </div>
 
         <Space style={{ marginBottom: 16 }}>
@@ -358,10 +420,15 @@ const MaintenanceTasksPage: React.FC = () => {
           <Form.Item name="description" label="Description">
             <Input.TextArea rows={4} placeholder="Describe the maintenance issue..." />
           </Form.Item>
-          <Form.Item name="assignedToId" label="Assigned To">
+          <Form.Item
+            name="assignedToId"
+            label="Assigned To"
+            tooltip={!isManagerOrAdmin ? 'Only managers and admins can assign tasks' : undefined}
+          >
             <Select
               placeholder="Optional: Select staff member"
               showSearch
+              disabled={!isManagerOrAdmin}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -369,8 +436,8 @@ const MaintenanceTasksPage: React.FC = () => {
               }
             >
               {staff.map((s) => (
-                <Option key={s.id} value={s.id} label={s.name}>
-                  {s.name} ({s.role})
+                <Option key={s.id} value={s.id} label={`${s.name} (Maintenance)`}>
+                  {s.name} (Maintenance)
                 </Option>
               ))}
             </Select>

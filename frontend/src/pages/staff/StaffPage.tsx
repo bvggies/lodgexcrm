@@ -12,8 +12,19 @@ import {
   message,
   Popconfirm,
   Switch,
+  Descriptions,
+  Tabs,
+  Spin,
+  Empty,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  UserOutlined,
+  EyeOutlined,
+} from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import type { ColumnsType } from 'antd/es/table';
 import { staffApi, Staff } from '../../services/api/staffApi';
@@ -28,7 +39,11 @@ const StaffPage: React.FC = () => {
   const [searchText, setSearchText] = useState('');
   const [roleFilter, setRoleFilter] = useState<string | undefined>();
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
   const [editingStaff, setEditingStaff] = useState<Staff | null>(null);
+  const [selectedStaff, setSelectedStaff] = useState<Staff | null>(null);
+  const [taskHistory, setTaskHistory] = useState<any[]>([]);
+  const [loadingTasks, setLoadingTasks] = useState(false);
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -96,6 +111,9 @@ const StaffPage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
+          <Button type="link" icon={<EyeOutlined />} onClick={() => handleViewProfile(record)}>
+            View Profile
+          </Button>
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Edit
           </Button>
@@ -118,6 +136,21 @@ const StaffPage: React.FC = () => {
     setEditingStaff(null);
     form.resetFields();
     setIsModalVisible(true);
+  };
+
+  const handleViewProfile = async (staffMember: Staff) => {
+    setSelectedStaff(staffMember);
+    setIsProfileModalVisible(true);
+    setLoadingTasks(true);
+    try {
+      const response = await staffApi.getTasks(staffMember.id);
+      setTaskHistory(response.data.data || []);
+    } catch (error) {
+      console.error('Failed to load task history');
+      setTaskHistory([]);
+    } finally {
+      setLoadingTasks(false);
+    }
   };
 
   const handleEdit = (staffMember: Staff) => {
@@ -242,6 +275,125 @@ const StaffPage: React.FC = () => {
             <Switch />
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title={
+          <Space>
+            <UserOutlined />
+            <span>Staff Profile: {selectedStaff?.name}</span>
+          </Space>
+        }
+        open={isProfileModalVisible}
+        onCancel={() => setIsProfileModalVisible(false)}
+        footer={[
+          <Button key="close" onClick={() => setIsProfileModalVisible(false)}>
+            Close
+          </Button>,
+        ]}
+        width={800}
+      >
+        {selectedStaff && (
+          <Tabs
+            items={[
+              {
+                key: 'details',
+                label: 'Contact Details',
+                children: (
+                  <Descriptions column={1} bordered>
+                    <Descriptions.Item label="Name">{selectedStaff.name}</Descriptions.Item>
+                    <Descriptions.Item label="Email">{selectedStaff.email || 'N/A'}</Descriptions.Item>
+                    <Descriptions.Item label="Phone">{selectedStaff.phone || 'N/A'}</Descriptions.Item>
+                    <Descriptions.Item label="Role">
+                      <Tag
+                        color={
+                          selectedStaff.role === 'admin'
+                            ? 'red'
+                            : selectedStaff.role === 'assistant'
+                            ? 'blue'
+                            : selectedStaff.role === 'cleaner'
+                            ? 'green'
+                            : selectedStaff.role === 'maintenance'
+                            ? 'orange'
+                            : 'purple'
+                        }
+                      >
+                        {selectedStaff.role.toUpperCase()}
+                      </Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Status">
+                      <Tag color={selectedStaff.isActive ? 'success' : 'default'}>
+                        {selectedStaff.isActive ? 'Active' : 'Inactive'}
+                      </Tag>
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Created At">
+                      {new Date(selectedStaff.createdAt).toLocaleDateString()}
+                    </Descriptions.Item>
+                  </Descriptions>
+                ),
+              },
+              {
+                key: 'tasks',
+                label: 'Task Assignment History',
+                children: (
+                  <Spin spinning={loadingTasks}>
+                    {taskHistory.length > 0 ? (
+                      <Table
+                        dataSource={taskHistory}
+                        rowKey="id"
+                        pagination={{ pageSize: 5 }}
+                        columns={[
+                          {
+                            title: 'Task Type',
+                            dataIndex: 'type',
+                            key: 'type',
+                            render: (type: string) => (
+                              <Tag color={type === 'cleaning' ? 'blue' : 'orange'}>
+                                {type?.toUpperCase() || 'N/A'}
+                              </Tag>
+                            ),
+                          },
+                          {
+                            title: 'Title',
+                            dataIndex: 'title',
+                            key: 'title',
+                          },
+                          {
+                            title: 'Status',
+                            dataIndex: 'status',
+                            key: 'status',
+                            render: (status: string) => (
+                              <Tag
+                                color={
+                                  status === 'completed'
+                                    ? 'success'
+                                    : status === 'in_progress'
+                                    ? 'processing'
+                                    : 'default'
+                                }
+                              >
+                                {status?.replace('_', ' ').toUpperCase() || 'N/A'}
+                              </Tag>
+                            ),
+                          },
+                          {
+                            title: 'Assigned Date',
+                            dataIndex: 'createdAt',
+                            key: 'createdAt',
+                            render: (date: string) =>
+                              date ? new Date(date).toLocaleDateString() : 'N/A',
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <Empty description="No task history available" />
+                    )}
+                  </Spin>
+                ),
+              },
+            ]}
+          />
+        )}
       </Modal>
     </div>
   );

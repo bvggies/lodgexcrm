@@ -255,7 +255,7 @@ const DashboardPage: React.FC = () => {
       key: 'totalAmount',
       render: (amount: any) => {
         const numAmount = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
-        return `$${numAmount.toFixed(2)}`;
+        return `AED ${numAmount.toFixed(2)}`;
       },
     },
     {
@@ -450,7 +450,7 @@ const DashboardPage: React.FC = () => {
               <ModernStatCard
                 title="Monthly Revenue"
                 value={data?.financial.monthlyRevenue || 0}
-                prefix="$"
+                prefix="AED "
                 precision={2}
                 loading={loading}
                 icon={<DollarOutlined />}
@@ -500,7 +500,7 @@ const DashboardPage: React.FC = () => {
               <ModernStatCard
                 title="Monthly Expenses"
                 value={data?.financial.monthlyExpenses || 0}
-                prefix="$"
+                prefix="AED "
                 precision={2}
                 loading={loading}
                 icon={<DollarOutlined />}
@@ -513,7 +513,7 @@ const DashboardPage: React.FC = () => {
               <ModernStatCard
                 title="Net Income"
                 value={data?.financial.monthlyNetIncome || 0}
-                prefix="$"
+                prefix="AED "
                 precision={2}
                 valueStyle={{
                   color: (data?.financial.monthlyNetIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
@@ -607,7 +607,7 @@ const DashboardPage: React.FC = () => {
                   <RechartsTooltip
                     formatter={(value: any) => {
                       const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
-                      return `$${numValue.toFixed(2)}`;
+                      return `AED ${numValue.toFixed(2)}`;
                     }}
                     labelFormatter={(label) => dayjs(label, 'YYYY-MM').format('MMMM YYYY')}
                   />
@@ -826,7 +826,7 @@ const DashboardPage: React.FC = () => {
                           <List.Item.Meta
                             avatar={<Avatar>{guest.firstName[0]}</Avatar>}
                             title={`${guest.firstName} ${guest.lastName}`}
-                            description={`${guest.totalBookings} bookings • $${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
+                            description={`${guest.totalBookings} bookings • AED ${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
                           />
                         </List.Item>
                       )}

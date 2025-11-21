@@ -23,6 +23,7 @@ import IntegrationsPage from './pages/integrations/IntegrationsPage';
 import AutomationsPage from './pages/automations/AutomationsPage';
 import ArchivePage from './pages/archive/ArchivePage';
 import ImportPage from './pages/import/ImportPage';
+import MyBookingsPage from './pages/bookings/MyBookingsPage';
 import { useAppSelector } from './store/hooks';
 
 const { Content } = Layout;
@@ -80,6 +81,14 @@ function App() {
                         element={
                           <PageTransition>
                             <BookingsPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/my-bookings"
+                        element={
+                          <PageTransition>
+                            <MyBookingsPage />
                           </PageTransition>
                         }
                       />
