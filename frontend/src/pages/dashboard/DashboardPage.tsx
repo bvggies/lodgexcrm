@@ -702,7 +702,7 @@ const DashboardPage: React.FC = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={channelData}
+                    data={channelData.length > 0 ? channelData : [{ name: 'No Data', value: 1 }]}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -715,9 +715,11 @@ const DashboardPage: React.FC = () => {
                     fill="#8884d8"
                     dataKey="value"
                   >
-                    {channelData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
+                    {(channelData.length > 0 ? channelData : [{ name: 'No Data', value: 1 }]).map(
+                      (entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      )
+                    )}
                   </Pie>
                   <RechartsTooltip />
                 </PieChart>
@@ -743,7 +745,14 @@ const DashboardPage: React.FC = () => {
               data-aos="fade-up"
             >
               <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={occupancyData} layout="vertical">
+                <BarChart
+                  data={
+                    occupancyData.length > 0
+                      ? occupancyData
+                      : [{ propertyName: 'No Data', occupancyRate: 0 }]
+                  }
+                  layout="vertical"
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" domain={[0, 100]} />
                   <YAxis
@@ -759,7 +768,10 @@ const DashboardPage: React.FC = () => {
                     }}
                   />
                   <Bar dataKey="occupancyRate" name="Occupancy Rate (%)">
-                    {occupancyData.map((entry, index) => (
+                    {(occupancyData.length > 0
+                      ? occupancyData
+                      : [{ propertyName: 'No Data', occupancyRate: 0 }]
+                    ).map((entry, index) => (
                       <Cell
                         key={`cell-${index}`}
                         fill={
@@ -794,7 +806,7 @@ const DashboardPage: React.FC = () => {
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
                   <Pie
-                    data={statusData}
+                    data={statusData.length > 0 ? statusData : [{ name: 'No Data', value: 1 }]}
                     cx="50%"
                     cy="50%"
                     labelLine={false}
@@ -830,111 +842,107 @@ const DashboardPage: React.FC = () => {
         </Row>
 
         {/* Repeat Guests Widget */}
-        <AnimatePresence>
-          {repeatGuestsData && (
-            <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
-              <Col xs={24} lg={12}>
-                <GlassCard
-                  index={4}
-                  glowColor="rgba(168, 237, 234, 0.2)"
-                  title={
-                    <Space>
-                      <UserOutlined style={{ fontSize: '20px', color: '#a8edea' }} />
-                      <span style={{ fontSize: '18px', fontWeight: 600 }}>
-                        Repeat Guests Analysis
-                      </span>
-                    </Space>
-                  }
-                  data-aos="zoom-in"
-                >
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Statistic
-                        title="Repeat Guest Rate"
-                        value={repeatGuestsData.summary?.repeatGuestPercentage || 0}
-                        suffix="%"
-                        precision={1}
-                        valueStyle={{ color: '#1890ff' }}
-                      />
-                    </Col>
-                    <Col span={12}>
-                      <Statistic
-                        title="Total Repeat Guests"
-                        value={repeatGuestsData.summary?.repeatGuests || 0}
-                        suffix={`/ ${repeatGuestsData.summary?.totalGuests || 0} total`}
-                      />
-                    </Col>
-                  </Row>
-                  <div style={{ marginTop: 16 }}>
-                    <Text strong>Top Repeat Guests:</Text>
-                    <List
-                      dataSource={repeatGuestsData.topRepeatGuests?.slice(0, 5) || []}
-                      renderItem={(guest: any) => (
-                        <List.Item>
-                          <List.Item.Meta
-                            avatar={<Avatar>{guest.firstName[0]}</Avatar>}
-                            title={`${guest.firstName} ${guest.lastName}`}
-                            description={`${guest.totalBookings} bookings • AED ${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
-                          />
-                        </List.Item>
-                      )}
-                      size="small"
-                    />
-                  </div>
-                </GlassCard>
-              </Col>
-              <Col xs={24} lg={12}>
-                <GlassCard
-                  index={5}
-                  glowColor="rgba(255, 236, 210, 0.2)"
-                  title={
-                    <Space>
-                      <CalendarOutlined style={{ fontSize: '20px', color: '#ffecd2' }} />
-                      <span style={{ fontSize: '18px', fontWeight: 600 }}>Upcoming Check-outs</span>
-                    </Space>
-                  }
-                  extra={
-                    <Button
-                      type="link"
-                      onClick={() => navigate('/bookings')}
-                      style={{ fontWeight: 500 }}
-                    >
-                      View All
-                    </Button>
-                  }
-                  data-aos="zoom-in"
-                  data-aos-delay="100"
-                >
-                  <Table
-                    columns={[
-                      {
-                        title: 'Property',
-                        dataIndex: ['property', 'name'],
-                        key: 'property',
-                      },
-                      {
-                        title: 'Guest',
-                        key: 'guest',
-                        render: (_, record) => `${record.guest.firstName} ${record.guest.lastName}`,
-                      },
-                      {
-                        title: 'Check-out',
-                        dataIndex: 'checkoutDate',
-                        key: 'checkoutDate',
-                        render: (date: string) => dayjs(date).format('MMM DD, YYYY'),
-                      },
-                    ]}
-                    dataSource={data?.upcomingCheckouts || []}
-                    loading={loading}
-                    pagination={false}
-                    size="small"
-                    scroll={{ y: 200 }}
+        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+          <Col xs={24} lg={12}>
+            <GlassCard
+              index={4}
+              glowColor="rgba(168, 237, 234, 0.2)"
+              title={
+                <Space>
+                  <UserOutlined style={{ fontSize: '20px', color: '#a8edea' }} />
+                  <span style={{ fontSize: '18px', fontWeight: 600 }}>Repeat Guests Analysis</span>
+                </Space>
+              }
+              data-aos="zoom-in"
+            >
+              <Row gutter={[16, 16]}>
+                <Col span={12}>
+                  <Statistic
+                    title="Repeat Guest Rate"
+                    value={repeatGuestsData?.summary?.repeatGuestPercentage || 0}
+                    suffix="%"
+                    precision={1}
+                    valueStyle={{ color: '#1890ff' }}
                   />
-                </GlassCard>
-              </Col>
-            </Row>
-          )}
-        </AnimatePresence>
+                </Col>
+                <Col span={12}>
+                  <Statistic
+                    title="Total Repeat Guests"
+                    value={repeatGuestsData?.summary?.repeatGuests || 0}
+                    suffix={`/ ${repeatGuestsData?.summary?.totalGuests || 0} total`}
+                  />
+                </Col>
+              </Row>
+              <div style={{ marginTop: 16 }}>
+                <Text strong>Top Repeat Guests:</Text>
+                <List
+                  dataSource={repeatGuestsData?.topRepeatGuests?.slice(0, 5) || []}
+                  renderItem={(guest: any) => (
+                    <List.Item>
+                      <List.Item.Meta
+                        avatar={<Avatar>{guest.firstName?.[0] || 'G'}</Avatar>}
+                        title={`${guest.firstName} ${guest.lastName}`}
+                        description={`${guest.totalBookings} bookings • AED ${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
+                      />
+                    </List.Item>
+                  )}
+                  size="small"
+                />
+              </div>
+            </GlassCard>
+          </Col>
+          <Col xs={24} lg={12}>
+            <GlassCard
+              index={5}
+              glowColor="rgba(255, 236, 210, 0.2)"
+              title={
+                <Space>
+                  <CalendarOutlined style={{ fontSize: '20px', color: '#ffecd2' }} />
+                  <span style={{ fontSize: '18px', fontWeight: 600 }}>Upcoming Check-outs</span>
+                </Space>
+              }
+              extra={
+                <Button
+                  type="link"
+                  onClick={() => navigate('/bookings')}
+                  style={{ fontWeight: 500 }}
+                >
+                  View All
+                </Button>
+              }
+              data-aos="zoom-in"
+              data-aos-delay="100"
+            >
+              <Table
+                columns={[
+                  {
+                    title: 'Property',
+                    dataIndex: ['property', 'name'],
+                    key: 'property',
+                    render: (text: any, record: any) => record?.property?.name || 'N/A',
+                  },
+                  {
+                    title: 'Guest',
+                    key: 'guest',
+                    render: (_, record: any) =>
+                      record?.guest ? `${record.guest.firstName} ${record.guest.lastName}` : 'N/A',
+                  },
+                  {
+                    title: 'Check-out',
+                    dataIndex: 'checkoutDate',
+                    key: 'checkoutDate',
+                    render: (date: string) => (date ? dayjs(date).format('MMM DD, YYYY') : 'N/A'),
+                  },
+                ]}
+                dataSource={data?.upcomingCheckouts || []}
+                loading={loading}
+                pagination={false}
+                size="small"
+                scroll={{ y: 200 }}
+              />
+            </GlassCard>
+          </Col>
+        </Row>
 
         {/* Performance Metrics Row */}
         <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
