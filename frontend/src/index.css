@@ -46,19 +46,52 @@ code {
 
 /* Smooth transitions */
 .ant-card {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: none;
 }
 
 .ant-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  transform: translateY(-2px);
 }
 
 .ant-btn {
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
+}
+
+.ant-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .ant-table-tbody > tr {
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
+}
+
+.ant-table-tbody > tr:hover {
+  background-color: rgba(102, 126, 234, 0.05) !important;
+  transform: scale(1.01);
+}
+
+.ant-select-selector,
+.ant-input,
+.ant-picker {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ant-select-selector:hover,
+.ant-input:hover,
+.ant-picker:hover {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+}
+
+.ant-select-focused .ant-select-selector,
+.ant-input:focus,
+.ant-picker:focus {
+  border-color: #667eea !important;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
 }
 
 /* AOS custom animations */
@@ -68,4 +101,75 @@ code {
 
 [data-aos].aos-animate {
   pointer-events: auto;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+/* Smooth page transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 0.4s ease,
+    transform 0.4s ease;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-20px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+/* Loading spinner enhancement */
+.ant-spin-dot-item {
+  background-color: #667eea;
+}
+
+/* Tag enhancements */
+.ant-tag {
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-weight: 500;
+  border: none;
+}
+
+/* Statistic enhancements */
+.ant-statistic-title {
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.65);
+  margin-bottom: 8px;
+}
+
+.ant-statistic-content {
+  font-weight: 700;
 }

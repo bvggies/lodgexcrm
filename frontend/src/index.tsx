@@ -26,7 +26,35 @@ root.render(
         <ConfigProvider
           theme={{
             token: {
-              colorPrimary: '#1890ff',
+              colorPrimary: '#667eea',
+              borderRadius: 8,
+              fontFamily:
+                '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+              fontSize: 14,
+              colorSuccess: '#52c41a',
+              colorWarning: '#faad14',
+              colorError: '#ff4d4f',
+              colorInfo: '#1890ff',
+              wireframe: false,
+            },
+            components: {
+              Card: {
+                borderRadius: 16,
+                paddingLG: 24,
+              },
+              Button: {
+                borderRadius: 8,
+                fontWeight: 500,
+              },
+              Input: {
+                borderRadius: 8,
+              },
+              Select: {
+                borderRadius: 8,
+              },
+              Table: {
+                borderRadius: 8,
+              },
             },
           }}
         >

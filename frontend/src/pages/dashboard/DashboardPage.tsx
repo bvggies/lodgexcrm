@@ -17,10 +17,12 @@ import {
   List,
   Avatar,
 } from 'antd';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedCard from '../../components/animations/AnimatedCard';
 import StaggerContainer from '../../components/animations/StaggerContainer';
 import FadeIn from '../../components/animations/FadeIn';
+import ModernStatCard from '../../components/animations/ModernStatCard';
+import GlassCard from '../../components/animations/GlassCard';
 import {
   DollarOutlined,
   CalendarOutlined,
@@ -281,504 +283,674 @@ const DashboardPage: React.FC = () => {
   ];
 
   return (
-    <div>
-      <FadeIn>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Dashboard
-          </Title>
-          <Space>
-            <Select
-              value={timeRange}
-              onChange={(value) => {
-                setTimeRange(value);
-                if (value !== 'custom') {
-                  setCustomDateRange(null);
-                }
-              }}
-              style={{ width: 150 }}
-            >
-              <Option value="7d">Last 7 Days</Option>
-              <Option value="30d">Last 30 Days</Option>
-              <Option value="90d">Last 90 Days</Option>
-              <Option value="1y">Last Year</Option>
-              <Option value="custom">Custom Range</Option>
-            </Select>
-            {timeRange === 'custom' && (
-              <RangePicker
-                value={customDateRange}
-                onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-              />
-            )}
-            <Tooltip title="Refresh Data">
-              <Button
-                icon={<ReloadOutlined spin={refreshing} />}
-                onClick={handleRefresh}
-                loading={refreshing}
-              >
-                Refresh
-              </Button>
-            </Tooltip>
-            <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/bookings')}>
-              Add Booking
-            </Button>
-          </Space>
-        </div>
-      </FadeIn>
+    <div
+      style={{
+        minHeight: '100vh',
+        background:
+          'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)',
+        backgroundSize: '400% 400%',
+        animation: 'gradientShift 15s ease infinite',
+        padding: '24px',
+        position: 'relative',
+      }}
+    >
+      <style>
+        {`
+          @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+          }
+        `}
+      </style>
 
-      {/* Summary Statistics */}
-      <StaggerContainer>
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={0}>
-              <Statistic
+      {/* Animated background particles */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          overflow: 'hidden',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}
+      >
+        {[...Array(20)].map((_, i) => (
+          <motion.div
+            key={i}
+            style={{
+              position: 'absolute',
+              width: '4px',
+              height: '4px',
+              background: 'rgba(255, 255, 255, 0.5)',
+              borderRadius: '50%',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -30, 0],
+              opacity: [0.3, 0.8, 0.3],
+            }}
+            transition={{
+              duration: 3 + Math.random() * 2,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+            }}
+          />
+        ))}
+      </div>
+
+      <div style={{ position: 'relative', zIndex: 1 }}>
+        <FadeIn>
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            data-aos="fade-down"
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 32,
+              background: 'rgba(255, 255, 255, 0.1)',
+              backdropFilter: 'blur(10px)',
+              padding: '20px 24px',
+              borderRadius: '16px',
+              border: '1px solid rgba(255, 255, 255, 0.2)',
+            }}
+          >
+            <Title
+              level={2}
+              style={{
+                margin: 0,
+                color: '#fff',
+                textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+                fontSize: '32px',
+                fontWeight: 700,
+              }}
+            >
+              Dashboard
+            </Title>
+            <Space>
+              <Select
+                value={timeRange}
+                onChange={(value) => {
+                  setTimeRange(value);
+                  if (value !== 'custom') {
+                    setCustomDateRange(null);
+                  }
+                }}
+                style={{
+                  width: 150,
+                  background: 'rgba(255, 255, 255, 0.9)',
+                  borderRadius: '8px',
+                }}
+              >
+                <Option value="7d">Last 7 Days</Option>
+                <Option value="30d">Last 30 Days</Option>
+                <Option value="90d">Last 90 Days</Option>
+                <Option value="1y">Last Year</Option>
+                <Option value="custom">Custom Range</Option>
+              </Select>
+              {timeRange === 'custom' && (
+                <RangePicker
+                  value={customDateRange}
+                  onChange={(dates) =>
+                    setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)
+                  }
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.9)',
+                    borderRadius: '8px',
+                  }}
+                />
+              )}
+              <Tooltip title="Refresh Data">
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    icon={<ReloadOutlined spin={refreshing} />}
+                    onClick={handleRefresh}
+                    loading={refreshing}
+                    style={{
+                      background: 'rgba(255, 255, 255, 0.9)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 500,
+                    }}
+                  >
+                    Refresh
+                  </Button>
+                </motion.div>
+              </Tooltip>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  type="primary"
+                  icon={<PlusOutlined />}
+                  onClick={() => navigate('/bookings')}
+                  style={{
+                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontWeight: 600,
+                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
+                  }}
+                >
+                  Add Booking
+                </Button>
+              </motion.div>
+            </Space>
+          </motion.div>
+        </FadeIn>
+
+        {/* Summary Statistics */}
+        <StaggerContainer>
+          <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Monthly Revenue"
                 value={data?.financial.monthlyRevenue || 0}
-                prefix={<DollarOutlined />}
+                prefix="$"
                 precision={2}
                 loading={loading}
+                icon={<DollarOutlined />}
+                gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                index={0}
                 valueStyle={{ color: '#3f8600' }}
               />
-            </AnimatedCard>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={1}>
-              <Statistic
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Active Bookings"
                 value={data?.summary.activeBookings || 0}
-                prefix={<CalendarOutlined />}
                 loading={loading}
+                icon={<CalendarOutlined />}
+                gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+                index={1}
               />
-            </AnimatedCard>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={2}>
-              <Statistic
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Properties"
                 value={data?.summary.totalProperties || 0}
-                prefix={<HomeOutlined />}
                 loading={loading}
+                icon={<HomeOutlined />}
+                gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+                index={2}
               />
-            </AnimatedCard>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={3}>
-              <Statistic
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Occupancy Rate"
                 value={data?.occupancy.rate || 0}
                 suffix="%"
                 precision={1}
                 loading={loading}
+                gradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+                index={3}
                 valueStyle={{
                   color: data?.occupancy.rate && data.occupancy.rate > 70 ? '#3f8600' : '#cf1322',
                 }}
               />
-            </AnimatedCard>
-          </Col>
-        </Row>
+            </Col>
+          </Row>
 
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={4}>
-              <Statistic
+          <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Monthly Expenses"
                 value={data?.financial.monthlyExpenses || 0}
-                prefix={<DollarOutlined />}
+                prefix="$"
                 precision={2}
                 loading={loading}
+                icon={<DollarOutlined />}
+                gradient="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+                index={4}
                 valueStyle={{ color: '#cf1322' }}
               />
-            </AnimatedCard>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={5}>
-              <Statistic
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Net Income"
                 value={data?.financial.monthlyNetIncome || 0}
-                prefix={<DollarOutlined />}
+                prefix="$"
                 precision={2}
                 valueStyle={{
                   color: (data?.financial.monthlyNetIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
                 }}
                 loading={loading}
+                icon={<DollarOutlined />}
+                gradient="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+                index={5}
               />
-            </AnimatedCard>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={6}>
-              <Statistic
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Pending Cleaning"
                 value={data?.summary.pendingCleaningTasks || 0}
                 loading={loading}
+                gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+                index={6}
                 suffix={
                   <Button
                     type="link"
                     size="small"
                     onClick={() => navigate('/cleaning')}
-                    style={{ padding: 0 }}
+                    style={{ padding: 0, fontSize: '12px' }}
                   >
                     View
                   </Button>
                 }
               />
-            </AnimatedCard>
-          </Col>
-          <Col xs={24} sm={12} lg={6}>
-            <AnimatedCard index={7}>
-              <Statistic
+            </Col>
+            <Col xs={24} sm={12} lg={6}>
+              <ModernStatCard
                 title="Pending Maintenance"
                 value={data?.summary.pendingMaintenanceTasks || 0}
                 loading={loading}
+                gradient="linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
+                index={7}
                 suffix={
                   <Button
                     type="link"
                     size="small"
                     onClick={() => navigate('/maintenance')}
-                    style={{ padding: 0 }}
+                    style={{ padding: 0, fontSize: '12px' }}
                   >
                     View
                   </Button>
                 }
               />
-            </AnimatedCard>
-          </Col>
-        </Row>
-      </StaggerContainer>
+            </Col>
+          </Row>
+        </StaggerContainer>
 
-      {/* Charts Row 1 */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} lg={16}>
-          <Card
-            title={
-              <Space>
-                <BarChartOutlined />
-                <span>Revenue vs Expenses</span>
-              </Space>
-            }
-            extra={
-              <Tooltip title="Shows revenue and expenses over time">
-                <Text type="secondary">Monthly Breakdown</Text>
-              </Tooltip>
-            }
-          >
-            <ResponsiveContainer width="100%" height={300}>
-              <AreaChart data={revenueChartData}>
-                <defs>
-                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#3f8600" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#3f8600" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#cf1322" stopOpacity={0.8} />
-                    <stop offset="95%" stopColor="#cf1322" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="month"
-                  tickFormatter={(value) => dayjs(value, 'YYYY-MM').format('MMM YY')}
-                />
-                <YAxis />
-                <RechartsTooltip
-                  formatter={(value: any) => {
-                    const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
-                    return `$${numValue.toFixed(2)}`;
-                  }}
-                  labelFormatter={(label) => dayjs(label, 'YYYY-MM').format('MMMM YYYY')}
-                />
-                <Legend />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#3f8600"
-                  fillOpacity={1}
-                  fill="url(#colorRevenue)"
-                  name="Revenue"
-                />
-                <Area
-                  type="monotone"
-                  dataKey="expense"
-                  stroke="#cf1322"
-                  fillOpacity={1}
-                  fill="url(#colorExpense)"
-                  name="Expenses"
-                />
-                <Line
-                  type="monotone"
-                  dataKey="netIncome"
-                  stroke="#1890ff"
-                  strokeWidth={2}
-                  name="Net Income"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-        <Col xs={24} lg={8}>
-          <Card
-            title={
-              <Space>
-                <PieChartOutlined />
-                <span>Booking Channels</span>
-              </Space>
-            }
-          >
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={channelData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }: any) => {
-                    const numPercent =
-                      typeof percent === 'number' ? percent : parseFloat(percent) || 0;
-                    return `${name}: ${(numPercent * 100).toFixed(0)}%`;
-                  }}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {channelData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Charts Row 2 */}
-      <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-        <Col xs={24} lg={12}>
-          <Card
-            title={
-              <Space>
-                <RiseOutlined />
-                <span>Top Properties by Occupancy</span>
-              </Space>
-            }
-          >
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={occupancyData} layout="vertical">
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis type="number" domain={[0, 100]} />
-                <YAxis dataKey="propertyName" type="category" width={120} tick={{ fontSize: 12 }} />
-                <RechartsTooltip
-                  formatter={(value: any) => {
-                    const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
-                    return `${numValue.toFixed(1)}%`;
-                  }}
-                />
-                <Bar dataKey="occupancyRate" name="Occupancy Rate (%)">
-                  {occupancyData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={
-                        entry.occupancyRate > 70
-                          ? '#3f8600'
-                          : entry.occupancyRate > 50
-                            ? '#ffa940'
-                            : '#cf1322'
-                      }
-                    />
-                  ))}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card
-            title={
-              <Space>
-                <PieChartOutlined />
-                <span>Payment Status Distribution</span>
-              </Space>
-            }
-          >
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={statusData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }: any) => {
-                    const numPercent =
-                      typeof percent === 'number' ? percent : parseFloat(percent) || 0;
-                    return `${name}: ${(numPercent * 100).toFixed(0)}%`;
-                  }}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="value"
-                >
-                  {statusData.map((entry, index) => {
-                    const colorMap: Record<string, string> = {
-                      Paid: '#3f8600',
-                      Pending: '#ffa940',
-                      Partial: '#1890ff',
-                      Refunded: '#cf1322',
-                    };
-                    return (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={colorMap[entry.name] || COLORS[index % COLORS.length]}
-                      />
-                    );
-                  })}
-                </Pie>
-                <RechartsTooltip />
-              </PieChart>
-            </ResponsiveContainer>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Repeat Guests Widget */}
-      {repeatGuestsData && (
-        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-          <Col xs={24} lg={12}>
-            <Card
+        {/* Charts Row 1 */}
+        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+          <Col xs={24} lg={16}>
+            <GlassCard
+              index={0}
+              glowColor="rgba(102, 126, 234, 0.2)"
               title={
                 <Space>
-                  <UserOutlined />
-                  <span>Repeat Guests Analysis</span>
-                </Space>
-              }
-            >
-              <Row gutter={[16, 16]}>
-                <Col span={12}>
-                  <Statistic
-                    title="Repeat Guest Rate"
-                    value={repeatGuestsData.summary?.repeatGuestPercentage || 0}
-                    suffix="%"
-                    precision={1}
-                    valueStyle={{ color: '#1890ff' }}
-                  />
-                </Col>
-                <Col span={12}>
-                  <Statistic
-                    title="Total Repeat Guests"
-                    value={repeatGuestsData.summary?.repeatGuests || 0}
-                    suffix={`/ ${repeatGuestsData.summary?.totalGuests || 0} total`}
-                  />
-                </Col>
-              </Row>
-              <div style={{ marginTop: 16 }}>
-                <Text strong>Top Repeat Guests:</Text>
-                <List
-                  dataSource={repeatGuestsData.topRepeatGuests?.slice(0, 5) || []}
-                  renderItem={(guest: any) => (
-                    <List.Item>
-                      <List.Item.Meta
-                        avatar={<Avatar>{guest.firstName[0]}</Avatar>}
-                        title={`${guest.firstName} ${guest.lastName}`}
-                        description={`${guest.totalBookings} bookings • $${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
-                      />
-                    </List.Item>
-                  )}
-                  size="small"
-                />
-              </div>
-            </Card>
-          </Col>
-          <Col xs={24} lg={12}>
-            <Card
-              title={
-                <Space>
-                  <CalendarOutlined />
-                  <span>Upcoming Check-outs</span>
+                  <BarChartOutlined style={{ fontSize: '20px', color: '#667eea' }} />
+                  <span style={{ fontSize: '18px', fontWeight: 600 }}>Revenue vs Expenses</span>
                 </Space>
               }
               extra={
-                <Button type="link" onClick={() => navigate('/bookings')}>
+                <Tooltip title="Shows revenue and expenses over time">
+                  <Text type="secondary" style={{ fontSize: '12px' }}>
+                    Monthly Breakdown
+                  </Text>
+                </Tooltip>
+              }
+              data-aos="fade-right"
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <AreaChart data={revenueChartData}>
+                  <defs>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#3f8600" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#3f8600" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorExpense" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#cf1322" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#cf1322" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="month"
+                    tickFormatter={(value) => dayjs(value, 'YYYY-MM').format('MMM YY')}
+                  />
+                  <YAxis />
+                  <RechartsTooltip
+                    formatter={(value: any) => {
+                      const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                      return `$${numValue.toFixed(2)}`;
+                    }}
+                    labelFormatter={(label) => dayjs(label, 'YYYY-MM').format('MMMM YYYY')}
+                  />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#3f8600"
+                    fillOpacity={1}
+                    fill="url(#colorRevenue)"
+                    name="Revenue"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="expense"
+                    stroke="#cf1322"
+                    fillOpacity={1}
+                    fill="url(#colorExpense)"
+                    name="Expenses"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="netIncome"
+                    stroke="#1890ff"
+                    strokeWidth={2}
+                    name="Net Income"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </GlassCard>
+          </Col>
+          <Col xs={24} lg={8}>
+            <GlassCard
+              index={1}
+              glowColor="rgba(245, 87, 108, 0.2)"
+              title={
+                <Space>
+                  <PieChartOutlined style={{ fontSize: '20px', color: '#f5576c' }} />
+                  <span style={{ fontSize: '18px', fontWeight: 600 }}>Booking Channels</span>
+                </Space>
+              }
+              data-aos="fade-left"
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={channelData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }: any) => {
+                      const numPercent =
+                        typeof percent === 'number' ? percent : parseFloat(percent) || 0;
+                      return `${name}: ${(numPercent * 100).toFixed(0)}%`;
+                    }}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {channelData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <RechartsTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </GlassCard>
+          </Col>
+        </Row>
+
+        {/* Charts Row 2 */}
+        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+          <Col xs={24} lg={12}>
+            <GlassCard
+              index={2}
+              glowColor="rgba(67, 233, 123, 0.2)"
+              title={
+                <Space>
+                  <RiseOutlined style={{ fontSize: '20px', color: '#43e97b' }} />
+                  <span style={{ fontSize: '18px', fontWeight: 600 }}>
+                    Top Properties by Occupancy
+                  </span>
+                </Space>
+              }
+              data-aos="fade-up"
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={occupancyData} layout="vertical">
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis type="number" domain={[0, 100]} />
+                  <YAxis
+                    dataKey="propertyName"
+                    type="category"
+                    width={120}
+                    tick={{ fontSize: 12 }}
+                  />
+                  <RechartsTooltip
+                    formatter={(value: any) => {
+                      const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                      return `${numValue.toFixed(1)}%`;
+                    }}
+                  />
+                  <Bar dataKey="occupancyRate" name="Occupancy Rate (%)">
+                    {occupancyData.map((entry, index) => (
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={
+                          entry.occupancyRate > 70
+                            ? '#3f8600'
+                            : entry.occupancyRate > 50
+                              ? '#ffa940'
+                              : '#cf1322'
+                        }
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </GlassCard>
+          </Col>
+          <Col xs={24} lg={12}>
+            <GlassCard
+              index={3}
+              glowColor="rgba(79, 172, 254, 0.2)"
+              title={
+                <Space>
+                  <PieChartOutlined style={{ fontSize: '20px', color: '#4facfe' }} />
+                  <span style={{ fontSize: '18px', fontWeight: 600 }}>
+                    Payment Status Distribution
+                  </span>
+                </Space>
+              }
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={statusData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }: any) => {
+                      const numPercent =
+                        typeof percent === 'number' ? percent : parseFloat(percent) || 0;
+                      return `${name}: ${(numPercent * 100).toFixed(0)}%`;
+                    }}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {statusData.map((entry, index) => {
+                      const colorMap: Record<string, string> = {
+                        Paid: '#3f8600',
+                        Pending: '#ffa940',
+                        Partial: '#1890ff',
+                        Refunded: '#cf1322',
+                      };
+                      return (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={colorMap[entry.name] || COLORS[index % COLORS.length]}
+                        />
+                      );
+                    })}
+                  </Pie>
+                  <RechartsTooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            </GlassCard>
+          </Col>
+        </Row>
+
+        {/* Repeat Guests Widget */}
+        <AnimatePresence>
+          {repeatGuestsData && (
+            <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+              <Col xs={24} lg={12}>
+                <GlassCard
+                  index={4}
+                  glowColor="rgba(168, 237, 234, 0.2)"
+                  title={
+                    <Space>
+                      <UserOutlined style={{ fontSize: '20px', color: '#a8edea' }} />
+                      <span style={{ fontSize: '18px', fontWeight: 600 }}>
+                        Repeat Guests Analysis
+                      </span>
+                    </Space>
+                  }
+                  data-aos="zoom-in"
+                >
+                  <Row gutter={[16, 16]}>
+                    <Col span={12}>
+                      <Statistic
+                        title="Repeat Guest Rate"
+                        value={repeatGuestsData.summary?.repeatGuestPercentage || 0}
+                        suffix="%"
+                        precision={1}
+                        valueStyle={{ color: '#1890ff' }}
+                      />
+                    </Col>
+                    <Col span={12}>
+                      <Statistic
+                        title="Total Repeat Guests"
+                        value={repeatGuestsData.summary?.repeatGuests || 0}
+                        suffix={`/ ${repeatGuestsData.summary?.totalGuests || 0} total`}
+                      />
+                    </Col>
+                  </Row>
+                  <div style={{ marginTop: 16 }}>
+                    <Text strong>Top Repeat Guests:</Text>
+                    <List
+                      dataSource={repeatGuestsData.topRepeatGuests?.slice(0, 5) || []}
+                      renderItem={(guest: any) => (
+                        <List.Item>
+                          <List.Item.Meta
+                            avatar={<Avatar>{guest.firstName[0]}</Avatar>}
+                            title={`${guest.firstName} ${guest.lastName}`}
+                            description={`${guest.totalBookings} bookings • $${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
+                          />
+                        </List.Item>
+                      )}
+                      size="small"
+                    />
+                  </div>
+                </GlassCard>
+              </Col>
+              <Col xs={24} lg={12}>
+                <GlassCard
+                  index={5}
+                  glowColor="rgba(255, 236, 210, 0.2)"
+                  title={
+                    <Space>
+                      <CalendarOutlined style={{ fontSize: '20px', color: '#ffecd2' }} />
+                      <span style={{ fontSize: '18px', fontWeight: 600 }}>Upcoming Check-outs</span>
+                    </Space>
+                  }
+                  extra={
+                    <Button
+                      type="link"
+                      onClick={() => navigate('/bookings')}
+                      style={{ fontWeight: 500 }}
+                    >
+                      View All
+                    </Button>
+                  }
+                  data-aos="zoom-in"
+                  data-aos-delay="100"
+                >
+                  <Table
+                    columns={[
+                      {
+                        title: 'Property',
+                        dataIndex: ['property', 'name'],
+                        key: 'property',
+                      },
+                      {
+                        title: 'Guest',
+                        key: 'guest',
+                        render: (_, record) => `${record.guest.firstName} ${record.guest.lastName}`,
+                      },
+                      {
+                        title: 'Check-out',
+                        dataIndex: 'checkoutDate',
+                        key: 'checkoutDate',
+                        render: (date: string) => dayjs(date).format('MMM DD, YYYY'),
+                      },
+                    ]}
+                    dataSource={data?.upcomingCheckouts || []}
+                    loading={loading}
+                    pagination={false}
+                    size="small"
+                    scroll={{ y: 200 }}
+                  />
+                </GlassCard>
+              </Col>
+            </Row>
+          )}
+        </AnimatePresence>
+
+        {/* Tables Row */}
+        <Row gutter={[20, 20]}>
+          <Col xs={24} lg={12}>
+            <GlassCard
+              index={6}
+              glowColor="rgba(102, 126, 234, 0.2)"
+              title={
+                <span style={{ fontSize: '18px', fontWeight: 600 }}>
+                  Upcoming Check-ins (Next 7 Days)
+                </span>
+              }
+              extra={
+                <Button
+                  type="link"
+                  onClick={() => navigate('/bookings')}
+                  style={{ fontWeight: 500 }}
+                >
                   View All
                 </Button>
               }
+              style={{ height: 400 }}
+              data-aos="fade-up"
             >
               <Table
-                columns={[
-                  {
-                    title: 'Property',
-                    dataIndex: ['property', 'name'],
-                    key: 'property',
-                  },
-                  {
-                    title: 'Guest',
-                    key: 'guest',
-                    render: (_, record) => `${record.guest.firstName} ${record.guest.lastName}`,
-                  },
-                  {
-                    title: 'Check-out',
-                    dataIndex: 'checkoutDate',
-                    key: 'checkoutDate',
-                    render: (date: string) => dayjs(date).format('MMM DD, YYYY'),
-                  },
-                ]}
-                dataSource={data?.upcomingCheckouts || []}
+                columns={checkinColumns}
+                dataSource={data?.upcomingCheckins || []}
                 loading={loading}
                 pagination={false}
                 size="small"
-                scroll={{ y: 200 }}
+                scroll={{ y: 280 }}
               />
-            </Card>
+            </GlassCard>
+          </Col>
+          <Col xs={24} lg={12}>
+            <GlassCard
+              index={7}
+              glowColor="rgba(250, 112, 154, 0.2)"
+              title={<span style={{ fontSize: '18px', fontWeight: 600 }}>Unpaid Bookings</span>}
+              extra={
+                <Button
+                  type="link"
+                  onClick={() => navigate('/bookings')}
+                  style={{ fontWeight: 500 }}
+                >
+                  View All
+                </Button>
+              }
+              style={{ height: 400 }}
+              data-aos="fade-up"
+              data-aos-delay="100"
+            >
+              <Table
+                columns={unpaidColumns}
+                dataSource={data?.unpaidBookings || []}
+                loading={loading}
+                pagination={false}
+                size="small"
+                scroll={{ y: 280 }}
+              />
+            </GlassCard>
           </Col>
         </Row>
-      )}
-
-      {/* Tables Row */}
-      <Row gutter={[16, 16]}>
-        <Col xs={24} lg={12}>
-          <Card
-            title="Upcoming Check-ins (Next 7 Days)"
-            extra={
-              <Button type="link" onClick={() => navigate('/bookings')}>
-                View All
-              </Button>
-            }
-            style={{ height: 400 }}
-          >
-            <Table
-              columns={checkinColumns}
-              dataSource={data?.upcomingCheckins || []}
-              loading={loading}
-              pagination={false}
-              size="small"
-              scroll={{ y: 280 }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} lg={12}>
-          <Card
-            title="Unpaid Bookings"
-            extra={
-              <Button type="link" onClick={() => navigate('/bookings')}>
-                View All
-              </Button>
-            }
-            style={{ height: 400 }}
-          >
-            <Table
-              columns={unpaidColumns}
-              dataSource={data?.unpaidBookings || []}
-              loading={loading}
-              pagination={false}
-              size="small"
-              scroll={{ y: 280 }}
-            />
-          </Card>
-        </Col>
-      </Row>
+      </div>
     </div>
   );
 };
