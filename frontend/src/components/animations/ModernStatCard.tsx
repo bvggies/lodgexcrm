@@ -17,36 +17,35 @@ interface ModernStatCardProps extends Omit<StatisticProps, 'value'> {
 const ModernStatCard: React.FC<ModernStatCardProps> = ({
   value,
   icon,
-  gradient = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+  gradient = 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)',
   index = 0,
   trend,
   ...statisticProps
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30, scale: 0.9 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
       transition={{
-        delay: index * 0.1,
-        duration: 0.6,
-        type: 'spring',
-        stiffness: 100,
+        delay: index * 0.05,
+        duration: 0.3,
+        ease: 'easeOut',
       }}
       whileHover={{
-        y: -8,
-        scale: 1.02,
-        transition: { duration: 0.3 },
+        y: -4,
+        transition: { duration: 0.2 },
       }}
       data-aos="fade-up"
-      data-aos-delay={index * 100}
+      data-aos-delay={index * 50}
+      style={{ willChange: 'transform' }}
     >
       <Card
         style={{
-          background: 'rgba(255, 255, 255, 0.95)',
+          background: '#1e293b',
           backdropFilter: 'blur(10px)',
           borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
+          border: '1px solid #334155',
+          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
           overflow: 'hidden',
           position: 'relative',
         }}
@@ -75,21 +74,23 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
               height: '60px',
               borderRadius: '12px',
               background: gradient,
-              opacity: 0.1,
+              opacity: 0.3,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              willChange: 'transform',
             }}
             animate={{
-              rotate: [0, 5, -5, 0],
+              rotate: [0, 3, -3, 0],
             }}
             transition={{
-              duration: 4,
+              duration: 6,
               repeat: Infinity,
               repeatType: 'reverse',
+              ease: 'easeInOut',
             }}
           >
-            <div style={{ color: gradient.split(' ')[0], fontSize: '24px' }}>{icon}</div>
+            <div style={{ color: '#ffffff', fontSize: '24px', opacity: 1 }}>{icon}</div>
           </motion.div>
         )}
 
@@ -99,7 +100,7 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
           valueStyle={{
             fontSize: '28px',
             fontWeight: 700,
-            color: '#1a1a1a',
+            color: '#e2e8f0',
           }}
           prefix={icon && <span style={{ marginRight: '8px', fontSize: '20px' }}>{icon}</span>}
         />

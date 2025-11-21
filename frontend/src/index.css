@@ -46,12 +46,16 @@ code {
   }
 }
 
-/* Smooth transitions */
+/* Smooth transitions - optimized for performance */
 .ant-card {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
   border: 1px solid #334155;
   background: #1e293b;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  will-change: transform;
 }
 
 .ant-card:hover {
@@ -61,8 +65,11 @@ code {
 }
 
 .ant-btn {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
   font-weight: 500;
+  will-change: transform;
 }
 
 .ant-btn:hover {
@@ -71,12 +78,12 @@ code {
 }
 
 .ant-table-tbody > tr {
-  transition: all 0.2s ease;
+  transition: background-color 0.15s ease;
+  will-change: background-color;
 }
 
 .ant-table-tbody > tr:hover {
   background-color: rgba(99, 102, 241, 0.1) !important;
-  transform: scale(1.01);
 }
 
 .ant-select-selector,
@@ -120,12 +127,12 @@ code {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+  background: linear-gradient(135deg, #334155 0%, #475569 100%);
 }
 
 /* Smooth page transitions */
@@ -171,10 +178,44 @@ code {
 /* Statistic enhancements */
 .ant-statistic-title {
   font-weight: 500;
-  color: rgba(0, 0, 0, 0.65);
+  color: #94a3b8;
   margin-bottom: 8px;
 }
 
 .ant-statistic-content {
   font-weight: 700;
+  color: #e2e8f0;
+}
+
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+body {
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Optimize animations */
+[data-aos] {
+  will-change: transform, opacity;
+}
+
+/* Reduce motion for better performance */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

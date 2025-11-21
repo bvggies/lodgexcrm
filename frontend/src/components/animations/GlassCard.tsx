@@ -16,28 +16,28 @@ const GlassCard: React.FC<GlassCardProps> = ({
 }) => {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        delay: index * 0.1,
-        duration: 0.5,
-        type: 'spring',
-        stiffness: 100,
+        delay: index * 0.03,
+        duration: 0.25,
+        ease: 'easeOut',
       }}
       whileHover={{
-        y: -4,
-        transition: { duration: 0.2 },
+        y: -2,
+        transition: { duration: 0.15 },
       }}
       data-aos="fade-up"
-      data-aos-delay={index * 50}
+      data-aos-delay={index * 30}
+      style={{ willChange: 'transform' }}
     >
       <Card
         {...cardProps}
         style={{
-          background: 'rgba(255, 255, 255, 0.95)',
+          background: '#1e293b',
           backdropFilter: 'blur(20px)',
           borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.3)',
+          border: '1px solid #334155',
           boxShadow: `0 8px 32px ${glowColor}`,
           overflow: 'hidden',
           ...cardProps.style,

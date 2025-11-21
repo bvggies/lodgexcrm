@@ -290,24 +290,11 @@ const DashboardPage: React.FC = () => {
     <div
       style={{
         minHeight: '100vh',
-        background:
-          'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)',
-        backgroundSize: '400% 400%',
-        animation: 'gradientShift 15s ease infinite',
+        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         padding: '24px',
         position: 'relative',
       }}
     >
-      <style>
-        {`
-          @keyframes gradientShift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-          }
-        `}
-      </style>
-
       {/* Animated background particles */}
       <div
         style={{
@@ -434,7 +421,7 @@ const DashboardPage: React.FC = () => {
                     icon={<PlusOutlined />}
                     onClick={() => navigate('/bookings')}
                     style={{
-                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      background: 'linear-gradient(135deg, #1e293b 0%, #334155 100%)',
                       border: 'none',
                       borderRadius: '8px',
                       fontWeight: 600,
@@ -494,7 +481,7 @@ const DashboardPage: React.FC = () => {
                 precision={2}
                 loading={loading}
                 icon={<DollarOutlined />}
-                gradient="linear-gradient(135deg, #667eea 0%, #764ba2 100%)"
+                gradient="linear-gradient(135deg, #1e293b 0%, #0f172a 100%)"
                 index={0}
                 valueStyle={{ color: '#3f8600' }}
               />

@@ -9,12 +9,14 @@ import App from './App';
 import { store } from './store/store';
 import './index.css';
 
-// Initialize AOS
+// Initialize AOS with optimized settings for performance
 AOS.init({
-  duration: 800,
-  easing: 'ease-in-out',
+  duration: 400,
+  easing: 'ease-out',
   once: true,
-  offset: 100,
+  offset: 50,
+  delay: 0,
+  disable: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
 });
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
