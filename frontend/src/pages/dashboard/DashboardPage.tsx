@@ -251,7 +251,10 @@ const DashboardPage: React.FC = () => {
       title: 'Amount',
       dataIndex: 'totalAmount',
       key: 'totalAmount',
-      render: (amount: number) => `$${amount.toFixed(2)}`,
+      render: (amount: any) => {
+        const numAmount = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
+        return `$${numAmount.toFixed(2)}`;
+      },
     },
     {
       title: 'Status',
@@ -484,7 +487,10 @@ const DashboardPage: React.FC = () => {
                 />
                 <YAxis />
                 <RechartsTooltip
-                  formatter={(value: number) => `$${value.toFixed(2)}`}
+                  formatter={(value: any) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                    return `$${numValue.toFixed(2)}`;
+                  }}
                   labelFormatter={(label) => dayjs(label, 'YYYY-MM').format('MMMM YYYY')}
                 />
                 <Legend />
@@ -531,7 +537,11 @@ const DashboardPage: React.FC = () => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }: any) => {
+                    const numPercent =
+                      typeof percent === 'number' ? percent : parseFloat(percent) || 0;
+                    return `${name}: ${(numPercent * 100).toFixed(0)}%`;
+                  }}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -563,7 +573,12 @@ const DashboardPage: React.FC = () => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis type="number" domain={[0, 100]} />
                 <YAxis dataKey="propertyName" type="category" width={120} tick={{ fontSize: 12 }} />
-                <RechartsTooltip formatter={(value: number) => `${value.toFixed(1)}%`} />
+                <RechartsTooltip
+                  formatter={(value: any) => {
+                    const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                    return `${numValue.toFixed(1)}%`;
+                  }}
+                />
                 <Bar dataKey="occupancyRate" name="Occupancy Rate (%)">
                   {occupancyData.map((entry, index) => (
                     <Cell
@@ -598,7 +613,11 @@ const DashboardPage: React.FC = () => {
                   cx="50%"
                   cy="50%"
                   labelLine={false}
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }: any) => {
+                    const numPercent =
+                      typeof percent === 'number' ? percent : parseFloat(percent) || 0;
+                    return `${name}: ${(numPercent * 100).toFixed(0)}%`;
+                  }}
                   outerRadius={80}
                   fill="#8884d8"
                   dataKey="value"
@@ -664,7 +683,7 @@ const DashboardPage: React.FC = () => {
                       <List.Item.Meta
                         avatar={<Avatar>{guest.firstName[0]}</Avatar>}
                         title={`${guest.firstName} ${guest.lastName}`}
-                        description={`${guest.totalBookings} bookings • $${guest.totalSpend.toFixed(2)} total`}
+                        description={`${guest.totalBookings} bookings • $${(typeof guest.totalSpend === 'number' ? guest.totalSpend : parseFloat(guest.totalSpend) || 0).toFixed(2)} total`}
                       />
                     </List.Item>
                   )}
