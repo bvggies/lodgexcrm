@@ -302,20 +302,24 @@ const StaffPage: React.FC = () => {
                 children: (
                   <Descriptions column={1} bordered>
                     <Descriptions.Item label="Name">{selectedStaff.name}</Descriptions.Item>
-                    <Descriptions.Item label="Email">{selectedStaff.email || 'N/A'}</Descriptions.Item>
-                    <Descriptions.Item label="Phone">{selectedStaff.phone || 'N/A'}</Descriptions.Item>
+                    <Descriptions.Item label="Email">
+                      {selectedStaff.email || 'N/A'}
+                    </Descriptions.Item>
+                    <Descriptions.Item label="Phone">
+                      {selectedStaff.phone || 'N/A'}
+                    </Descriptions.Item>
                     <Descriptions.Item label="Role">
                       <Tag
                         color={
                           selectedStaff.role === 'admin'
                             ? 'red'
                             : selectedStaff.role === 'assistant'
-                            ? 'blue'
-                            : selectedStaff.role === 'cleaner'
-                            ? 'green'
-                            : selectedStaff.role === 'maintenance'
-                            ? 'orange'
-                            : 'purple'
+                              ? 'blue'
+                              : selectedStaff.role === 'cleaner'
+                                ? 'green'
+                                : selectedStaff.role === 'maintenance'
+                                  ? 'orange'
+                                  : 'purple'
                         }
                       >
                         {selectedStaff.role.toUpperCase()}
@@ -368,8 +372,8 @@ const StaffPage: React.FC = () => {
                                   status === 'completed'
                                     ? 'success'
                                     : status === 'in_progress'
-                                    ? 'processing'
-                                    : 'default'
+                                      ? 'processing'
+                                      : 'default'
                                 }
                               >
                                 {status?.replace('_', ' ').toUpperCase() || 'N/A'}
