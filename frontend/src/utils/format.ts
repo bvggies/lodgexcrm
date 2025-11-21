@@ -3,6 +3,9 @@
  */
 
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
+
+dayjs.extend(relativeTime);
 
 export const formatCurrency = (amount: number, currency: string = 'AED'): string => {
   return new Intl.NumberFormat('en-AE', {

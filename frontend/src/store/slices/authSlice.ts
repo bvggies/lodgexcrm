@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authApi } from '../../services/api/authApi';
 import { User } from '../../types/auth';
 
@@ -25,7 +25,7 @@ export const loginUser = createAsyncThunk(
   async (credentials: { email: string; password: string }, { rejectWithValue }) => {
     try {
       const response = await authApi.login(credentials);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error?.message || 'Login failed');
     }
@@ -59,7 +59,7 @@ export const refreshAccessToken = createAsyncThunk(
       }
 
       const response = await authApi.refreshToken(refreshToken);
-      return response.data;
+      return response.data.data;
     } catch (error: any) {
       return rejectWithValue(error.response?.data?.error?.message || 'Token refresh failed');
     }
@@ -69,7 +69,7 @@ export const refreshAccessToken = createAsyncThunk(
 export const getCurrentUser = createAsyncThunk('auth/me', async (_, { rejectWithValue }) => {
   try {
     const response = await authApi.getMe();
-    return response.data.user;
+    return response.data.data.user;
   } catch (error: any) {
     return rejectWithValue(error.response?.data?.error?.message || 'Failed to get user');
   }
@@ -100,7 +100,11 @@ const authSlice = createSlice({
       })
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.user = action.payload.user;
+        state.user = {
+          ...action.payload.user,
+          isActive: true,
+          createdAt: new Date().toISOString(),
+        } as User;
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;

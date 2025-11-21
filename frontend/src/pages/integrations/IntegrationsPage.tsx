@@ -69,7 +69,9 @@ const IntegrationsPage: React.FC = () => {
   const loadProperties = async () => {
     try {
       const response = await propertiesApi.getAll();
-      setProperties(response.data.data);
+      setProperties(
+        Array.isArray(response.data.data.properties) ? response.data.data.properties : []
+      );
     } catch (error) {
       console.error('Failed to load properties');
     }

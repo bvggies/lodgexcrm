@@ -208,7 +208,9 @@ const UnitsPage: React.FC = () => {
           onChange={setPropertyFilter}
           showSearch
           filterOption={(input, option) =>
-            (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+            String(option?.label ?? '')
+              .toLowerCase()
+              .includes(input.toLowerCase())
           }
         >
           {properties.map((p) => (
@@ -263,7 +265,9 @@ const UnitsPage: React.FC = () => {
               placeholder="Select a property"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
             >
               {properties.map((p) => (

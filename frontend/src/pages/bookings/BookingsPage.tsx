@@ -369,7 +369,9 @@ const BookingsPage: React.FC = () => {
               placeholder="Select a property"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               options={properties.map((p) => ({
                 value: p.id,
@@ -386,7 +388,9 @@ const BookingsPage: React.FC = () => {
               placeholder="Select a guest"
               showSearch
               filterOption={(input, option) =>
-                (option?.label ?? '').toLowerCase().includes(input.toLowerCase())
+                String(option?.label ?? '')
+                  .toLowerCase()
+                  .includes(input.toLowerCase())
               }
               options={guests.map((g) => ({
                 value: g.id,
