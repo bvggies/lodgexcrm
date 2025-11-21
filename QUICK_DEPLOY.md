@@ -93,7 +93,7 @@ npx prisma migrate deploy
 4. **Framework**: Create React App (auto-detected)
 5. **Environment Variables**:
    ```
-   REACT_APP_API_URL=https://lodgexcrm-backendL.vercel.app/api
+   REACT_APP_API_URL=https://lodgexcrm-backend.vercel.app/api
    ```
    (Replace with your actual backend URL from Step 3)
 6. Click **Deploy**
