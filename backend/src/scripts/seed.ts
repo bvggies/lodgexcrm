@@ -1,6 +1,11 @@
+import dotenv from 'dotenv';
 import { PrismaClient, StaffRole } from '@prisma/client';
 import { hashPassword } from '../utils/auth';
 import prisma from '../config/database';
+
+// Load environment variables from .env.local or .env
+dotenv.config({ path: '.env.local' });
+dotenv.config();
 
 async function main() {
   console.log('🌱 Starting database seed...');
