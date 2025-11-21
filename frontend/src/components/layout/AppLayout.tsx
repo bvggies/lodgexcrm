@@ -144,7 +144,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       label: 'Profile',
     },
     {
-      key: 'settings',
+      key: '/settings',
       icon: <SettingOutlined />,
       label: 'Settings',
     },
@@ -167,6 +167,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     if (key === 'logout') {
       dispatch(logout());
       navigate('/login');
+    } else if (key === 'settings') {
+      navigate('/settings');
     }
   };
 
@@ -213,12 +215,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <Layout>
         <Header
           style={{
-            background: '#fff',
+            background: '#1e293b',
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+            borderBottom: '1px solid #334155',
           }}
         >
           <GlobalSearch />

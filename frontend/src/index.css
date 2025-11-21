@@ -11,6 +11,8 @@ body {
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #0f172a;
+  color: #e2e8f0;
 }
 
 code {
@@ -47,12 +49,15 @@ code {
 /* Smooth transitions */
 .ant-card {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border: none;
+  border: 1px solid #334155;
+  background: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 .ant-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2);
   transform: translateY(-2px);
+  border-color: #475569;
 }
 
 .ant-btn {
@@ -70,7 +75,7 @@ code {
 }
 
 .ant-table-tbody > tr:hover {
-  background-color: rgba(102, 126, 234, 0.05) !important;
+  background-color: rgba(99, 102, 241, 0.1) !important;
   transform: scale(1.01);
 }
 
@@ -83,15 +88,15 @@ code {
 .ant-select-selector:hover,
 .ant-input:hover,
 .ant-picker:hover {
-  border-color: #667eea !important;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.1);
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
 }
 
 .ant-select-focused .ant-select-selector,
 .ant-input:focus,
 .ant-picker:focus {
-  border-color: #667eea !important;
-  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
 /* AOS custom animations */

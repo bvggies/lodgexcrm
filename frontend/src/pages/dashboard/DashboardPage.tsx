@@ -33,6 +33,8 @@ import {
   RiseOutlined,
   PieChartOutlined,
   BarChartOutlined,
+  ToolOutlined,
+  CheckCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { analyticsApi } from '../../services/api/analyticsApi';
@@ -423,22 +425,58 @@ const DashboardPage: React.FC = () => {
                   </Button>
                 </motion.div>
               </Tooltip>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => navigate('/bookings')}
-                  style={{
-                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    boxShadow: '0 4px 15px rgba(102, 126, 234, 0.4)',
-                  }}
-                >
-                  Add Booking
-                </Button>
-              </motion.div>
+              <Space>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    type="primary"
+                    icon={<PlusOutlined />}
+                    onClick={() => navigate('/bookings')}
+                    style={{
+                      background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                      border: 'none',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
+                    }}
+                  >
+                    Add Booking
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    type="default"
+                    icon={<ToolOutlined />}
+                    onClick={() => navigate('/cleaning')}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      border: 'none',
+                      color: 'white',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
+                    }}
+                  >
+                    Add Cleaning Task
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    type="default"
+                    icon={<CheckCircleOutlined />}
+                    onClick={() => navigate('/maintenance')}
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      border: 'none',
+                      color: 'white',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
+                    }}
+                  >
+                    Add Maintenance Task
+                  </Button>
+                </motion.div>
+              </Space>
             </Space>
           </motion.div>
         </FadeIn>

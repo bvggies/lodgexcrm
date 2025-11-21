@@ -24,6 +24,7 @@ import AutomationsPage from './pages/automations/AutomationsPage';
 import ArchivePage from './pages/archive/ArchivePage';
 import ImportPage from './pages/import/ImportPage';
 import MyBookingsPage from './pages/bookings/MyBookingsPage';
+import SettingsPage from './pages/settings/SettingsPage';
 import { useAppSelector } from './store/hooks';
 
 const { Content } = Layout;
@@ -177,6 +178,14 @@ function App() {
                         element={
                           <PageTransition>
                             <ImportPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/settings"
+                        element={
+                          <PageTransition>
+                            <SettingsPage />
                           </PageTransition>
                         }
                       />

@@ -30,6 +30,8 @@ const PropertiesPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [statusFilter, setStatusFilter] = useState<string | undefined>();
+  const [ownerFilter, setOwnerFilter] = useState<string | undefined>();
+  const [unitTypeFilter, setUnitTypeFilter] = useState<string | undefined>();
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProperty, setEditingProperty] = useState<Property | null>(null);
   const [form] = Form.useForm();
@@ -37,7 +39,7 @@ const PropertiesPage: React.FC = () => {
   useEffect(() => {
     loadProperties();
     loadOwners();
-  }, [searchText, statusFilter]);
+  }, [searchText, statusFilter, ownerFilter, unitTypeFilter]);
 
   const loadOwners = async () => {
     try {
@@ -54,15 +56,28 @@ const PropertiesPage: React.FC = () => {
       const params: any = {};
       if (searchText) params.search = searchText;
       if (statusFilter) params.status = statusFilter;
+      if (ownerFilter) params.ownerId = ownerFilter;
+      if (unitTypeFilter) params.unitType = unitTypeFilter;
 
       const response = await propertiesApi.getAll(params);
-      setProperties(response.data.data.properties);
+      let filteredProperties = response.data.data.properties;
+
+      // Client-side filter for unitType if not supported by API
+      if (unitTypeFilter && !params.unitType) {
+        filteredProperties = filteredProperties.filter(
+          (p: Property) => p.unitType === unitTypeFilter
+        );
+      }
+
+      setProperties(filteredProperties);
     } catch (error) {
       message.error('Failed to load properties');
     } finally {
       setLoading(false);
     }
   };
+
+  const uniqueUnitTypes = Array.from(new Set(properties.map((p) => p.unitType))).filter(Boolean);
 
   const handleCreate = () => {
     setEditingProperty(null);
@@ -173,7 +188,7 @@ const PropertiesPage: React.FC = () => {
         </div>
       </FadeIn>
 
-      <Space style={{ marginBottom: 16, width: '100%', justifyContent: 'space-between' }}>
+      <Space style={{ marginBottom: 16, width: '100%', flexWrap: 'wrap' }}>
         <Input
           placeholder="Search properties..."
           prefix={<SearchOutlined />}
@@ -184,13 +199,45 @@ const PropertiesPage: React.FC = () => {
         />
         <Select
           placeholder="Filter by status"
-          style={{ width: 200 }}
+          style={{ width: 180 }}
           allowClear
           value={statusFilter}
           onChange={setStatusFilter}
         >
           <Option value="active">Active</Option>
           <Option value="inactive">Inactive</Option>
+        </Select>
+        <Select
+          placeholder="Filter by owner"
+          style={{ width: 200 }}
+          allowClear
+          value={ownerFilter}
+          onChange={setOwnerFilter}
+          showSearch
+          filterOption={(input, option) =>
+            String(option?.label ?? '')
+              .toLowerCase()
+              .includes(input.toLowerCase())
+          }
+        >
+          {owners.map((owner) => (
+            <Option key={owner.id} value={owner.id} label={owner.name}>
+              {owner.name}
+            </Option>
+          ))}
+        </Select>
+        <Select
+          placeholder="Filter by unit type"
+          style={{ width: 180 }}
+          allowClear
+          value={unitTypeFilter}
+          onChange={setUnitTypeFilter}
+        >
+          {uniqueUnitTypes.map((type) => (
+            <Option key={type} value={type}>
+              {type}
+            </Option>
+          ))}
         </Select>
       </Space>
 
