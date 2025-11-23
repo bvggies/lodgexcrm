@@ -37,7 +37,7 @@ import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
 import { archiveApi } from '../../services/api/archiveApi';
 import FadeIn from '../../components/animations/FadeIn';
-import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer, Views, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -72,7 +72,7 @@ const BookingsPage: React.FC = () => {
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [form] = Form.useForm();
   const [activeTab, setActiveTab] = useState('table');
-  const [calendarView, setCalendarView] = useState(Views.MONTH);
+  const [calendarView, setCalendarView] = useState<View>(Views.MONTH);
   const [currentDate, setCurrentDate] = useState(new Date());
   const [reminders, setReminders] = useState<any>(null);
   const [remindersLoading, setRemindersLoading] = useState(false);
@@ -401,13 +401,25 @@ const BookingsPage: React.FC = () => {
                 onSelectEvent={(event) => navigate(`/bookings/${event.resource.bookingId}`)}
                 eventPropGetter={(event) => {
                   const status = event.resource?.paymentStatus;
-                  const colorMap: Record<string, { backgroundColor: string; borderColor: string }> = {
-                    paid: { backgroundColor: '#52c41a', borderColor: '#389e0d' },
-                    pending: { backgroundColor: '#faad14', borderColor: '#d48806' },
-                    partial: { backgroundColor: '#1890ff', borderColor: '#096dd9' },
-                    refunded: { backgroundColor: '#ff4d4f', borderColor: '#cf1322' },
+                  const colorMap: Record<string, { backgroundColor: string; borderColor: string }> =
+                    {
+                      paid: { backgroundColor: '#52c41a', borderColor: '#389e0d' },
+                      pending: { backgroundColor: '#faad14', borderColor: '#d48806' },
+                      partial: { backgroundColor: '#1890ff', borderColor: '#096dd9' },
+                      refunded: { backgroundColor: '#ff4d4f', borderColor: '#cf1322' },
+                    };
+                  const colors = colorMap[status] || {
+                    backgroundColor: '#722ed1',
+                    borderColor: '#531dab',
                   };
-                  return colorMap[status] || { backgroundColor: '#722ed1', borderColor: '#531dab' };
+                  return {
+                    style: {
+                      backgroundColor: colors.backgroundColor,
+                      borderColor: colors.borderColor,
+                      borderWidth: '1px',
+                      borderStyle: 'solid',
+                    },
+                  };
                 }}
               />
             </div>
@@ -417,12 +429,13 @@ const BookingsPage: React.FC = () => {
               <span>
                 <BellOutlined />
                 Reminders
-                {reminders && (reminders.summary.checkinsToday + reminders.summary.checkoutsToday > 0) && (
-                  <Badge
-                    count={reminders.summary.checkinsToday + reminders.summary.checkoutsToday}
-                    style={{ marginLeft: 8 }}
-                  />
-                )}
+                {reminders &&
+                  reminders.summary.checkinsToday + reminders.summary.checkoutsToday > 0 && (
+                    <Badge
+                      count={reminders.summary.checkinsToday + reminders.summary.checkoutsToday}
+                      style={{ marginLeft: 8 }}
+                    />
+                  )}
               </span>
             }
             key="reminders"
@@ -435,7 +448,8 @@ const BookingsPage: React.FC = () => {
               <div>
                 {reminders && (
                   <>
-                    {(reminders.summary.checkinsToday > 0 || reminders.summary.checkoutsToday > 0) && (
+                    {(reminders.summary.checkinsToday > 0 ||
+                      reminders.summary.checkoutsToday > 0) && (
                       <Alert
                         message="Urgent Reminders"
                         description={`${reminders.summary.checkinsToday} check-in(s) and ${reminders.summary.checkoutsToday} check-out(s) today!`}
@@ -482,12 +496,11 @@ const BookingsPage: React.FC = () => {
                                   avatar={
                                     <Avatar
                                       style={{
-                                        backgroundColor:
-                                          reminder.isToday
-                                            ? '#ff4d4f'
-                                            : reminder.isTomorrow
-                                              ? '#faad14'
-                                              : '#1890ff',
+                                        backgroundColor: reminder.isToday
+                                          ? '#ff4d4f'
+                                          : reminder.isTomorrow
+                                            ? '#faad14'
+                                            : '#1890ff',
                                       }}
                                     >
                                       {reminder.daysUntil}
@@ -515,7 +528,8 @@ const BookingsPage: React.FC = () => {
                                         Guest: {reminder.guest.firstName} {reminder.guest.lastName}
                                       </div>
                                       <div>
-                                        Check-in: {dayjs(reminder.date).format('MMM DD, YYYY HH:mm')}
+                                        Check-in:{' '}
+                                        {dayjs(reminder.date).format('MMM DD, YYYY HH:mm')}
                                       </div>
                                       <div>
                                         {reminder.daysUntil === 0
@@ -569,12 +583,11 @@ const BookingsPage: React.FC = () => {
                                   avatar={
                                     <Avatar
                                       style={{
-                                        backgroundColor:
-                                          reminder.isToday
-                                            ? '#ff4d4f'
-                                            : reminder.isTomorrow
-                                              ? '#faad14'
-                                              : '#1890ff',
+                                        backgroundColor: reminder.isToday
+                                          ? '#ff4d4f'
+                                          : reminder.isTomorrow
+                                            ? '#faad14'
+                                            : '#1890ff',
                                       }}
                                     >
                                       {reminder.daysUntil}
@@ -602,7 +615,8 @@ const BookingsPage: React.FC = () => {
                                         Guest: {reminder.guest.firstName} {reminder.guest.lastName}
                                       </div>
                                       <div>
-                                        Check-out: {dayjs(reminder.date).format('MMM DD, YYYY HH:mm')}
+                                        Check-out:{' '}
+                                        {dayjs(reminder.date).format('MMM DD, YYYY HH:mm')}
                                       </div>
                                       <div>
                                         {reminder.daysUntil === 0
