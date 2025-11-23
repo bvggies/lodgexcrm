@@ -7,6 +7,8 @@ import {
   updateGuest,
   deleteGuest,
   getGuestStayHistory,
+  getGuestPaymentRecords,
+  getGuestSecurityDeposits,
 } from '../controllers/guests.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { StaffRole } from '@prisma/client';
@@ -183,6 +185,46 @@ router.get(
   [param('id').isUUID()],
   validateRequest,
   getGuestStayHistory
+);
+
+/**
+ * @swagger
+ * /api/guests/{id}/payment-records:
+ *   get:
+ *     summary: Get guest payment records
+ *     tags: [Guests]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Payment records retrieved successfully
+ */
+router.get(
+  '/:id/payment-records',
+  authenticate,
+  [param('id').isUUID()],
+  validateRequest,
+  getGuestPaymentRecords
+);
+
+/**
+ * @swagger
+ * /api/guests/{id}/security-deposits:
+ *   get:
+ *     summary: Get guest security deposits
+ *     tags: [Guests]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Security deposits retrieved successfully
+ */
+router.get(
+  '/:id/security-deposits',
+  authenticate,
+  [param('id').isUUID()],
+  validateRequest,
+  getGuestSecurityDeposits
 );
 
 export default router;

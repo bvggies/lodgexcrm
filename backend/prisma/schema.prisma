@@ -145,6 +145,8 @@ model Unit {
   size              Float?
   currentPrice      Decimal?
   availabilityStatus String?
+  keys              Json?    // Array of key information: [{type: "main", location: "office", notes: ""}]
+  accessCodes       Json?    // Array of access codes: [{type: "wifi", code: "1234", notes: ""}, {type: "door", code: "5678"}]
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
 

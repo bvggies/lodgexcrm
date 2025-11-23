@@ -83,4 +83,20 @@ export const bookingsApi = {
   checkOut: (id: string) => {
     return apiClient.post<{ success: boolean; message: string }>(`/bookings/${id}/checkout`);
   },
+
+  getReminders: (days?: number) => {
+    return apiClient.get<{
+      success: boolean;
+      data: {
+        checkinReminders: any[];
+        checkoutReminders: any[];
+        summary: {
+          checkinsToday: number;
+          checkinsTomorrow: number;
+          checkoutsToday: number;
+          checkoutsTomorrow: number;
+        };
+      };
+    }>('/bookings/reminders', { params: { days } });
+  },
 };

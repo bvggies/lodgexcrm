@@ -299,3 +299,144 @@ export const getGuestStayHistory = async (
   }
 };
 
+export const getGuestPaymentRecords = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const guest = await prisma.guest.findUnique({
+      where: { id },
+    });
+
+    if (!guest) {
+      return next(createError('Guest not found', 404));
+    }
+
+    const financeRecords = await prisma.financeRecord.findMany({
+      where: { guestId: id },
+      include: {
+        booking: {
+          select: {
+            id: true,
+            reference: true,
+            checkinDate: true,
+            checkoutDate: true,
+          },
+        },
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    // Calculate totals
+    const totalPaid = financeRecords
+      .filter((r) => r.status === 'paid' && r.type === 'revenue')
+      .reduce((sum, r) => sum + Number(r.amount), 0);
+    
+    const totalPending = financeRecords
+      .filter((r) => r.status === 'pending' && r.type === 'revenue')
+      .reduce((sum, r) => sum + Number(r.amount), 0);
+
+    res.json({
+      success: true,
+      data: {
+        records: financeRecords,
+        summary: {
+          totalPaid,
+          totalPending,
+          totalRecords: financeRecords.length,
+        },
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const getGuestSecurityDeposits = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const guest = await prisma.guest.findUnique({
+      where: { id },
+    });
+
+    if (!guest) {
+      return next(createError('Guest not found', 404));
+    }
+
+    const bookings = await prisma.booking.findMany({
+      where: {
+        guestId: id,
+        depositAmount: { not: null },
+      },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        unit: {
+          select: {
+            id: true,
+            unitCode: true,
+          },
+        },
+      },
+      orderBy: {
+        checkinDate: 'desc',
+      },
+    });
+
+    // Calculate deposit summary
+    const totalDeposits = bookings.reduce((sum, b) => sum + Number(b.depositAmount || 0), 0);
+    const activeDeposits = bookings
+      .filter((b) => {
+        const checkout = new Date(b.checkoutDate);
+        const today = new Date();
+        return checkout >= today;
+      })
+      .reduce((sum, b) => sum + Number(b.depositAmount || 0), 0);
+
+    res.json({
+      success: true,
+      data: {
+        deposits: bookings.map((b) => ({
+          bookingId: b.id,
+          reference: b.reference,
+          property: b.property,
+          unit: b.unit,
+          depositAmount: b.depositAmount,
+          checkinDate: b.checkinDate,
+          checkoutDate: b.checkoutDate,
+          isActive: new Date(b.checkoutDate) >= new Date(),
+        })),
+        summary: {
+          totalDeposits,
+          activeDeposits,
+          totalBookings: bookings.length,
+        },
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+

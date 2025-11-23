@@ -15,6 +15,9 @@ import {
   Popconfirm,
   Tabs,
   Checkbox,
+  Row,
+  Col,
+  Spin,
 } from 'antd';
 import {
   PlusOutlined,
@@ -23,6 +26,9 @@ import {
   SearchOutlined,
   CalendarOutlined,
   InboxOutlined,
+  BellOutlined,
+  CheckCircleOutlined,
+  ClockCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -31,12 +37,13 @@ import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
 import { archiveApi } from '../../services/api/archiveApi';
 import FadeIn from '../../components/animations/FadeIn';
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
+import { Card, Badge, List, Avatar, Alert } from 'antd';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -65,13 +72,30 @@ const BookingsPage: React.FC = () => {
   const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
   const [form] = Form.useForm();
   const [activeTab, setActiveTab] = useState('table');
+  const [calendarView, setCalendarView] = useState(Views.MONTH);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [reminders, setReminders] = useState<any>(null);
+  const [remindersLoading, setRemindersLoading] = useState(false);
 
   useEffect(() => {
     loadBookings();
     loadCalendar();
     loadProperties();
     loadGuests();
+    loadReminders();
   }, [searchText, statusFilter]);
+
+  const loadReminders = async () => {
+    try {
+      setRemindersLoading(true);
+      const response = await bookingsApi.getReminders(7);
+      setReminders(response.data.data);
+    } catch (error) {
+      console.error('Failed to load reminders:', error);
+    } finally {
+      setRemindersLoading(false);
+    }
+  };
 
   const loadProperties = async () => {
     try {
@@ -340,6 +364,29 @@ const BookingsPage: React.FC = () => {
             />
           </Tabs.TabPane>
           <Tabs.TabPane tab="Calendar View" key="calendar">
+            <div style={{ marginBottom: 16 }}>
+              <Space>
+                <Button
+                  type={calendarView === Views.MONTH ? 'primary' : 'default'}
+                  onClick={() => setCalendarView(Views.MONTH)}
+                >
+                  Month
+                </Button>
+                <Button
+                  type={calendarView === Views.WEEK ? 'primary' : 'default'}
+                  onClick={() => setCalendarView(Views.WEEK)}
+                >
+                  Week
+                </Button>
+                <Button
+                  type={calendarView === Views.DAY ? 'primary' : 'default'}
+                  onClick={() => setCalendarView(Views.DAY)}
+                >
+                  Day
+                </Button>
+                <Button onClick={() => setCurrentDate(new Date())}>Today</Button>
+              </Space>
+            </div>
             <div style={{ height: 600 }}>
               <Calendar
                 localizer={localizer}
@@ -347,9 +394,236 @@ const BookingsPage: React.FC = () => {
                 startAccessor="start"
                 endAccessor="end"
                 style={{ height: '100%' }}
+                view={calendarView}
+                onView={setCalendarView}
+                date={currentDate}
+                onNavigate={setCurrentDate}
                 onSelectEvent={(event) => navigate(`/bookings/${event.resource.bookingId}`)}
+                eventPropGetter={(event) => {
+                  const status = event.resource?.paymentStatus;
+                  const colorMap: Record<string, { backgroundColor: string; borderColor: string }> = {
+                    paid: { backgroundColor: '#52c41a', borderColor: '#389e0d' },
+                    pending: { backgroundColor: '#faad14', borderColor: '#d48806' },
+                    partial: { backgroundColor: '#1890ff', borderColor: '#096dd9' },
+                    refunded: { backgroundColor: '#ff4d4f', borderColor: '#cf1322' },
+                  };
+                  return colorMap[status] || { backgroundColor: '#722ed1', borderColor: '#531dab' };
+                }}
               />
             </div>
+          </Tabs.TabPane>
+          <Tabs.TabPane
+            tab={
+              <span>
+                <BellOutlined />
+                Reminders
+                {reminders && (reminders.summary.checkinsToday + reminders.summary.checkoutsToday > 0) && (
+                  <Badge
+                    count={reminders.summary.checkinsToday + reminders.summary.checkoutsToday}
+                    style={{ marginLeft: 8 }}
+                  />
+                )}
+              </span>
+            }
+            key="reminders"
+          >
+            {remindersLoading ? (
+              <div style={{ textAlign: 'center', padding: 40 }}>
+                <Spin size="large" />
+              </div>
+            ) : (
+              <div>
+                {reminders && (
+                  <>
+                    {(reminders.summary.checkinsToday > 0 || reminders.summary.checkoutsToday > 0) && (
+                      <Alert
+                        message="Urgent Reminders"
+                        description={`${reminders.summary.checkinsToday} check-in(s) and ${reminders.summary.checkoutsToday} check-out(s) today!`}
+                        type="warning"
+                        showIcon
+                        style={{ marginBottom: 16 }}
+                      />
+                    )}
+                    <Row gutter={[16, 16]}>
+                      <Col xs={24} lg={12}>
+                        <Card
+                          title={
+                            <span>
+                              <CheckCircleOutlined style={{ color: '#52c41a', marginRight: 8 }} />
+                              Upcoming Check-ins ({reminders.checkinReminders.length})
+                            </span>
+                          }
+                          extra={
+                            <Badge
+                              count={reminders.summary.checkinsToday}
+                              style={{ backgroundColor: '#52c41a' }}
+                            />
+                          }
+                        >
+                          <List
+                            dataSource={reminders.checkinReminders}
+                            renderItem={(reminder: any) => (
+                              <List.Item
+                                style={{
+                                  backgroundColor:
+                                    reminder.isToday || reminder.isTomorrow
+                                      ? reminder.isToday
+                                        ? '#fff1f0'
+                                        : '#fffbe6'
+                                      : 'transparent',
+                                  padding: '12px',
+                                  marginBottom: 8,
+                                  borderRadius: 4,
+                                  cursor: 'pointer',
+                                }}
+                                onClick={() => navigate(`/bookings/${reminder.bookingId}`)}
+                              >
+                                <List.Item.Meta
+                                  avatar={
+                                    <Avatar
+                                      style={{
+                                        backgroundColor:
+                                          reminder.isToday
+                                            ? '#ff4d4f'
+                                            : reminder.isTomorrow
+                                              ? '#faad14'
+                                              : '#1890ff',
+                                      }}
+                                    >
+                                      {reminder.daysUntil}
+                                    </Avatar>
+                                  }
+                                  title={
+                                    <div>
+                                      <strong>{reminder.property.name}</strong>
+                                      {reminder.unit && ` - ${reminder.unit.unitCode}`}
+                                      {reminder.isToday && (
+                                        <Tag color="red" style={{ marginLeft: 8 }}>
+                                          TODAY
+                                        </Tag>
+                                      )}
+                                      {reminder.isTomorrow && (
+                                        <Tag color="orange" style={{ marginLeft: 8 }}>
+                                          TOMORROW
+                                        </Tag>
+                                      )}
+                                    </div>
+                                  }
+                                  description={
+                                    <div>
+                                      <div>
+                                        Guest: {reminder.guest.firstName} {reminder.guest.lastName}
+                                      </div>
+                                      <div>
+                                        Check-in: {dayjs(reminder.date).format('MMM DD, YYYY HH:mm')}
+                                      </div>
+                                      <div>
+                                        {reminder.daysUntil === 0
+                                          ? 'Today'
+                                          : reminder.daysUntil === 1
+                                            ? 'Tomorrow'
+                                            : `In ${reminder.daysUntil} days`}
+                                      </div>
+                                    </div>
+                                  }
+                                />
+                              </List.Item>
+                            )}
+                          />
+                        </Card>
+                      </Col>
+                      <Col xs={24} lg={12}>
+                        <Card
+                          title={
+                            <span>
+                              <ClockCircleOutlined style={{ color: '#1890ff', marginRight: 8 }} />
+                              Upcoming Check-outs ({reminders.checkoutReminders.length})
+                            </span>
+                          }
+                          extra={
+                            <Badge
+                              count={reminders.summary.checkoutsToday}
+                              style={{ backgroundColor: '#1890ff' }}
+                            />
+                          }
+                        >
+                          <List
+                            dataSource={reminders.checkoutReminders}
+                            renderItem={(reminder: any) => (
+                              <List.Item
+                                style={{
+                                  backgroundColor:
+                                    reminder.isToday || reminder.isTomorrow
+                                      ? reminder.isToday
+                                        ? '#fff1f0'
+                                        : '#fffbe6'
+                                      : 'transparent',
+                                  padding: '12px',
+                                  marginBottom: 8,
+                                  borderRadius: 4,
+                                  cursor: 'pointer',
+                                }}
+                                onClick={() => navigate(`/bookings/${reminder.bookingId}`)}
+                              >
+                                <List.Item.Meta
+                                  avatar={
+                                    <Avatar
+                                      style={{
+                                        backgroundColor:
+                                          reminder.isToday
+                                            ? '#ff4d4f'
+                                            : reminder.isTomorrow
+                                              ? '#faad14'
+                                              : '#1890ff',
+                                      }}
+                                    >
+                                      {reminder.daysUntil}
+                                    </Avatar>
+                                  }
+                                  title={
+                                    <div>
+                                      <strong>{reminder.property.name}</strong>
+                                      {reminder.unit && ` - ${reminder.unit.unitCode}`}
+                                      {reminder.isToday && (
+                                        <Tag color="red" style={{ marginLeft: 8 }}>
+                                          TODAY
+                                        </Tag>
+                                      )}
+                                      {reminder.isTomorrow && (
+                                        <Tag color="orange" style={{ marginLeft: 8 }}>
+                                          TOMORROW
+                                        </Tag>
+                                      )}
+                                    </div>
+                                  }
+                                  description={
+                                    <div>
+                                      <div>
+                                        Guest: {reminder.guest.firstName} {reminder.guest.lastName}
+                                      </div>
+                                      <div>
+                                        Check-out: {dayjs(reminder.date).format('MMM DD, YYYY HH:mm')}
+                                      </div>
+                                      <div>
+                                        {reminder.daysUntil === 0
+                                          ? 'Today'
+                                          : reminder.daysUntil === 1
+                                            ? 'Tomorrow'
+                                            : `In ${reminder.daysUntil} days`}
+                                      </div>
+                                    </div>
+                                  }
+                                />
+                              </List.Item>
+                            )}
+                          />
+                        </Card>
+                      </Col>
+                    </Row>
+                  </>
+                )}
+              </div>
+            )}
           </Tabs.TabPane>
         </Tabs>
       </motion.div>

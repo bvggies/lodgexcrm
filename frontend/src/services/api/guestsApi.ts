@@ -55,4 +55,32 @@ export const guestsApi = {
       `/guests/${id}/stay-history`
     );
   },
+
+  getPaymentRecords: (id: string) => {
+    return apiClient.get<{
+      success: boolean;
+      data: {
+        records: any[];
+        summary: {
+          totalPaid: number;
+          totalPending: number;
+          totalRecords: number;
+        };
+      };
+    }>(`/guests/${id}/payment-records`);
+  },
+
+  getSecurityDeposits: (id: string) => {
+    return apiClient.get<{
+      success: boolean;
+      data: {
+        deposits: any[];
+        summary: {
+          totalDeposits: number;
+          activeDeposits: number;
+          totalBookings: number;
+        };
+      };
+    }>(`/guests/${id}/security-deposits`);
+  },
 };

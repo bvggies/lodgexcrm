@@ -9,6 +9,7 @@ import {
   checkIn,
   checkOut,
   getCalendarBookings,
+  getReminders,
 } from '../controllers/bookings.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { StaffRole } from '@prisma/client';
@@ -283,6 +284,32 @@ router.post(
   [param('id').isUUID()],
   validateRequest,
   checkOut
+);
+
+/**
+ * @swagger
+ * /api/bookings/reminders:
+ *   get:
+ *     summary: Get check-in and check-out reminders
+ *     tags: [Bookings]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: integer
+ *           default: 7
+ *     responses:
+ *       200:
+ *         description: Reminders retrieved successfully
+ */
+router.get(
+  '/reminders',
+  authenticate,
+  [query('days').optional().isInt({ min: 1, max: 30 })],
+  validateRequest,
+  getReminders
 );
 
 export default router;

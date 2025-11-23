@@ -844,3 +844,149 @@ export const getCalendarBookings = async (
   }
 };
 
+export const getReminders = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { days = 7 } = req.query;
+    const daysAhead = parseInt(days as string, 10);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const futureDate = new Date(today);
+    futureDate.setDate(futureDate.getDate() + daysAhead);
+
+    // Get upcoming check-ins
+    const upcomingCheckins = await prisma.booking.findMany({
+      where: {
+        checkinDate: {
+          gte: today,
+          lte: futureDate,
+        },
+      },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        unit: {
+          select: {
+            id: true,
+            unitCode: true,
+          },
+        },
+        guest: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+      orderBy: {
+        checkinDate: 'asc',
+      },
+    });
+
+    // Get upcoming check-outs
+    const upcomingCheckouts = await prisma.booking.findMany({
+      where: {
+        checkoutDate: {
+          gte: today,
+          lte: futureDate,
+        },
+      },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        unit: {
+          select: {
+            id: true,
+            unitCode: true,
+          },
+        },
+        guest: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+          },
+        },
+      },
+      orderBy: {
+        checkoutDate: 'asc',
+      },
+    });
+
+    // Format reminders
+    const checkinReminders = upcomingCheckins.map((booking) => {
+      const daysUntil = differenceInDays(booking.checkinDate, today);
+      return {
+        id: booking.id,
+        type: 'checkin' as const,
+        bookingId: booking.id,
+        reference: booking.reference,
+        date: booking.checkinDate,
+        daysUntil,
+        isToday: daysUntil === 0,
+        isTomorrow: daysUntil === 1,
+        property: booking.property,
+        unit: booking.unit,
+        guest: booking.guest,
+        nights: booking.nights,
+        totalAmount: booking.totalAmount,
+        paymentStatus: booking.paymentStatus,
+      };
+    });
+
+    const checkoutReminders = upcomingCheckouts.map((booking) => {
+      const daysUntil = differenceInDays(booking.checkoutDate, today);
+      return {
+        id: booking.id,
+        type: 'checkout' as const,
+        bookingId: booking.id,
+        reference: booking.reference,
+        date: booking.checkoutDate,
+        daysUntil,
+        isToday: daysUntil === 0,
+        isTomorrow: daysUntil === 1,
+        property: booking.property,
+        unit: booking.unit,
+        guest: booking.guest,
+        nights: booking.nights,
+        totalAmount: booking.totalAmount,
+        paymentStatus: booking.paymentStatus,
+      };
+    });
+
+    res.json({
+      success: true,
+      data: {
+        checkinReminders,
+        checkoutReminders,
+        summary: {
+          checkinsToday: checkinReminders.filter((r) => r.isToday).length,
+          checkinsTomorrow: checkinReminders.filter((r) => r.isTomorrow).length,
+          checkoutsToday: checkoutReminders.filter((r) => r.isToday).length,
+          checkoutsTomorrow: checkoutReminders.filter((r) => r.isTomorrow).length,
+        },
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
