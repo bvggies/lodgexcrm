@@ -409,9 +409,9 @@ export class ExcelImportService {
       const rowNum = i + 2;
 
       try {
-        if (!row.name || !row.email || !row.role) {
+        if (!row.firstName || !row.lastName || !row.email || !row.role) {
           result.failed++;
-          result.errors.push(`Row ${rowNum}: Missing required fields (name, email, role)`);
+          result.errors.push(`Row ${rowNum}: Missing required fields (firstName, lastName, email, role)`);
           continue;
         }
 
@@ -424,16 +424,23 @@ export class ExcelImportService {
           continue;
         }
 
-        const passwordHash = await hashPassword(row.password || 'password123');
+        if (!row.password) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Password is required`);
+          continue;
+        }
+
+        const passwordHash = await hashPassword(row.password);
 
         await prisma.user.create({
           data: {
             email: row.email,
             passwordHash,
-            firstName: row.name.split(' ')[0] || row.name,
-            lastName: row.name.split(' ').slice(1).join(' ') || '',
+            firstName: row.firstName,
+            lastName: row.lastName,
             role: row.role,
-            isActive: row.isActive !== 'No' && row.isActive !== false,
+            phone: row.phone || undefined,
+            isActive: row.isActive !== 'No' && row.isActive !== false && row.isActive !== 'no',
           },
         });
 

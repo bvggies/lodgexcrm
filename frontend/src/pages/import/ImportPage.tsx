@@ -178,8 +178,15 @@ const ImportPage: React.FC = () => {
               <Text strong>Step 2: Download Template</Text>
               <br />
               <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-                Download the Excel template for {importType}, fill it with your data, then upload
-                it.
+                Download the Excel template for {importType}. The template includes:
+              </Text>
+              <ul style={{ fontSize: 12, color: '#666', marginTop: 8, marginBottom: 8 }}>
+                <li>An "Instructions" sheet with detailed field descriptions</li>
+                <li>Example rows showing the correct format</li>
+                <li>All required and optional fields clearly marked</li>
+              </ul>
+              <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
+                Fill the template with your data (delete example rows), then upload it.
               </Text>
               <Button
                 type="primary"
@@ -317,13 +324,45 @@ const ImportPage: React.FC = () => {
             message="Import Guidelines"
             description={
               <ul style={{ margin: 0, paddingLeft: 20 }}>
-                <li>Download the template for the data type you want to import</li>
-                <li>Fill in the template with your data (keep the header row)</li>
-                <li>Ensure required fields are filled</li>
-                <li>Dates should be in YYYY-MM-DD format</li>
-                <li>JSON fields (like address) should be valid JSON strings</li>
-                <li>Duplicate records (by email/code) will be skipped</li>
-                <li>Maximum file size: 10MB</li>
+                <li>
+                  <strong>Download the template</strong> - Each template includes an "Instructions"
+                  sheet with detailed field descriptions
+                </li>
+                <li>
+                  <strong>Read the instructions</strong> - Check the Instructions sheet in the
+                  downloaded Excel file for field requirements
+                </li>
+                <li>
+                  <strong>Fill in your data</strong> - Delete the example rows and add your actual
+                  data (keep the header row)
+                </li>
+                <li>
+                  <strong>Required fields</strong> - Make sure all required fields are filled
+                  (marked in Instructions sheet)
+                </li>
+                <li>
+                  <strong>Date format</strong> - Dates must be in YYYY-MM-DD format (e.g.,
+                  2024-01-15)
+                </li>
+                <li>
+                  <strong>JSON fields</strong> - Address and other JSON fields must be valid JSON
+                  strings (see examples in template)
+                </li>
+                <li>
+                  <strong>Unique identifiers</strong> - Email addresses, property codes, etc. must
+                  be unique
+                </li>
+                <li>
+                  <strong>Duplicate handling</strong> - Duplicate records (by email/code) will be
+                  skipped with a warning
+                </li>
+                <li>
+                  <strong>File size</strong> - Maximum file size: 10MB
+                </li>
+                <li>
+                  <strong>Historical data</strong> - Use the historical data option for importing
+                  past years' data
+                </li>
               </ul>
             }
             type="info"
