@@ -113,8 +113,15 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
             fontSize: '28px',
             fontWeight: 700,
             color: '#e2e8f0',
+            ...statisticProps.valueStyle,
           }}
-          prefix={icon && <span style={{ marginRight: '8px', fontSize: '20px' }}>{icon}</span>}
+          title={
+            statisticProps.title ? (
+              <span style={{ color: '#94a3b8', fontSize: '14px', fontWeight: 500 }}>
+                {statisticProps.title}
+              </span>
+            ) : null
+          }
         />
 
         {trend && (
