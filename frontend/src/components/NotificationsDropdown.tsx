@@ -18,7 +18,11 @@ dayjs.extend(relativeTime);
 
 const { Text } = Typography;
 
-const NotificationsDropdown: React.FC = () => {
+interface NotificationsDropdownProps {
+  collapsed?: boolean;
+}
+
+const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ collapsed = false }) => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { notifications, unreadCount } = useAppSelector((state) => state.notifications);
@@ -146,14 +150,19 @@ const NotificationsDropdown: React.FC = () => {
   };
 
   return (
-    <Dropdown menu={menuItems} placement="bottomRight" trigger={['click']}>
+    <Dropdown menu={menuItems} placement="topRight" trigger={['click']}>
       <div
         style={{
           cursor: 'pointer',
-          padding: '4px 8px',
-          borderRadius: '4px',
+          padding: '8px 12px',
+          borderRadius: '6px',
           transition: 'background-color 0.2s',
-          display: 'inline-block',
+          display: 'flex',
+          alignItems: 'center',
+          gap: 8,
+          width: '100%',
+          color: '#e2e8f0',
+          justifyContent: collapsed ? 'center' : 'flex-start',
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
@@ -165,13 +174,14 @@ const NotificationsDropdown: React.FC = () => {
         <Badge count={unreadCount} size="small" offset={[-5, 5]}>
           <BellOutlined
             style={{
-              fontSize: 20,
+              fontSize: 18,
               cursor: 'pointer',
               color: unreadCount > 0 ? '#1890ff' : '#e2e8f0',
               pointerEvents: 'none',
             }}
           />
         </Badge>
+        {!collapsed && <span style={{ fontSize: 14, fontWeight: 500 }}>Notifications</span>}
       </div>
     </Dropdown>
   );
