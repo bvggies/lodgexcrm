@@ -137,7 +137,35 @@ const DashboardPage: React.FC = () => {
       const response = await analyticsApi.getDashboardSummary();
       if (response?.data?.data) {
         setData(response.data.data);
+      } else {
+        console.error('Dashboard data is missing:', response);
       }
+    } catch (error) {
+      console.error('Failed to load dashboard data:', error);
+      // Set default values on error
+      setData({
+        summary: {
+          totalProperties: 0,
+          activeBookings: 0,
+          totalGuests: 0,
+          pendingCleaningTasks: 0,
+          pendingMaintenanceTasks: 0,
+          unpaidBookingsCount: 0,
+        },
+        financial: {
+          monthlyRevenue: 0,
+          monthlyExpenses: 0,
+          monthlyNetIncome: 0,
+        },
+        occupancy: {
+          rate: 0,
+          totalBookings: 0,
+          totalNights: 0,
+        },
+        upcomingCheckins: [],
+        upcomingCheckouts: [],
+        unpaidBookings: [],
+      });
     } finally {
       setLoading(false);
     }

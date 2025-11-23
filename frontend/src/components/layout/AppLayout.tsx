@@ -144,7 +144,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       label: 'Profile',
     },
     {
-      key: '/settings',
+      key: 'settings',
       icon: <SettingOutlined />,
       label: 'Settings',
     },
@@ -163,11 +163,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     navigate(key);
   };
 
-  const handleUserMenuClick = ({ key }: { key: string }) => {
+  const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
     if (key === 'logout') {
       dispatch(logout());
       navigate('/login');
-    } else if (key === '/settings' || key === 'settings') {
+    } else if (key === 'settings') {
       navigate('/settings');
     } else if (key === 'profile') {
       // Navigate to settings page with profile tab

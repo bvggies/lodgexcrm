@@ -34,8 +34,12 @@ const SettingsPage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
-  const [searchParams] = useSearchParams();
-  const defaultTab = searchParams.get('tab') || 'profile';
+  const [searchParams, setSearchParams] = useSearchParams();
+  const activeTab = searchParams.get('tab') || 'profile';
+
+  const handleTabChange = (key: string) => {
+    setSearchParams({ tab: key });
+  };
 
   const handleSave = async (values: any) => {
     try {
@@ -276,7 +280,7 @@ const SettingsPage: React.FC = () => {
           </Button>
         </div>
 
-        <Tabs items={tabItems} size="large" defaultActiveKey={defaultTab} />
+        <Tabs items={tabItems} size="large" activeKey={activeTab} onChange={handleTabChange} />
       </FadeIn>
     </div>
   );
