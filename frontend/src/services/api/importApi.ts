@@ -13,7 +13,16 @@ export const importApi = {
    * Download Excel template
    */
   downloadTemplate: (
-    type: 'properties' | 'guests' | 'bookings' | 'finance' | 'owners' | 'staff'
+    type:
+      | 'properties'
+      | 'guests'
+      | 'bookings'
+      | 'finance'
+      | 'owners'
+      | 'staff'
+      | 'units'
+      | 'cleaning_tasks'
+      | 'maintenance_tasks'
   ) => {
     return apiClient.get<Blob>(`/import/template?type=${type}`, {
       responseType: 'blob',
@@ -25,7 +34,16 @@ export const importApi = {
    */
   importData: (
     file: File,
-    type: 'properties' | 'guests' | 'bookings' | 'finance' | 'owners' | 'staff',
+    type:
+      | 'properties'
+      | 'guests'
+      | 'bookings'
+      | 'finance'
+      | 'owners'
+      | 'staff'
+      | 'units'
+      | 'cleaning_tasks'
+      | 'maintenance_tasks',
     options?: {
       isHistoricalData?: boolean;
       historicalYear?: number;

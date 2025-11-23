@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Typography,
@@ -30,15 +31,41 @@ import type { UploadFile, RcFile } from 'antd/es/upload/interface';
 const { Title, Text } = Typography;
 const { Option } = Select;
 
-type ImportType = 'properties' | 'guests' | 'bookings' | 'finance' | 'owners' | 'staff';
+type ImportType =
+  | 'properties'
+  | 'guests'
+  | 'bookings'
+  | 'finance'
+  | 'owners'
+  | 'staff'
+  | 'units'
+  | 'cleaning_tasks'
+  | 'maintenance_tasks';
 
 const ImportPage: React.FC = () => {
+  const navigate = useNavigate();
   const [importType, setImportType] = useState<ImportType>('properties');
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
   const [isHistoricalData, setIsHistoricalData] = useState(false);
   const [historicalYear, setHistoricalYear] = useState<number>(new Date().getFullYear() - 1);
+
+  // Map import types to their corresponding routes
+  const getRouteForImportType = (type: ImportType): string => {
+    const routeMap: Record<ImportType, string> = {
+      properties: '/properties',
+      units: '/units',
+      guests: '/guests',
+      bookings: '/bookings',
+      finance: '/finance',
+      owners: '/owners',
+      staff: '/staff',
+      cleaning_tasks: '/cleaning',
+      maintenance_tasks: '/maintenance',
+    };
+    return routeMap[type] || '/';
+  };
 
   const handleDownloadTemplate = async () => {
     try {
@@ -90,6 +117,10 @@ const ImportPage: React.FC = () => {
 
       if (response.data.data.failed === 0) {
         message.success(`Successfully imported ${response.data.data.imported} records`);
+        // Navigate to the appropriate page after successful import
+        setTimeout(() => {
+          navigate(getRouteForImportType(importType));
+        }, 1500);
       } else {
         message.warning(
           `Imported ${response.data.data.imported} records, ${response.data.data.failed} failed`
@@ -164,11 +195,14 @@ const ImportPage: React.FC = () => {
                 style={{ width: 200, marginLeft: 16 }}
               >
                 <Option value="properties">Properties</Option>
+                <Option value="units">Units</Option>
                 <Option value="guests">Guests</Option>
                 <Option value="bookings">Bookings</Option>
                 <Option value="finance">Finance Records</Option>
                 <Option value="owners">Owners</Option>
                 <Option value="staff">Staff</Option>
+                <Option value="cleaning_tasks">Cleaning Tasks</Option>
+                <Option value="maintenance_tasks">Maintenance Tasks</Option>
               </Select>
             </div>
 

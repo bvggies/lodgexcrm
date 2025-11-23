@@ -453,6 +453,299 @@ export class ExcelImportService {
 
     return result;
   }
+
+  /**
+   * Import Units from Excel
+   */
+  async importUnits(data: any[], options?: ImportOptions): Promise<ImportResult> {
+    const result: ImportResult = {
+      success: 0,
+      failed: 0,
+      errors: [],
+      warnings: [],
+    };
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const rowNum = i + 2;
+
+      try {
+        if (!row.propertyCode || !row.unitCode) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Missing required fields (propertyCode, unitCode)`);
+          continue;
+        }
+
+        // Find property
+        const property = await prisma.property.findFirst({
+          where: { code: row.propertyCode },
+        });
+
+        if (!property) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Property with code "${row.propertyCode}" not found`);
+          continue;
+        }
+
+        // Check if unit already exists
+        const existing = await prisma.unit.findFirst({
+          where: {
+            propertyId: property.id,
+            unitCode: row.unitCode,
+          },
+        });
+
+        if (existing) {
+          result.warnings.push(
+            `Row ${rowNum}: Unit "${row.unitCode}" already exists for property "${row.propertyCode}", skipping`
+          );
+          continue;
+        }
+
+        // Parse keys and access codes if provided
+        let keys = undefined;
+        if (row.keys) {
+          try {
+            keys = typeof row.keys === 'string' ? JSON.parse(row.keys) : row.keys;
+          } catch (e) {
+            result.warnings.push(`Row ${rowNum}: Invalid keys JSON format, skipping keys`);
+          }
+        }
+
+        let accessCodes = undefined;
+        if (row.accessCodes) {
+          try {
+            accessCodes = typeof row.accessCodes === 'string' ? JSON.parse(row.accessCodes) : row.accessCodes;
+          } catch (e) {
+            result.warnings.push(`Row ${rowNum}: Invalid accessCodes JSON format, skipping access codes`);
+          }
+        }
+
+        await prisma.unit.create({
+          data: {
+            propertyId: property.id,
+            unitCode: row.unitCode,
+            floor: row.floor ? parseInt(row.floor, 10) : undefined,
+            size: row.size ? parseFloat(row.size) : undefined,
+            currentPrice: row.currentPrice ? parseFloat(row.currentPrice) : undefined,
+            availabilityStatus: row.availabilityStatus || undefined,
+            ...(keys && { keys: keys as any }),
+            ...(accessCodes && { accessCodes: accessCodes as any }),
+          },
+        });
+
+        result.success++;
+      } catch (error: any) {
+        result.failed++;
+        result.errors.push(`Row ${rowNum}: ${error.message}`);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Import Cleaning Tasks from Excel
+   */
+  async importCleaningTasks(data: any[], options?: ImportOptions): Promise<ImportResult> {
+    const result: ImportResult = {
+      success: 0,
+      failed: 0,
+      errors: [],
+      warnings: [],
+    };
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const rowNum = i + 2;
+
+      try {
+        if (!row.propertyCode || !row.scheduledDate) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Missing required fields (propertyCode, scheduledDate)`);
+          continue;
+        }
+
+        // Find property
+        const property = await prisma.property.findFirst({
+          where: { code: row.propertyCode },
+        });
+
+        if (!property) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Property with code "${row.propertyCode}" not found`);
+          continue;
+        }
+
+        // Find unit if specified
+        let unitId = undefined;
+        if (row.unitCode) {
+          const unit = await prisma.unit.findFirst({
+            where: {
+              propertyId: property.id,
+              unitCode: row.unitCode,
+            },
+          });
+          unitId = unit?.id;
+          if (!unit) {
+            result.warnings.push(`Row ${rowNum}: Unit "${row.unitCode}" not found, continuing without unit`);
+          }
+        }
+
+        // Find booking if specified
+        let bookingId = undefined;
+        if (row.bookingReference) {
+          const booking = await prisma.booking.findFirst({
+            where: { reference: row.bookingReference },
+          });
+          bookingId = booking?.id;
+          if (!booking) {
+            result.warnings.push(`Row ${rowNum}: Booking "${row.bookingReference}" not found, continuing without booking`);
+          }
+        }
+
+        // Find cleaner if specified
+        let cleanerId = undefined;
+        if (row.cleanerEmail) {
+          const cleaner = await prisma.user.findFirst({
+            where: { email: row.cleanerEmail, role: 'cleaner' },
+          });
+          cleanerId = cleaner?.id;
+          if (!cleaner) {
+            result.warnings.push(`Row ${rowNum}: Cleaner with email "${row.cleanerEmail}" not found, continuing without cleaner`);
+          }
+        }
+
+        // Generate cleaning ID
+        const cleaningId = row.cleaningId || `CLN-${Date.now()}-${i}`;
+
+        // Parse scheduled date
+        const scheduledDate = new Date(row.scheduledDate);
+
+        await prisma.cleaningTask.create({
+          data: {
+            cleaningId,
+            propertyId: property.id,
+            unitId,
+            bookingId,
+            cleanerId,
+            scheduledDate,
+            status: row.status || 'not_started',
+            cost: row.cost ? parseFloat(row.cost) : undefined,
+            notes: row.notes || undefined,
+          },
+        });
+
+        result.success++;
+      } catch (error: any) {
+        result.failed++;
+        result.errors.push(`Row ${rowNum}: ${error.message}`);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Import Maintenance Tasks from Excel
+   */
+  async importMaintenanceTasks(data: any[], options?: ImportOptions): Promise<ImportResult> {
+    const result: ImportResult = {
+      success: 0,
+      failed: 0,
+      errors: [],
+      warnings: [],
+    };
+
+    for (let i = 0; i < data.length; i++) {
+      const row = data[i];
+      const rowNum = i + 2;
+
+      try {
+        if (!row.propertyCode || !row.title || !row.type) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Missing required fields (propertyCode, title, type)`);
+          continue;
+        }
+
+        // Find property
+        const property = await prisma.property.findFirst({
+          where: { code: row.propertyCode },
+        });
+
+        if (!property) {
+          result.failed++;
+          result.errors.push(`Row ${rowNum}: Property with code "${row.propertyCode}" not found`);
+          continue;
+        }
+
+        // Find unit if specified
+        let unitId = undefined;
+        if (row.unitCode) {
+          const unit = await prisma.unit.findFirst({
+            where: {
+              propertyId: property.id,
+              unitCode: row.unitCode,
+            },
+          });
+          unitId = unit?.id;
+          if (!unit) {
+            result.warnings.push(`Row ${rowNum}: Unit "${row.unitCode}" not found, continuing without unit`);
+          }
+        }
+
+        // Find booking if specified
+        let bookingId = undefined;
+        if (row.bookingReference) {
+          const booking = await prisma.booking.findFirst({
+            where: { reference: row.bookingReference },
+          });
+          bookingId = booking?.id;
+          if (!booking) {
+            result.warnings.push(`Row ${rowNum}: Booking "${row.bookingReference}" not found, continuing without booking`);
+          }
+        }
+
+        // Find assigned user if specified
+        let assignedToId = undefined;
+        if (row.assignedToEmail) {
+          const user = await prisma.user.findFirst({
+            where: { email: row.assignedToEmail, role: 'maintenance' },
+          });
+          assignedToId = user?.id;
+          if (!user) {
+            result.warnings.push(
+              `Row ${rowNum}: Maintenance user with email "${row.assignedToEmail}" not found, continuing without assignment`
+            );
+          }
+        }
+
+        await prisma.maintenanceTask.create({
+          data: {
+            title: row.title,
+            propertyId: property.id,
+            unitId,
+            bookingId,
+            description: row.description || undefined,
+            type: row.type,
+            priority: row.priority || 'medium',
+            assignedToId,
+            status: row.status || 'open',
+            cost: row.cost ? parseFloat(row.cost) : undefined,
+            notes: row.notes || undefined,
+            completedAt: row.completedAt ? new Date(row.completedAt) : undefined,
+          },
+        });
+
+        result.success++;
+      } catch (error: any) {
+        result.failed++;
+        result.errors.push(`Row ${rowNum}: ${error.message}`);
+      }
+    }
+
+    return result;
+  }
 }
 
 export const excelImportService = new ExcelImportService();

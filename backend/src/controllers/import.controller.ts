@@ -500,6 +500,208 @@ export const downloadTemplate = async (
         }
         break;
 
+      case 'units':
+        {
+          // Add instructions
+          addInstructionsSheet([
+            ['UNITS IMPORT TEMPLATE - INSTRUCTIONS'],
+            [''],
+            ['REQUIRED FIELDS (must be filled):'],
+            ['  • propertyCode: Property code (must exist in system)'],
+            ['  • unitCode: Unit code (unique within property)'],
+            [''],
+            ['OPTIONAL FIELDS:'],
+            ['  • floor: Floor number'],
+            ['  • size: Unit size in square meters'],
+            ['  • currentPrice: Current price per night'],
+            ['  • availabilityStatus: available, occupied, maintenance, etc.'],
+            ['  • keys: JSON array of key information (e.g., [{"type":"main","location":"office","notes":""}])'],
+            ['  • accessCodes: JSON array of access codes (e.g., [{"type":"wifi","code":"1234","notes":""}])'],
+            [''],
+            ['IMPORTANT NOTES:'],
+            ['  • Property code must exist in the system'],
+            ['  • Unit code must be unique within the property'],
+            ['  • Keys and accessCodes must be valid JSON arrays'],
+            ['  • Delete example rows before uploading'],
+          ]);
+
+          const data = [
+            {
+              propertyCode: 'PROP-001',
+              unitCode: 'UNIT-101',
+              floor: '1',
+              size: '50',
+              currentPrice: '500',
+              availabilityStatus: 'available',
+              keys: '[{"type":"main","location":"office","notes":"Main entrance key"}]',
+              accessCodes:
+                '[{"type":"wifi","code":"WIFI1234","notes":"Guest WiFi"},{"type":"door","code":"5678","notes":"Main door code"}]',
+            },
+            {
+              propertyCode: 'PROP-001',
+              unitCode: 'UNIT-102',
+              floor: '1',
+              size: '75',
+              currentPrice: '750',
+              availabilityStatus: 'available',
+              keys: '[{"type":"main","location":"office"}]',
+              accessCodes: '[{"type":"wifi","code":"WIFI5678"},{"type":"door","code":"9012"}]',
+            },
+          ];
+          const ws = XLSX.utils.json_to_sheet(data);
+          ws['!cols'] = [
+            { wch: 15 }, // propertyCode
+            { wch: 12 }, // unitCode
+            { wch: 8 }, // floor
+            { wch: 10 }, // size
+            { wch: 12 }, // currentPrice
+            { wch: 18 }, // availabilityStatus
+            { wch: 50 }, // keys
+            { wch: 60 }, // accessCodes
+          ];
+          XLSX.utils.book_append_sheet(workbook, ws, 'Units');
+        }
+        break;
+
+      case 'cleaning_tasks':
+        {
+          // Add instructions
+          addInstructionsSheet([
+            ['CLEANING TASKS IMPORT TEMPLATE - INSTRUCTIONS'],
+            [''],
+            ['REQUIRED FIELDS (must be filled):'],
+            ['  • propertyCode: Property code (must exist in system)'],
+            ['  • scheduledDate: Scheduled date in YYYY-MM-DD format'],
+            [''],
+            ['OPTIONAL FIELDS:'],
+            ['  • unitCode: Unit code (must belong to the property)'],
+            ['  • bookingReference: Booking reference (if task is related to a booking)'],
+            ['  • cleanerEmail: Cleaner email (must be a user with cleaner role)'],
+            ['  • cleaningId: Unique cleaning task ID (auto-generated if not provided)'],
+            ['  • status: not_started, in_progress, or completed (default: not_started)'],
+            ['  • cost: Cleaning cost'],
+            ['  • notes: Additional notes'],
+            [''],
+            ['IMPORTANT NOTES:'],
+            ['  • Property code must exist in the system'],
+            ['  • Unit code must belong to the specified property'],
+            ['  • Cleaner email must be a user with cleaner role'],
+            ['  • Dates must be in YYYY-MM-DD format'],
+            ['  • Delete example rows before uploading'],
+          ]);
+
+          const data = [
+            {
+              propertyCode: 'PROP-001',
+              unitCode: 'UNIT-101',
+              bookingReference: 'BK-2024-001',
+              scheduledDate: '2024-01-15',
+              cleanerEmail: 'ahmed.cleaner@example.com',
+              status: 'not_started',
+              cost: '200',
+              notes: 'Deep cleaning after checkout',
+            },
+            {
+              propertyCode: 'PROP-001',
+              unitCode: 'UNIT-102',
+              scheduledDate: '2024-01-16',
+              cleanerEmail: 'ahmed.cleaner@example.com',
+              status: 'not_started',
+              cost: '150',
+              notes: 'Regular maintenance cleaning',
+            },
+          ];
+          const ws = XLSX.utils.json_to_sheet(data);
+          ws['!cols'] = [
+            { wch: 15 }, // propertyCode
+            { wch: 12 }, // unitCode
+            { wch: 18 }, // bookingReference
+            { wch: 15 }, // scheduledDate
+            { wch: 30 }, // cleanerEmail
+            { wch: 15 }, // cleaningId
+            { wch: 15 }, // status
+            { wch: 10 }, // cost
+            { wch: 40 }, // notes
+          ];
+          XLSX.utils.book_append_sheet(workbook, ws, 'Cleaning Tasks');
+        }
+        break;
+
+      case 'maintenance_tasks':
+        {
+          // Add instructions
+          addInstructionsSheet([
+            ['MAINTENANCE TASKS IMPORT TEMPLATE - INSTRUCTIONS'],
+            [''],
+            ['REQUIRED FIELDS (must be filled):'],
+            ['  • propertyCode: Property code (must exist in system)'],
+            ['  • title: Task title'],
+            ['  • type: ac, plumbing, electrical, appliance, or other'],
+            [''],
+            ['OPTIONAL FIELDS:'],
+            ['  • unitCode: Unit code (must belong to the property)'],
+            ['  • bookingReference: Booking reference (if task is related to a booking)'],
+            ['  • description: Task description'],
+            ['  • priority: low, medium, high, or urgent (default: medium)'],
+            ['  • assignedToEmail: Maintenance staff email (must be a user with maintenance role)'],
+            ['  • status: open, in_progress, or completed (default: open)'],
+            ['  • cost: Maintenance cost'],
+            ['  • completedAt: Completion date in YYYY-MM-DD format'],
+            ['  • notes: Additional notes'],
+            [''],
+            ['IMPORTANT NOTES:'],
+            ['  • Property code must exist in the system'],
+            ['  • Unit code must belong to the specified property'],
+            ['  • Assigned user email must be a user with maintenance role'],
+            ['  • Dates must be in YYYY-MM-DD format'],
+            ['  • Delete example rows before uploading'],
+          ]);
+
+          const data = [
+            {
+              propertyCode: 'PROP-001',
+              unitCode: 'UNIT-101',
+              title: 'AC Repair',
+              type: 'ac',
+              description: 'AC not cooling properly',
+              priority: 'high',
+              assignedToEmail: 'mohammed.maintenance@example.com',
+              status: 'open',
+              cost: '500',
+              notes: 'Guest reported issue',
+            },
+            {
+              propertyCode: 'PROP-001',
+              unitCode: 'UNIT-102',
+              title: 'Leaky Faucet',
+              type: 'plumbing',
+              description: 'Kitchen faucet leaking',
+              priority: 'medium',
+              assignedToEmail: 'mohammed.maintenance@example.com',
+              status: 'in_progress',
+              cost: '150',
+              notes: 'Scheduled for repair',
+            },
+          ];
+          const ws = XLSX.utils.json_to_sheet(data);
+          ws['!cols'] = [
+            { wch: 15 }, // propertyCode
+            { wch: 12 }, // unitCode
+            { wch: 20 }, // title
+            { wch: 15 }, // type
+            { wch: 40 }, // description
+            { wch: 12 }, // priority
+            { wch: 30 }, // assignedToEmail
+            { wch: 15 }, // status
+            { wch: 10 }, // cost
+            { wch: 12 }, // completedAt
+            { wch: 40 }, // notes
+            { wch: 18 }, // bookingReference
+          ];
+          XLSX.utils.book_append_sheet(workbook, ws, 'Maintenance Tasks');
+        }
+        break;
+
       default:
         return next(createError(`Unknown template type: ${type}`, 400));
     }
@@ -571,6 +773,15 @@ export const importData = async (
         break;
       case 'staff':
         result = await excelImportService.importStaff(data, importOptions);
+        break;
+      case 'units':
+        result = await excelImportService.importUnits(data, importOptions);
+        break;
+      case 'cleaning_tasks':
+        result = await excelImportService.importCleaningTasks(data, importOptions);
+        break;
+      case 'maintenance_tasks':
+        result = await excelImportService.importMaintenanceTasks(data, importOptions);
         break;
       default:
         return next(createError(`Unknown import type: ${type}`, 400));
