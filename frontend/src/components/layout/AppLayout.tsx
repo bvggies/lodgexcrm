@@ -170,8 +170,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     } else if (key === '/settings' || key === 'settings') {
       navigate('/settings');
     } else if (key === 'profile') {
-      // Navigate to profile page or show profile modal
-      navigate('/staff');
+      // Navigate to settings page with profile tab
+      navigate('/settings?tab=profile');
     }
   };
 

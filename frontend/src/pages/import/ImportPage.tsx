@@ -10,9 +10,10 @@ import {
   Table,
   Tag,
   message,
-  Spin,
   Divider,
   Descriptions,
+  InputNumber,
+  Checkbox,
 } from 'antd';
 import {
   UploadOutlined,
@@ -36,6 +37,8 @@ const ImportPage: React.FC = () => {
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [loading, setLoading] = useState(false);
   const [importResult, setImportResult] = useState<ImportResult | null>(null);
+  const [isHistoricalData, setIsHistoricalData] = useState(false);
+  const [historicalYear, setHistoricalYear] = useState<number>(new Date().getFullYear() - 1);
 
   const handleDownloadTemplate = async () => {
     try {
@@ -79,7 +82,10 @@ const ImportPage: React.FC = () => {
       setLoading(true);
       setImportResult(null);
 
-      const response = await importApi.importData(file, importType);
+      const response = await importApi.importData(file, importType, {
+        isHistoricalData,
+        historicalYear: isHistoricalData ? historicalYear : undefined,
+      });
       setImportResult(response.data.data);
 
       if (response.data.data.failed === 0) {
@@ -189,7 +195,47 @@ const ImportPage: React.FC = () => {
             <Divider />
 
             <div>
-              <Text strong>Step 3: Upload Filled Excel File</Text>
+              <Text strong>Step 3: Historical Data Options (Optional)</Text>
+              <br />
+              <Space direction="vertical" style={{ marginTop: 8, width: '100%' }}>
+                <div>
+                  <Checkbox
+                    checked={isHistoricalData}
+                    onChange={(e) => setIsHistoricalData(e.target.checked)}
+                  >
+                    <Text>This is historical data from previous years</Text>
+                  </Checkbox>
+                </div>
+                {isHistoricalData && (
+                  <div>
+                    <Text type="secondary" style={{ marginRight: 8 }}>
+                      Year of data:
+                    </Text>
+                    <InputNumber
+                      min={2000}
+                      max={new Date().getFullYear()}
+                      value={historicalYear}
+                      onChange={(value) => setHistoricalYear(value || new Date().getFullYear())}
+                      style={{ width: 120 }}
+                    />
+                  </div>
+                )}
+                {isHistoricalData && (
+                  <Alert
+                    message="Historical Data Import"
+                    description="Historical data will be imported with the specified year. This is useful for importing past bookings, finance records, and other data from previous years. The system will preserve the original dates from your Excel file."
+                    type="info"
+                    showIcon
+                    style={{ marginTop: 8 }}
+                  />
+                )}
+              </Space>
+            </div>
+
+            <Divider />
+
+            <div>
+              <Text strong>Step 4: Upload Filled Excel File</Text>
               <br />
               <Upload {...uploadProps} style={{ marginTop: 8 }}>
                 <Button icon={<UploadOutlined />}>Select Excel File</Button>

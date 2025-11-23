@@ -11,6 +11,11 @@ export interface ImportResult {
   warnings: string[];
 }
 
+export interface ImportOptions {
+  isHistoricalData?: boolean;
+  historicalYear?: number;
+}
+
 export class ExcelImportService {
   /**
    * Parse Excel file and return data
@@ -38,7 +43,7 @@ export class ExcelImportService {
   /**
    * Import Properties from Excel
    */
-  async importProperties(data: any[]): Promise<ImportResult> {
+  async importProperties(data: any[], options?: ImportOptions): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       failed: 0,
@@ -123,7 +128,7 @@ export class ExcelImportService {
   /**
    * Import Guests from Excel
    */
-  async importGuests(data: any[]): Promise<ImportResult> {
+  async importGuests(data: any[], options?: ImportOptions): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       failed: 0,
@@ -180,7 +185,7 @@ export class ExcelImportService {
   /**
    * Import Bookings from Excel
    */
-  async importBookings(data: any[]): Promise<ImportResult> {
+  async importBookings(data: any[], options?: ImportOptions): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       failed: 0,
@@ -240,8 +245,11 @@ export class ExcelImportService {
         }
 
         // Parse dates
-        const checkinDate = new Date(row.checkinDate);
-        const checkoutDate = new Date(row.checkoutDate);
+        let checkinDate = new Date(row.checkinDate);
+        let checkoutDate = new Date(row.checkoutDate);
+
+        // If historical data, ensure dates are preserved as-is (don't adjust to current year)
+        // The dates from Excel should already be in the correct format
 
         // Calculate nights
         const nights = differenceInDays(checkoutDate, checkinDate);
@@ -277,7 +285,7 @@ export class ExcelImportService {
   /**
    * Import Finance Records from Excel
    */
-  async importFinanceRecords(data: any[]): Promise<ImportResult> {
+  async importFinanceRecords(data: any[], options?: ImportOptions): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       failed: 0,
@@ -304,12 +312,20 @@ export class ExcelImportService {
           propertyId = property?.id;
         }
 
+        // Parse date - preserve historical dates as-is
+        const recordDate = new Date(row.date);
+        
+        // If historical data flag is set, add a note in the description
+        const description = options?.isHistoricalData
+          ? `[Historical Data${options.historicalYear ? ` - ${options.historicalYear}` : ''}] ${row.description || ''}`
+          : row.description || undefined;
+
         await prisma.financeRecord.create({
           data: {
             type: row.type,
             category: row.category || 'other',
             amount: parseFloat(row.amount),
-            date: new Date(row.date),
+            date: recordDate,
             propertyId,
             paymentMethod: row.paymentMethod || 'cash',
             status: row.status || 'completed',
@@ -329,7 +345,7 @@ export class ExcelImportService {
   /**
    * Import Owners from Excel
    */
-  async importOwners(data: any[]): Promise<ImportResult> {
+  async importOwners(data: any[], options?: ImportOptions): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       failed: 0,
@@ -380,7 +396,7 @@ export class ExcelImportService {
   /**
    * Import Staff from Excel
    */
-  async importStaff(data: any[]): Promise<ImportResult> {
+  async importStaff(data: any[], options?: ImportOptions): Promise<ImportResult> {
     const result: ImportResult = {
       success: 0,
       failed: 0,

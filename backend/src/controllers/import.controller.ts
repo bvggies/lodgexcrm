@@ -186,7 +186,7 @@ export const importData = async (
       return next(createError('No file uploaded', 400));
     }
 
-    const { type } = req.body;
+    const { type, isHistoricalData, historicalYear } = req.body;
 
     if (!type) {
       return next(createError('Import type is required', 400));
@@ -201,26 +201,32 @@ export const importData = async (
       return next(createError('Excel file is empty', 400));
     }
 
+    // Prepare import options
+    const importOptions = {
+      isHistoricalData: isHistoricalData === 'true' || isHistoricalData === true,
+      historicalYear: historicalYear ? parseInt(historicalYear, 10) : undefined,
+    };
+
     let result;
 
     switch (type) {
       case 'properties':
-        result = await excelImportService.importProperties(data);
+        result = await excelImportService.importProperties(data, importOptions);
         break;
       case 'guests':
-        result = await excelImportService.importGuests(data);
+        result = await excelImportService.importGuests(data, importOptions);
         break;
       case 'bookings':
-        result = await excelImportService.importBookings(data);
+        result = await excelImportService.importBookings(data, importOptions);
         break;
       case 'finance':
-        result = await excelImportService.importFinanceRecords(data);
+        result = await excelImportService.importFinanceRecords(data, importOptions);
         break;
       case 'owners':
-        result = await excelImportService.importOwners(data);
+        result = await excelImportService.importOwners(data, importOptions);
         break;
       case 'staff':
-        result = await excelImportService.importStaff(data);
+        result = await excelImportService.importStaff(data, importOptions);
         break;
       default:
         return next(createError(`Unknown import type: ${type}`, 400));

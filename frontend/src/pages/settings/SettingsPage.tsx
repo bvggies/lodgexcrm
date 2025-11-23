@@ -11,9 +11,9 @@ import {
   Space,
   message,
   Tabs,
-  Row,
-  Col,
   InputNumber,
+  Avatar,
+  Descriptions,
 } from 'antd';
 import {
   SettingOutlined,
@@ -21,17 +21,21 @@ import {
   SecurityScanOutlined,
   GlobalOutlined,
   SaveOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import FadeIn from '../../components/animations/FadeIn';
+import { useAppSelector } from '../../store/hooks';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
-const { TextArea } = Input;
 
 const SettingsPage: React.FC = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const { user } = useAppSelector((state) => state.auth);
+  const [searchParams] = useSearchParams();
+  const defaultTab = searchParams.get('tab') || 'profile';
 
   const handleSave = async (values: any) => {
     try {
@@ -47,6 +51,39 @@ const SettingsPage: React.FC = () => {
   };
 
   const tabItems = [
+    {
+      key: 'profile',
+      label: (
+        <span>
+          <UserOutlined /> Profile
+        </span>
+      ),
+      children: (
+        <Card>
+          <Title level={4}>User Profile</Title>
+          <Space direction="vertical" size="large" style={{ width: '100%' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+              <Avatar size={64} icon={<UserOutlined />} />
+              <div>
+                <Title level={4} style={{ margin: 0 }}>
+                  {user?.firstName} {user?.lastName}
+                </Title>
+                <Text type="secondary">{user?.email}</Text>
+              </div>
+            </div>
+            <Descriptions bordered column={1}>
+              <Descriptions.Item label="First Name">{user?.firstName || 'N/A'}</Descriptions.Item>
+              <Descriptions.Item label="Last Name">{user?.lastName || 'N/A'}</Descriptions.Item>
+              <Descriptions.Item label="Email">{user?.email || 'N/A'}</Descriptions.Item>
+              <Descriptions.Item label="Role">
+                <span style={{ textTransform: 'capitalize' }}>{user?.role || 'N/A'}</span>
+              </Descriptions.Item>
+              <Descriptions.Item label="Phone">{user?.phone || 'N/A'}</Descriptions.Item>
+            </Descriptions>
+          </Space>
+        </Card>
+      ),
+    },
     {
       key: 'general',
       label: (
@@ -239,7 +276,7 @@ const SettingsPage: React.FC = () => {
           </Button>
         </div>
 
-        <Tabs items={tabItems} size="large" />
+        <Tabs items={tabItems} size="large" defaultActiveKey={defaultTab} />
       </FadeIn>
     </div>
   );
