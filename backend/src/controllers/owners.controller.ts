@@ -402,13 +402,30 @@ export const getMyOwnerData = async (
       return next(createError('Authentication required', 401));
     }
 
-    // Find owner by user email
-    const owner = await prisma.owner.findFirst({
-      where: { email: req.user.email },
+    // Get user details from database
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { firstName: true, lastName: true, email: true, phone: true },
     });
 
+    if (!user) {
+      return next(createError('User not found', 404));
+    }
+
+    // Find owner by user email
+    let owner = await prisma.owner.findFirst({
+      where: { email: user.email },
+    });
+
+    // If owner not found, create one automatically with user's information
     if (!owner) {
-      return next(createError('Owner record not found for this user', 404));
+      owner = await prisma.owner.create({
+        data: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          phone: user.phone || null,
+        },
+      });
     }
 
     // Get properties
@@ -553,13 +570,30 @@ export const getMyOwnerStatements = async (
       return next(createError('Authentication required', 401));
     }
 
-    // Find owner by user email
-    const owner = await prisma.owner.findFirst({
-      where: { email: req.user.email },
+    // Get user details from database
+    const user = await prisma.user.findUnique({
+      where: { id: req.user.userId },
+      select: { firstName: true, lastName: true, email: true, phone: true },
     });
 
+    if (!user) {
+      return next(createError('User not found', 404));
+    }
+
+    // Find owner by user email
+    let owner = await prisma.owner.findFirst({
+      where: { email: user.email },
+    });
+
+    // If owner not found, create one automatically with user's information
     if (!owner) {
-      return next(createError('Owner record not found for this user', 404));
+      owner = await prisma.owner.create({
+        data: {
+          name: `${user.firstName} ${user.lastName}`,
+          email: user.email,
+          phone: user.phone || null,
+        },
+      });
     }
 
     const { month, startDate, endDate } = req.query;
@@ -677,12 +711,29 @@ export const exportOwnerStatementPDF = async (
         return next(createError('Owner not found', 404));
       }
     } else {
+      // Get user details from database
+      const user = await prisma.user.findUnique({
+        where: { id: req.user.userId },
+        select: { firstName: true, lastName: true, email: true, phone: true },
+      });
+
+      if (!user) {
+        return next(createError('User not found', 404));
+      }
+
       // For owner_view role, find owner by email
       owner = await prisma.owner.findFirst({
-        where: { email: req.user.email },
+        where: { email: user.email },
       });
+      // If owner not found, create one automatically with user's information
       if (!owner) {
-        return next(createError('Owner record not found for this user', 404));
+        owner = await prisma.owner.create({
+          data: {
+            name: `${user.firstName} ${user.lastName}`,
+            email: user.email,
+            phone: user.phone || null,
+          },
+        });
       }
     }
 
