@@ -117,12 +117,12 @@ const StaffDashboardPage: React.FC = () => {
     {
       title: 'Property',
       key: 'property',
-      render: (_, record) => record?.property?.name || 'N/A',
+      render: (_, record: any) => record?.property?.name || 'N/A',
     },
     {
       title: 'Unit',
       key: 'unit',
-      render: (_, record) => record?.unit?.unitCode || 'N/A',
+      render: (_, record: any) => record?.unit?.unitCode || 'N/A',
     },
     {
       title: 'Scheduled Date',
@@ -140,7 +140,9 @@ const StaffDashboardPage: React.FC = () => {
           in_progress: 'processing',
           completed: 'success',
         };
-        return <Tag color={colorMap[status] || 'default'}>{status?.replace('_', ' ').toUpperCase()}</Tag>;
+        return (
+          <Tag color={colorMap[status] || 'default'}>{status?.replace('_', ' ').toUpperCase()}</Tag>
+        );
       },
     },
   ];
@@ -154,7 +156,7 @@ const StaffDashboardPage: React.FC = () => {
     {
       title: 'Property',
       key: 'property',
-      render: (_, record) => record?.property?.name || 'N/A',
+      render: (_, record: any) => record?.property?.name || 'N/A',
     },
     {
       title: 'Type',
@@ -186,7 +188,9 @@ const StaffDashboardPage: React.FC = () => {
           in_progress: 'processing',
           completed: 'success',
         };
-        return <Tag color={colorMap[status] || 'default'}>{status?.replace('_', ' ').toUpperCase()}</Tag>;
+        return (
+          <Tag color={colorMap[status] || 'default'}>{status?.replace('_', ' ').toUpperCase()}</Tag>
+        );
       },
     },
     {
@@ -423,4 +427,3 @@ const StaffDashboardPage: React.FC = () => {
 };
 
 export default StaffDashboardPage;
-

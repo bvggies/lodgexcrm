@@ -39,7 +39,6 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
-  const isAdmin = user?.role === 'admin';
   const isGuest = user?.role === 'guest';
   const isStaff = user?.role !== 'guest' && user?.role !== 'admin';
 

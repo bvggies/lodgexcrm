@@ -120,7 +120,6 @@ const GuestDashboardPage: React.FC = () => {
         channel: values.channel || 'direct',
         checkinDate: checkinDate.toISOString(),
         checkoutDate: checkoutDate.toISOString(),
-        nights,
         totalAmount: values.totalAmount,
         currency: 'AED',
         paymentStatus: 'pending',
@@ -154,7 +153,10 @@ const GuestDashboardPage: React.FC = () => {
 
   const getTotalSpend = () => {
     return bookings.reduce((sum, booking) => {
-      const amount = typeof booking.totalAmount === 'number' ? booking.totalAmount : parseFloat(booking.totalAmount) || 0;
+      const amount =
+        typeof booking.totalAmount === 'number'
+          ? booking.totalAmount
+          : parseFloat(booking.totalAmount) || 0;
       return sum + amount;
     }, 0);
   };
@@ -178,7 +180,7 @@ const GuestDashboardPage: React.FC = () => {
     {
       title: 'Property',
       key: 'property',
-      render: (_, record) => record?.property?.name || 'N/A',
+      render: (_, record: any) => record?.property?.name || 'N/A',
     },
     {
       title: 'Check-in',
@@ -467,11 +469,9 @@ const GuestDashboardPage: React.FC = () => {
       >
         {selectedBooking && (
           <Descriptions column={1} bordered>
-            <Descriptions.Item label="Reference">
-              {selectedBooking.reference}
-            </Descriptions.Item>
+            <Descriptions.Item label="Reference">{selectedBooking.reference}</Descriptions.Item>
             <Descriptions.Item label="Property">
-              {selectedBooking?.property?.name || 'N/A'}
+              {(selectedBooking as any)?.property?.name || 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Check-in">
               {dayjs(selectedBooking.checkinDate).format('MMMM DD, YYYY')}
@@ -482,10 +482,9 @@ const GuestDashboardPage: React.FC = () => {
             <Descriptions.Item label="Nights">{selectedBooking.nights}</Descriptions.Item>
             <Descriptions.Item label="Total Amount">
               AED{' '}
-              {(
-                typeof selectedBooking.totalAmount === 'number'
-                  ? selectedBooking.totalAmount
-                  : parseFloat(selectedBooking.totalAmount) || 0
+              {(typeof selectedBooking.totalAmount === 'number'
+                ? selectedBooking.totalAmount
+                : parseFloat(selectedBooking.totalAmount) || 0
               ).toFixed(2)}
             </Descriptions.Item>
             <Descriptions.Item label="Payment Status">
@@ -569,4 +568,3 @@ const GuestDashboardPage: React.FC = () => {
 };
 
 export default GuestDashboardPage;
-
