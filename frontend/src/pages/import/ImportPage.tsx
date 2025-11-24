@@ -189,20 +189,24 @@ const ImportPage: React.FC = () => {
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <div>
               <Text strong>Step 1: Select Data Type</Text>
+              <br />
               <Select
                 value={importType}
-                onChange={setImportType}
-                style={{ width: 200, marginLeft: 16 }}
+                onChange={(value) => setImportType(value as ImportType)}
+                style={{ width: '100%', maxWidth: 400, marginTop: 8 }}
+                placeholder="Select data type to import"
+                showSearch
+                optionFilterProp="label"
               >
-                <Option value="properties">Properties</Option>
-                <Option value="units">Units</Option>
-                <Option value="guests">Guests</Option>
-                <Option value="bookings">Bookings</Option>
-                <Option value="finance">Finance Records</Option>
-                <Option value="owners">Owners</Option>
-                <Option value="staff">Staff</Option>
-                <Option value="cleaning_tasks">Cleaning Tasks</Option>
-                <Option value="maintenance_tasks">Maintenance Tasks</Option>
+                <Option value="properties" label="Properties">Properties</Option>
+                <Option value="units" label="Units">Units</Option>
+                <Option value="guests" label="Guests">Guests</Option>
+                <Option value="bookings" label="Bookings">Bookings</Option>
+                <Option value="finance" label="Finance Records">Finance Records</Option>
+                <Option value="owners" label="Owners">Owners</Option>
+                <Option value="staff" label="Staff">Staff</Option>
+                <Option value="cleaning_tasks" label="Cleaning Tasks">Cleaning Tasks</Option>
+                <Option value="maintenance_tasks" label="Maintenance Tasks">Maintenance Tasks</Option>
               </Select>
             </div>
 
