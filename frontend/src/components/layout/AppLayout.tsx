@@ -56,6 +56,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       ];
     }
 
+    // Owner menu - dashboard, statements, finance
+    if (user?.role === 'owner_view') {
+      return [
+        {
+          key: '/owner/dashboard',
+          icon: <DashboardOutlined />,
+          label: 'Dashboard',
+        },
+        {
+          key: '/owner/statements',
+          icon: <DollarOutlined />,
+          label: 'Statements',
+        },
+      ];
+    }
+
     // Staff menu - dashboard and tasks
     if (isStaff) {
       const items: MenuProps['items'] = [

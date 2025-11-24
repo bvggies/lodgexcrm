@@ -24,8 +24,10 @@ const LoginPage: React.FC = () => {
         navigate('/guest/dashboard');
       } else if (user.role === 'admin') {
         navigate('/');
+      } else if (user.role === 'owner_view') {
+        navigate('/owner/dashboard');
       } else {
-        // staff roles (assistant, cleaner, maintenance, owner_view)
+        // staff roles (assistant, cleaner, maintenance)
         navigate('/staff/dashboard');
       }
     }

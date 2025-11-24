@@ -50,4 +50,12 @@ export const ownersApi = {
   getStatements: (id: string, params?: { month?: string }) => {
     return apiClient.get<{ success: boolean; data: any }>(`/owners/${id}/statements`, { params });
   },
+
+  getMyData: () => {
+    return apiClient.get<{ success: boolean; data: any }>('/owners/me/data');
+  },
+
+  getMyStatements: (params?: { month?: string; startDate?: string; endDate?: string }) => {
+    return apiClient.get<{ success: boolean; data: any }>('/owners/me/statements', { params });
+  },
 };

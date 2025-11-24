@@ -28,6 +28,8 @@ import SettingsPage from './pages/settings/SettingsPage';
 import OwnerStatementsPage from './pages/owners/OwnerStatementsPage';
 import GuestDashboardPage from './pages/guest/GuestDashboardPage';
 import StaffDashboardPage from './pages/staff/StaffDashboardPage';
+import OwnerDashboardPage from './pages/owner/OwnerDashboardPage';
+import OwnerMyStatementsPage from './pages/owner/OwnerStatementsPage';
 import { useAppSelector } from './store/hooks';
 
 const { Content } = Layout;
@@ -63,21 +65,46 @@ function App() {
                           <Route path="*" element={<Navigate to="/guest/dashboard" replace />} />
                         </>
                       )}
-                      {/* Staff Routes */}
-                      {user?.role !== 'guest' && user?.role !== 'admin' && (
+                      {/* Owner Routes */}
+                      {user?.role === 'owner_view' && (
                         <>
                           <Route
-                            path="/staff/dashboard"
+                            path="/owner/dashboard"
                             element={
                               <PageTransition>
-                                <StaffDashboardPage />
+                                <OwnerDashboardPage />
                               </PageTransition>
                             }
                           />
-                          <Route path="/" element={<Navigate to="/staff/dashboard" replace />} />
-                          <Route path="*" element={<Navigate to="/staff/dashboard" replace />} />
+                          <Route
+                            path="/owner/statements"
+                            element={
+                              <PageTransition>
+                                <OwnerMyStatementsPage />
+                              </PageTransition>
+                            }
+                          />
+                          <Route path="/" element={<Navigate to="/owner/dashboard" replace />} />
+                          <Route path="*" element={<Navigate to="/owner/dashboard" replace />} />
                         </>
                       )}
+                      {/* Staff Routes */}
+                      {user?.role !== 'guest' &&
+                        user?.role !== 'admin' &&
+                        user?.role !== 'owner_view' && (
+                          <>
+                            <Route
+                              path="/staff/dashboard"
+                              element={
+                                <PageTransition>
+                                  <StaffDashboardPage />
+                                </PageTransition>
+                              }
+                            />
+                            <Route path="/" element={<Navigate to="/staff/dashboard" replace />} />
+                            <Route path="*" element={<Navigate to="/staff/dashboard" replace />} />
+                          </>
+                        )}
                       {/* Admin Routes */}
                       {user?.role === 'admin' && (
                         <>

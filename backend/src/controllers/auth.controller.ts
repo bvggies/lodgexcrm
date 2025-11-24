@@ -321,9 +321,23 @@ export const getMe = async (
       });
     }
 
+    // If user is an owner, include owner data (matched by email)
+    let owner = null;
+    if (user.role === 'owner_view') {
+      owner = await prisma.owner.findFirst({
+        where: { email: user.email },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phone: true,
+        },
+      });
+    }
+
     res.json({
       success: true,
-      data: { user, guest },
+      data: { user, guest, owner },
     });
   } catch (error: any) {
     next(error);

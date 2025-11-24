@@ -7,6 +7,8 @@ import {
   updateOwner,
   deleteOwner,
   getOwnerStatements,
+  getMyOwnerData,
+  getMyOwnerStatements,
 } from '../controllers/owners.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { StaffRole } from '@prisma/client';
@@ -166,6 +168,60 @@ router.get(
   ],
   validateRequest,
   getOwnerStatements
+);
+
+/**
+ * @swagger
+ * /api/owners/me/data:
+ *   get:
+ *     summary: Get owner's own data (properties, units, bookings, statistics)
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Owner data retrieved successfully
+ */
+router.get('/me/data', authenticate, getMyOwnerData);
+
+/**
+ * @swagger
+ * /api/owners/me/statements:
+ *   get:
+ *     summary: Get owner's own statements with date range
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           format: YYYY-MM
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: Statements retrieved successfully
+ */
+router.get(
+  '/me/statements',
+  authenticate,
+  [
+    query('month').optional().matches(/^\d{4}-\d{2}$/),
+    query('startDate').optional().isISO8601(),
+    query('endDate').optional().isISO8601(),
+  ],
+  validateRequest,
+  getMyOwnerStatements
 );
 
 export default router;
