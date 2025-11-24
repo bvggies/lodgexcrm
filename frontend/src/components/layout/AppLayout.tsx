@@ -294,7 +294,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
           </div>
         </div>
       </Sider>
-      <Layout>
+      <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header
           style={{
             background: '#1e293b',
@@ -304,11 +304,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             justifyContent: 'flex-start',
             boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
             borderBottom: '1px solid #334155',
+            flexShrink: 0,
           }}
         >
           <GlobalSearch />
         </Header>
-        <Content>{children}</Content>
+        <Content style={{ flex: 1, overflow: 'auto' }}>{children}</Content>
       </Layout>
     </Layout>
   );

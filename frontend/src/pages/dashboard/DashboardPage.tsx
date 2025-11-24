@@ -383,11 +383,12 @@ const DashboardPage: React.FC = () => {
         position: 'relative',
         width: '100%',
         overflowX: 'hidden',
+        overflowY: 'visible',
       }}
     >
       {/* Simplified background - removed heavy animations for performance */}
 
-      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', width: '100%' }}>
+      <div style={{ position: 'relative', zIndex: 1, width: '100%', paddingBottom: '24px' }}>
         <FadeIn>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -1019,7 +1020,15 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={6}
               glowColor="rgba(16, 185, 129, 0.2)"
-              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              style={{
+                textAlign: 'center',
+                padding: '24px',
+                height: '100%',
+                minHeight: '200px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
               data-aos="zoom-in"
             >
               <Progress
@@ -1047,7 +1056,15 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={7}
               glowColor="rgba(99, 102, 241, 0.2)"
-              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              style={{
+                textAlign: 'center',
+                padding: '24px',
+                height: '100%',
+                minHeight: '200px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
               data-aos="zoom-in"
               data-aos-delay="100"
             >
@@ -1070,7 +1087,15 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={8}
               glowColor="rgba(245, 158, 11, 0.2)"
-              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              style={{
+                textAlign: 'center',
+                padding: '24px',
+                height: '100%',
+                minHeight: '200px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
               data-aos="zoom-in"
               data-aos-delay="200"
             >
@@ -1100,7 +1125,15 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={9}
               glowColor="rgba(239, 68, 68, 0.2)"
-              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+              style={{
+                textAlign: 'center',
+                padding: '24px',
+                height: '100%',
+                minHeight: '200px',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+              }}
               data-aos="zoom-in"
               data-aos-delay="300"
             >

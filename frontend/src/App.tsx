@@ -43,7 +43,7 @@ function App() {
           element={
             isAuthenticated ? (
               <AppLayout>
-                <Content style={{ padding: '24px', minHeight: '100vh' }}>
+                <Content style={{ padding: '24px', minHeight: '100vh', overflow: 'visible' }}>
                   <AnimatePresence mode="wait">
                     <Routes location={location} key={location.pathname}>
                       <Route

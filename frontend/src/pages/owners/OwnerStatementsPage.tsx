@@ -63,9 +63,7 @@ const OwnerStatementsPage: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<StatementData | null>(null);
-  const [selectedMonth, setSelectedMonth] = useState<string>(
-    dayjs().format('YYYY-MM')
-  );
+  const [selectedMonth, setSelectedMonth] = useState<string>(dayjs().format('YYYY-MM'));
 
   useEffect(() => {
     if (id) {
@@ -81,9 +79,7 @@ const OwnerStatementsPage: React.FC = () => {
       const response = await ownersApi.getStatements(id, { month: selectedMonth });
       setData(response.data.data);
     } catch (error: any) {
-      message.error(
-        error.response?.data?.error?.message || 'Failed to load statements'
-      );
+      message.error(error.response?.data?.error?.message || 'Failed to load statements');
     } finally {
       setLoading(false);
     }
@@ -108,9 +104,7 @@ const OwnerStatementsPage: React.FC = () => {
       dataIndex: 'type',
       key: 'type',
       render: (type: string) => (
-        <Tag color={type === 'revenue' ? 'green' : 'red'}>
-          {type.toUpperCase()}
-        </Tag>
+        <Tag color={type === 'revenue' ? 'green' : 'red'}>{type.toUpperCase()}</Tag>
       ),
     },
     {
@@ -135,10 +129,7 @@ const OwnerStatementsPage: React.FC = () => {
       render: (amount: number, record) => {
         const numAmount = typeof amount === 'number' ? amount : parseFloat(amount) || 0;
         return (
-          <Text
-            strong
-            style={{ color: record.type === 'revenue' ? '#3f8600' : '#cf1322' }}
-          >
+          <Text strong style={{ color: record.type === 'revenue' ? '#3f8600' : '#cf1322' }}>
             {record.type === 'revenue' ? '+' : '-'}AED {numAmount.toFixed(2)}
           </Text>
         );
@@ -183,18 +174,12 @@ const OwnerStatementsPage: React.FC = () => {
             </Space>
           </div>
 
-          <Descriptions
-            bordered
-            column={{ xs: 1, sm: 2, md: 3 }}
-            style={{ marginBottom: 24 }}
-          >
+          <Descriptions bordered column={{ xs: 1, sm: 2, md: 3 }} style={{ marginBottom: 24 }}>
             <Descriptions.Item label="Period">
               {dayjs(data.period.start).format('MMM DD, YYYY')} -{' '}
               {dayjs(data.period.end).format('MMM DD, YYYY')}
             </Descriptions.Item>
-            <Descriptions.Item label="Total Records">
-              {data.records.length}
-            </Descriptions.Item>
+            <Descriptions.Item label="Total Records">{data.records.length}</Descriptions.Item>
           </Descriptions>
 
           <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
@@ -224,9 +209,7 @@ const OwnerStatementsPage: React.FC = () => {
               <GlassCard
                 index={2}
                 glowColor={
-                  data.summary.netIncome >= 0
-                    ? 'rgba(16, 185, 129, 0.2)'
-                    : 'rgba(239, 68, 68, 0.2)'
+                  data.summary.netIncome >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
                 }
               >
                 <Statistic
@@ -258,4 +241,3 @@ const OwnerStatementsPage: React.FC = () => {
 };
 
 export default OwnerStatementsPage;
-
