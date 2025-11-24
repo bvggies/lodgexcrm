@@ -196,21 +196,33 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             justifyContent: 'center',
             color: 'white',
             gap: 8,
+            padding: '0 12px',
           }}
         >
           {collapsed ? (
-            <span style={{ fontSize: 20, fontWeight: 'bold' }}>LC</span>
+            <span style={{ fontSize: 20, fontWeight: 'bold' }}>CH</span>
           ) : (
             <>
               <img
-                src="/logo.svg"
-                alt="Lodgex CRM"
-                style={{ height: 32, width: 'auto', filter: 'brightness(0) invert(1)' }}
+                src="/chlogo.png"
+                alt="Creative Homes Vacation Rental LLC"
+                style={{ height: 32, width: 'auto', flexShrink: 0 }}
                 onError={(e) => {
                   (e.target as HTMLImageElement).style.display = 'none';
                 }}
               />
-              <span style={{ fontSize: 16, fontWeight: 'bold' }}>Lodgex CRM</span>
+              <span
+                style={{
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                  lineHeight: 1.2,
+                  textAlign: 'center',
+                  whiteSpace: 'normal',
+                  wordBreak: 'break-word',
+                }}
+              >
+                Creative Homes Vacation Rental LLC
+              </span>
             </>
           )}
         </motion.div>
