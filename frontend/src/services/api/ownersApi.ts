@@ -58,4 +58,15 @@ export const ownersApi = {
   getMyStatements: (params?: { month?: string; startDate?: string; endDate?: string }) => {
     return apiClient.get<{ success: boolean; data: any }>('/owners/me/statements', { params });
   },
+
+  exportStatementPDF: (
+    id?: string,
+    params?: { month?: string; startDate?: string; endDate?: string }
+  ) => {
+    const url = id ? `/owners/${id}/statements/pdf` : '/owners/me/statements/pdf';
+    return apiClient.get<Blob>(url, {
+      params,
+      responseType: 'blob',
+    });
+  },
 };

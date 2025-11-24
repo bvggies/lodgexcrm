@@ -4,6 +4,10 @@ import { createError } from '../middleware/errorHandler';
 import { AuthRequest } from '../middleware/auth';
 import { auditLog } from '../middleware/audit';
 import crypto from 'crypto';
+import { PDFDocument, rgb, StandardFonts } from 'pdf-lib';
+import { format } from 'date-fns';
+import fs from 'fs';
+import path from 'path';
 
 // Simple encryption/decryption for bank details
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default-key-change-in-production';
@@ -184,9 +188,16 @@ export const updateOwner = async (
     }
 
     const { id } = req.params;
-    const updateData: any = { ...req.body };
+    const {
+      name,
+      email,
+      phone,
+      bankDetails,
+      paymentMethod,
+      idDocuments,
+      notes,
+    } = req.body;
 
-    // Check if owner exists
     const existingOwner = await prisma.owner.findUnique({
       where: { id },
     });
@@ -195,30 +206,38 @@ export const updateOwner = async (
       return next(createError('Owner not found', 404));
     }
 
-    // Encrypt bank details if being updated
-    if (updateData.bankDetails) {
-      updateData.bankDetails = encrypt(JSON.stringify(updateData.bankDetails));
+    // Encrypt bank details if provided
+    let encryptedBankDetails = existingOwner.bankDetails;
+    if (bankDetails !== undefined) {
+      if (bankDetails) {
+        encryptedBankDetails = encrypt(JSON.stringify(bankDetails));
+      } else {
+        encryptedBankDetails = null;
+      }
     }
 
     const owner = await prisma.owner.update({
       where: { id },
-      data: updateData,
+      data: {
+        name,
+        email,
+        phone,
+        bankDetails: encryptedBankDetails,
+        paymentMethod,
+        idDocuments,
+        notes,
+      },
     });
 
     // Audit log
     await auditLog('update', 'owners', owner.id, req.user.userId, {
-      changes: Object.keys(updateData),
+      name: owner.name,
+      email: owner.email,
     });
 
-    // Return decrypted bank details
+    // Don't return encrypted bank details
     const ownerData: any = { ...owner };
-    if (owner.bankDetails) {
-      try {
-        ownerData.bankDetails = JSON.parse(decrypt(owner.bankDetails));
-      } catch (e) {
-        ownerData.bankDetails = owner.bankDetails;
-      }
-    }
+    ownerData.bankDetails = bankDetails !== undefined ? bankDetails : existingOwner.bankDetails;
 
     res.json({
       success: true,
@@ -242,25 +261,12 @@ export const deleteOwner = async (
 
     const { id } = req.params;
 
-    // Check if owner exists
     const owner = await prisma.owner.findUnique({
       where: { id },
-      include: {
-        _count: {
-          select: {
-            properties: true,
-          },
-        },
-      },
     });
 
     if (!owner) {
       return next(createError('Owner not found', 404));
-    }
-
-    // Check if owner has properties
-    if (owner._count.properties > 0) {
-      return next(createError('Cannot delete owner with existing properties', 400));
     }
 
     await prisma.owner.delete({
@@ -648,3 +654,403 @@ export const getMyOwnerStatements = async (
   }
 };
 
+// Export owner statement as PDF
+export const exportOwnerStatementPDF = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      return next(createError('Authentication required', 401));
+    }
+
+    const { month, startDate, endDate } = req.query;
+    let owner;
+
+    // Check if this is for a specific owner (admin) or current user (owner_view)
+    if (req.params.id) {
+      owner = await prisma.owner.findUnique({
+        where: { id: req.params.id },
+      });
+      if (!owner) {
+        return next(createError('Owner not found', 404));
+      }
+    } else {
+      // For owner_view role, find owner by email
+      owner = await prisma.owner.findFirst({
+        where: { email: req.user.email },
+      });
+      if (!owner) {
+        return next(createError('Owner record not found for this user', 404));
+      }
+    }
+
+    let start: Date;
+    let end: Date;
+
+    if (startDate && endDate) {
+      start = new Date(startDate as string);
+      end = new Date(endDate as string);
+      end.setHours(23, 59, 59, 999);
+    } else if (month) {
+      const [year, monthNum] = (month as string).split('-').map(Number);
+      start = new Date(year, monthNum - 1, 1);
+      end = new Date(year, monthNum, 0, 23, 59, 59);
+    } else {
+      // Current month
+      const now = new Date();
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    }
+
+    // Get properties for this owner
+    const properties = await prisma.property.findMany({
+      where: { ownerId: owner.id },
+      select: { id: true },
+    });
+
+    const propertyIds = properties.map((p) => p.id);
+
+    // Get finance records
+    const financeRecords = await prisma.financeRecord.findMany({
+      where: {
+        propertyId: { in: propertyIds },
+        date: {
+          gte: start,
+          lte: end,
+        },
+      },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            reference: true,
+          },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    // Calculate totals
+    const revenue = financeRecords
+      .filter((r) => r.type === 'revenue')
+      .reduce((sum, r) => sum + Number(r.amount), 0);
+
+    const expenses = financeRecords
+      .filter((r) => r.type === 'expense')
+      .reduce((sum, r) => sum + Number(r.amount), 0);
+
+    const netIncome = revenue - expenses;
+
+    // Create PDF
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([612, 792]); // US Letter size
+    const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+    const boldFont = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+
+    let y = 750;
+    const margin = 50;
+    const lineHeight = 20;
+
+    // Try to load logo
+    try {
+      const logoPath = path.join(process.cwd(), 'frontend', 'public', 'chlogo.png');
+      if (fs.existsSync(logoPath)) {
+        const logoBytes = fs.readFileSync(logoPath);
+        // Try PNG first, then JPG
+        let logoImage;
+        try {
+          logoImage = await pdfDoc.embedPng(logoBytes);
+        } catch {
+          try {
+            logoImage = await pdfDoc.embedJpg(logoBytes);
+          } catch {
+            console.warn('Logo is not a valid PNG or JPG');
+          }
+        }
+        if (logoImage) {
+          const logoDims = logoImage.scale(0.15); // Scale down logo
+          page.drawImage(logoImage, {
+            x: margin,
+            y: y - 30,
+            width: logoDims.width,
+            height: logoDims.height,
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Could not load logo:', error);
+    }
+
+    // Company name and contact info
+    const companyName = 'Creative Homes Vacation Rental LLC';
+    const companyPhone = process.env.COMPANY_PHONE || '+971 4 XXX XXXX';
+    const companyAddress = process.env.COMPANY_ADDRESS || 'Dubai, United Arab Emirates';
+
+    // Company name (right-aligned)
+    const companyNameWidth = boldFont.widthOfTextAtSize(companyName, 18);
+    page.drawText(companyName, {
+      x: 612 - margin - companyNameWidth,
+      y: y,
+      size: 18,
+      font: boldFont,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    y -= 25;
+
+    // Phone and address (right-aligned)
+    const phoneWidth = font.widthOfTextAtSize(companyPhone, 10);
+    page.drawText(companyPhone, {
+      x: 612 - margin - phoneWidth,
+      y,
+      size: 10,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    y -= 15;
+
+    const addressWidth = font.widthOfTextAtSize(companyAddress, 10);
+    page.drawText(companyAddress, {
+      x: 612 - margin - addressWidth,
+      y,
+      size: 10,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    y -= 50;
+
+    // Draw a line separator
+    page.drawLine({
+      start: { x: margin, y },
+      end: { x: 562, y },
+      thickness: 1,
+      color: rgb(0.8, 0.8, 0.8),
+    });
+
+    y -= 30;
+
+    // Title
+    page.drawText('Financial Statement', {
+      x: margin,
+      y,
+      size: 24,
+      font: boldFont,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    y -= 30;
+
+    // Owner name
+    page.drawText(`Owner: ${owner.name}`, {
+      x: margin,
+      y,
+      size: 14,
+      font: boldFont,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    y -= 25;
+
+    // Period
+    page.drawText(
+      `Period: ${format(start, 'MMM dd, yyyy')} - ${format(end, 'MMM dd, yyyy')}`,
+      {
+        x: margin,
+        y,
+        size: 12,
+        font,
+        color: rgb(0.4, 0.4, 0.4),
+      }
+    );
+
+    y -= 30;
+
+    // Summary section
+    page.drawText('Summary', {
+      x: margin,
+      y,
+      size: 16,
+      font: boldFont,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    y -= lineHeight + 5;
+    page.drawText(`Total Revenue: AED ${revenue.toFixed(2)}`, {
+      x: margin + 20,
+      y,
+      size: 12,
+      font,
+      color: rgb(0, 0.5, 0),
+    });
+
+    y -= lineHeight;
+    page.drawText(`Total Expenses: AED ${expenses.toFixed(2)}`, {
+      x: margin + 20,
+      y,
+      size: 12,
+      font,
+      color: rgb(0.8, 0, 0),
+    });
+
+    y -= lineHeight;
+    page.drawText(`Net Income: AED ${netIncome.toFixed(2)}`, {
+      x: margin + 20,
+      y,
+      size: 14,
+      font: boldFont,
+      color: netIncome >= 0 ? rgb(0, 0.5, 0) : rgb(0.8, 0, 0),
+    });
+
+    y -= 30;
+
+    // Records table header
+    const tableY = y;
+    page.drawLine({
+      start: { x: margin, y },
+      end: { x: 562, y },
+      thickness: 1,
+      color: rgb(0.6, 0.6, 0.6),
+    });
+
+    y -= 5;
+    page.drawText('Date', { x: margin, y, size: 10, font: boldFont });
+    page.drawText('Type', { x: margin + 80, y, size: 10, font: boldFont });
+    page.drawText('Property', { x: margin + 140, y, size: 10, font: boldFont });
+    page.drawText('Description', { x: margin + 250, y, size: 10, font: boldFont });
+    page.drawText('Amount', { x: margin + 450, y, size: 10, font: boldFont });
+
+    y -= 5;
+    page.drawLine({
+      start: { x: margin, y },
+      end: { x: 562, y },
+      thickness: 1,
+      color: rgb(0.6, 0.6, 0.6),
+    });
+
+    y -= 15;
+
+    // Records
+    let currentPage = page;
+    financeRecords.forEach((record) => {
+      if (y < 100) {
+        // New page if needed
+        currentPage = pdfDoc.addPage([612, 792]);
+        y = 750;
+
+        // Add header to new page
+        currentPage.drawText('Financial Statement (continued)', {
+          x: margin,
+          y,
+          size: 16,
+          font: boldFont,
+          color: rgb(0.2, 0.2, 0.2),
+        });
+        y -= 30;
+
+        // Table header on new page
+        currentPage.drawLine({
+          start: { x: margin, y },
+          end: { x: 562, y },
+          thickness: 1,
+          color: rgb(0.6, 0.6, 0.6),
+        });
+        y -= 5;
+        currentPage.drawText('Date', { x: margin, y, size: 10, font: boldFont });
+        currentPage.drawText('Type', { x: margin + 80, y, size: 10, font: boldFont });
+        currentPage.drawText('Property', { x: margin + 140, y, size: 10, font: boldFont });
+        currentPage.drawText('Description', { x: margin + 250, y, size: 10, font: boldFont });
+        currentPage.drawText('Amount', { x: margin + 450, y, size: 10, font: boldFont });
+        y -= 5;
+        currentPage.drawLine({
+          start: { x: margin, y },
+          end: { x: 562, y },
+          thickness: 1,
+          color: rgb(0.6, 0.6, 0.6),
+        });
+        y -= 15;
+      }
+
+      currentPage.drawText(format(new Date(record.date), 'MM/dd/yyyy'), {
+        x: margin,
+        y,
+        size: 9,
+        font,
+      });
+      currentPage.drawText(record.type.toUpperCase(), {
+        x: margin + 80,
+        y,
+        size: 9,
+        font,
+        color: record.type === 'revenue' ? rgb(0, 0.5, 0) : rgb(0.8, 0, 0),
+      });
+      currentPage.drawText((record.property?.name || 'N/A').substring(0, 15), {
+        x: margin + 140,
+        y,
+        size: 9,
+        font,
+      });
+      const description = (record as any).description || record.booking?.reference || '-';
+      currentPage.drawText(description.substring(0, 20), {
+        x: margin + 250,
+        y,
+        size: 9,
+        font,
+      });
+      const amountText = `AED ${Number(record.amount).toFixed(2)}`;
+      const amountWidth = font.widthOfTextAtSize(amountText, 9);
+      currentPage.drawText(amountText, {
+        x: margin + 500 - amountWidth,
+        y,
+        size: 9,
+        font,
+        color: record.type === 'revenue' ? rgb(0, 0.5, 0) : rgb(0.8, 0, 0),
+      });
+
+      y -= lineHeight;
+    });
+
+    // Footer on last page
+    y = 50;
+    currentPage.drawLine({
+      start: { x: margin, y },
+      end: { x: 562, y },
+      thickness: 0.5,
+      color: rgb(0.8, 0.8, 0.8),
+    });
+    y -= 15;
+    currentPage.drawText(
+      `Generated on ${format(new Date(), 'MMM dd, yyyy HH:mm')}`,
+      {
+        x: margin,
+        y,
+        size: 8,
+        font,
+        color: rgb(0.5, 0.5, 0.5),
+      }
+    );
+
+    // Generate PDF bytes
+    const pdfBytes = await pdfDoc.save();
+
+    // Send PDF
+    const filename = `statement-${owner.name.replace(/\s+/g, '-')}-${format(start, 'yyyy-MM')}.pdf`;
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(Buffer.from(pdfBytes));
+  } catch (error: any) {
+    next(error);
+  }
+};

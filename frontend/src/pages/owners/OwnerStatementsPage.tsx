@@ -62,6 +62,7 @@ const OwnerStatementsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [exporting, setExporting] = useState(false);
   const [data, setData] = useState<StatementData | null>(null);
   const [selectedMonth, setSelectedMonth] = useState<string>(dayjs().format('YYYY-MM'));
 
@@ -88,6 +89,39 @@ const OwnerStatementsPage: React.FC = () => {
   const handleMonthChange = (date: dayjs.Dayjs | null) => {
     if (date) {
       setSelectedMonth(date.format('YYYY-MM'));
+    }
+  };
+
+  const handleExportPDF = async () => {
+    if (!id) return;
+    try {
+      setExporting(true);
+      const params: any = {};
+      if (selectedMonth) {
+        params.month = selectedMonth;
+      }
+      const response = await ownersApi.exportStatementPDF(id, params);
+
+      // Create blob and download
+      const blob = new Blob([response.data], {
+        type: 'application/pdf',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const filename = `statement-${selectedMonth || 'current'}.pdf`;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      message.success('PDF downloaded successfully');
+    } catch (error: any) {
+      message.error('Failed to export PDF');
+      console.error('Failed to export PDF:', error);
+    } finally {
+      setExporting(false);
     }
   };
 
@@ -168,7 +202,12 @@ const OwnerStatementsPage: React.FC = () => {
                 onChange={handleMonthChange}
                 format="MMMM YYYY"
               />
-              <Button icon={<DownloadOutlined />} type="primary">
+              <Button
+                icon={<DownloadOutlined />}
+                type="primary"
+                onClick={handleExportPDF}
+                loading={exporting}
+              >
                 Download PDF
               </Button>
             </Space>

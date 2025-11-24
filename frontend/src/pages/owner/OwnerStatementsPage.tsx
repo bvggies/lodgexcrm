@@ -104,8 +104,39 @@ const OwnerStatementsPage: React.FC = () => {
     }
   };
 
-  const handleExport = () => {
-    message.info('Export functionality coming soon');
+  const handleExport = async () => {
+    try {
+      setLoading(true);
+      const params: any = {};
+      if (month) {
+        params.month = month;
+      } else if (dateRange) {
+        params.startDate = dateRange[0].format('YYYY-MM-DD');
+        params.endDate = dateRange[1].format('YYYY-MM-DD');
+      }
+      const response = await ownersApi.exportStatementPDF(undefined, params);
+
+      // Create blob and download
+      const blob = new Blob([response.data], {
+        type: 'application/pdf',
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      const filename = `statement-${month || dateRange?.[0].format('YYYY-MM') || 'current'}.pdf`;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      message.success('PDF downloaded successfully');
+    } catch (error: any) {
+      message.error('Failed to export PDF');
+      console.error('Failed to export PDF:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const columns: ColumnsType<StatementRecord> = [

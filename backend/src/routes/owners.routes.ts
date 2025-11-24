@@ -9,6 +9,7 @@ import {
   getOwnerStatements,
   getMyOwnerData,
   getMyOwnerStatements,
+  exportOwnerStatementPDF,
 } from '../controllers/owners.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { StaffRole } from '@prisma/client';
@@ -222,6 +223,91 @@ router.get(
   ],
   validateRequest,
   getMyOwnerStatements
+);
+
+/**
+ * @swagger
+ * /api/owners/{id}/statements/pdf:
+ *   get:
+ *     summary: Export owner statement as PDF
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           format: YYYY-MM
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: PDF file
+ */
+router.get(
+  '/:id/statements/pdf',
+  authenticate,
+  [
+    param('id').optional().isUUID(),
+    query('month').optional().matches(/^\d{4}-\d{2}$/),
+    query('startDate').optional().isISO8601(),
+    query('endDate').optional().isISO8601(),
+  ],
+  validateRequest,
+  exportOwnerStatementPDF
+);
+
+/**
+ * @swagger
+ * /api/owners/me/statements/pdf:
+ *   get:
+ *     summary: Export owner's own statement as PDF
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           format: YYYY-MM
+ *       - in: query
+ *         name: startDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *       - in: query
+ *         name: endDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *     responses:
+ *       200:
+ *         description: PDF file
+ */
+router.get(
+  '/me/statements/pdf',
+  authenticate,
+  [
+    query('month').optional().matches(/^\d{4}-\d{2}$/),
+    query('startDate').optional().isISO8601(),
+    query('endDate').optional().isISO8601(),
+  ],
+  validateRequest,
+  exportOwnerStatementPDF
 );
 
 export default router;
