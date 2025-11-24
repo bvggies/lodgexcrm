@@ -358,17 +358,29 @@ const FinancePage: React.FC = () => {
         width={600}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          <Form.Item name="type" label="Type" rules={[{ required: true }]}>
-            <Select>
+          <Form.Item
+            name="type"
+            label="Type"
+            rules={[{ required: true, message: 'Please select a type' }]}
+          >
+            <Select placeholder="Select type">
               <Option value="revenue">Revenue</Option>
               <Option value="expense">Expense</Option>
             </Select>
           </Form.Item>
-          <Form.Item name="amount" label="Amount" rules={[{ required: true }]}>
-            <InputNumber style={{ width: '100%' }} min={0} step={0.01} />
+          <Form.Item
+            name="amount"
+            label="Amount"
+            rules={[{ required: true, message: 'Please enter amount' }]}
+          >
+            <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="0.00" />
           </Form.Item>
-          <Form.Item name="category" label="Category" rules={[{ required: true }]}>
-            <Select>
+          <Form.Item
+            name="category"
+            label="Category"
+            rules={[{ required: true, message: 'Please select a category' }]}
+          >
+            <Select placeholder="Select category">
               <Option value="guest_payment">Guest Payment</Option>
               <Option value="cleaning">Cleaning</Option>
               <Option value="maintenance">Maintenance</Option>
@@ -384,29 +396,29 @@ const FinancePage: React.FC = () => {
             <Select
               placeholder="Optional: Select a property"
               showSearch
+              allowClear
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              allowClear
               onChange={(value) => {
                 setSelectedPropertyId(value);
                 form.setFieldsValue({ bookingId: undefined });
               }}
-            >
-              {properties.map((p) => (
-                <Option key={p.id} value={p.id} label={`${p.name} (${p.code})`}>
-                  {p.name} ({p.code})
-                </Option>
-              ))}
-            </Select>
+              options={properties.map((p) => ({
+                value: p.id,
+                label: `${p.name} (${p.code})`,
+              }))}
+            />
           </Form.Item>
           <Form.Item name="bookingId" label="Booking">
             <Select
               placeholder="Optional: Select a booking"
               showSearch
+              allowClear
+              disabled={!selectedPropertyId}
               notFoundContent={
                 !selectedPropertyId
                   ? 'Please select a property first'
@@ -419,18 +431,14 @@ const FinancePage: React.FC = () => {
                   .toLowerCase()
                   .includes(input.toLowerCase())
               }
-              disabled={!selectedPropertyId}
-              allowClear
-            >
-              {bookings.map((b) => (
-                <Option key={b.id} value={b.id} label={b.reference}>
-                  {b.reference} - {b.guestId || 'N/A'}
-                </Option>
-              ))}
-            </Select>
+              options={bookings.map((b) => ({
+                value: b.id,
+                label: `${b.reference}${b.guestId ? ` - ${b.guestId}` : ''}`,
+              }))}
+            />
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="paid">
-            <Select>
+            <Select placeholder="Select status">
               <Option value="paid">Paid</Option>
               <Option value="pending">Pending</Option>
             </Select>
