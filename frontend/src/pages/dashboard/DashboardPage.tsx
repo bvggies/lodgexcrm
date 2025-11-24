@@ -75,11 +75,18 @@ interface DashboardData {
     monthlyRevenue: number;
     monthlyExpenses: number;
     monthlyNetIncome: number;
+    revenueGrowth?: number;
+    avgBookingValue?: number;
   };
   occupancy: {
     rate: number;
     totalBookings: number;
     totalNights: number;
+  };
+  tasks?: {
+    completionRate: number;
+    totalTasks: number;
+    completedTasks: number;
   };
   upcomingCheckins: any[];
   upcomingCheckouts: any[];
@@ -111,6 +118,11 @@ const DashboardPage: React.FC = () => {
       rate: 0,
       totalBookings: 0,
       totalNights: 0,
+    },
+    tasks: {
+      completionRate: 0,
+      totalTasks: 0,
+      completedTasks: 0,
     },
     upcomingCheckins: [],
     upcomingCheckouts: [],
@@ -159,6 +171,11 @@ const DashboardPage: React.FC = () => {
           rate: 0,
           totalBookings: 0,
           totalNights: 0,
+        },
+        tasks: {
+          completionRate: 0,
+          totalTasks: 0,
+          completedTasks: 0,
         },
         upcomingCheckins: [],
         upcomingCheckouts: [],
@@ -1067,12 +1084,9 @@ const DashboardPage: React.FC = () => {
               >
                 <Statistic
                   title="Avg. Booking Value"
-                  value={
-                    data?.summary.activeBookings && data?.financial.monthlyRevenue
-                      ? (data.financial.monthlyRevenue / data.summary.activeBookings).toFixed(0)
-                      : 0
-                  }
+                  value={data?.financial.avgBookingValue || 0}
                   prefix="AED "
+                  precision={0}
                   valueStyle={{ color: '#6366f1', fontSize: '28px' }}
                 />
                 <Text type="secondary" style={{ fontSize: '12px' }}>
@@ -1095,19 +1109,9 @@ const DashboardPage: React.FC = () => {
               >
                 <Statistic
                   title="Task Completion Rate"
-                  value={
-                    data?.summary.pendingCleaningTasks && data?.summary.pendingMaintenanceTasks
-                      ? Math.round(
-                          ((data.summary.pendingCleaningTasks +
-                            data.summary.pendingMaintenanceTasks) /
-                            (data.summary.pendingCleaningTasks +
-                              data.summary.pendingMaintenanceTasks +
-                              10)) *
-                            100
-                        )
-                      : 0
-                  }
+                  value={data?.tasks?.completionRate || 0}
                   suffix="%"
+                  precision={1}
                   valueStyle={{ color: '#f59e0b', fontSize: '28px' }}
                 />
                 <Text type="secondary" style={{ fontSize: '12px' }}>
@@ -1130,10 +1134,13 @@ const DashboardPage: React.FC = () => {
               >
                 <Statistic
                   title="Revenue Growth"
-                  value={15.8}
+                  value={data?.financial.revenueGrowth || 0}
                   suffix="%"
                   precision={1}
-                  valueStyle={{ color: '#ef4444', fontSize: '28px' }}
+                  valueStyle={{
+                    color: (data?.financial.revenueGrowth || 0) >= 0 ? '#3f8600' : '#ef4444',
+                    fontSize: '28px',
+                  }}
                   prefix={<RiseOutlined />}
                 />
                 <Text type="secondary" style={{ fontSize: '12px' }}>

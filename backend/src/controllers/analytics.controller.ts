@@ -196,6 +196,69 @@ export const getDashboardSummary = async (
         ? ((totalNightsThisMonth._sum.nights || 0) / totalAvailableNights) * 100
         : 0;
 
+    // Calculate revenue growth (current month vs last month)
+    const startOfLastMonth = startOfMonth(subDays(startOfCurrentMonth, 1));
+    const endOfLastMonth = endOfMonth(subDays(startOfCurrentMonth, 1));
+    const lastMonthRevenue = await prisma.financeRecord.aggregate({
+      where: {
+        type: 'revenue',
+        date: {
+          gte: startOfLastMonth,
+          lte: endOfLastMonth,
+        },
+      },
+      _sum: {
+        amount: true,
+      },
+    });
+    const currentRevenue = Number(monthlyRevenue._sum.amount || 0);
+    const previousRevenue = Number(lastMonthRevenue._sum.amount || 0);
+    const revenueGrowth =
+      previousRevenue > 0 ? ((currentRevenue - previousRevenue) / previousRevenue) * 100 : 0;
+
+    // Calculate average booking value (from bookings in current month)
+    const bookingsThisMonth = await prisma.booking.findMany({
+      where: {
+        OR: [
+          {
+            checkinDate: { lte: endOfCurrentMonth },
+            checkoutDate: { gte: startOfCurrentMonth },
+          },
+        ],
+      },
+      select: {
+        totalAmount: true,
+      },
+    });
+    const totalBookingRevenue = bookingsThisMonth.reduce(
+      (sum, b) => sum + Number(b.totalAmount || 0),
+      0
+    );
+    const avgBookingValue =
+      bookingsThisMonth.length > 0 ? totalBookingRevenue / bookingsThisMonth.length : 0;
+
+    // Calculate task completion rate
+    const totalCleaningTasks = await prisma.cleaningTask.count({
+      where: {
+        scheduledDate: { lte: sevenDaysFromNow },
+      },
+    });
+    const completedCleaningTasks = await prisma.cleaningTask.count({
+      where: {
+        status: 'completed',
+        scheduledDate: { lte: sevenDaysFromNow },
+      },
+    });
+    const totalMaintenanceTasks = await prisma.maintenanceTask.count();
+    const completedMaintenanceTasks = await prisma.maintenanceTask.count({
+      where: {
+        status: 'completed',
+      },
+    });
+    const totalTasks = totalCleaningTasks + totalMaintenanceTasks;
+    const completedTasks = completedCleaningTasks + completedMaintenanceTasks;
+    const taskCompletionRate = totalTasks > 0 ? (completedTasks / totalTasks) * 100 : 0;
+
     res.json({
       success: true,
       data: {
@@ -208,16 +271,21 @@ export const getDashboardSummary = async (
           unpaidBookingsCount: unpaidBookings.length,
         },
         financial: {
-          monthlyRevenue: Number(monthlyRevenue._sum.amount || 0),
+          monthlyRevenue: currentRevenue,
           monthlyExpenses: Number(monthlyExpenses._sum.amount || 0),
-          monthlyNetIncome:
-            Number(monthlyRevenue._sum.amount || 0) -
-            Number(monthlyExpenses._sum.amount || 0),
+          monthlyNetIncome: currentRevenue - Number(monthlyExpenses._sum.amount || 0),
+          revenueGrowth: Math.round(revenueGrowth * 100) / 100,
+          avgBookingValue: Math.round(avgBookingValue * 100) / 100,
         },
         occupancy: {
           rate: Math.round(occupancyRate * 100) / 100,
           totalBookings: totalBookingsThisMonth,
           totalNights: totalNightsThisMonth._sum.nights || 0,
+        },
+        tasks: {
+          completionRate: Math.round(taskCompletionRate * 100) / 100,
+          totalTasks,
+          completedTasks,
         },
         upcomingCheckins: upcomingCheckins.slice(0, 5),
         upcomingCheckouts: upcomingCheckouts.slice(0, 5),
