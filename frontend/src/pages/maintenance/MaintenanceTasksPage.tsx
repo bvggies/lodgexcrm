@@ -316,6 +316,7 @@ const MaintenanceTasksPage: React.FC = () => {
             allowClear
             value={statusFilter}
             onChange={setStatusFilter}
+            getPopupContainer={(trigger) => trigger.parentElement || document.body}
           >
             <Option value="open">Open</Option>
             <Option value="in_progress">In Progress</Option>
@@ -327,6 +328,7 @@ const MaintenanceTasksPage: React.FC = () => {
             allowClear
             value={priorityFilter}
             onChange={setPriorityFilter}
+            getPopupContainer={(trigger) => trigger.parentElement || document.body}
           >
             <Option value="low">Low</Option>
             <Option value="medium">Medium</Option>

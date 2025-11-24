@@ -711,6 +711,7 @@ const OwnerDashboardPage: React.FC = () => {
                   onChange={(dates) =>
                     setFinanceDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)
                   }
+                  getPopupContainer={(trigger) => trigger.parentElement || document.body}
                 />
                 <Button onClick={loadFinanceRecords} loading={financeLoading}>
                   Load Report
@@ -924,14 +925,20 @@ const OwnerDashboardPage: React.FC = () => {
             label="Check-in Date"
             rules={[{ required: true, message: 'Please select check-in date' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              style={{ width: '100%' }}
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item
             name="checkoutDate"
             label="Check-out Date"
             rules={[{ required: true, message: 'Please select check-out date' }]}
           >
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              style={{ width: '100%' }}
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item
             name="totalAmount"

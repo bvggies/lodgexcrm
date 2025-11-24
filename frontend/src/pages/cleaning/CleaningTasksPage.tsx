@@ -435,7 +435,12 @@ const CleaningTasksPage: React.FC = () => {
             label="Scheduled Date"
             rules={[{ required: true, message: 'Please select scheduled date' }]}
           >
-            <DatePicker showTime style={{ width: '100%' }} format="YYYY-MM-DD HH:mm" />
+            <DatePicker
+              showTime
+              style={{ width: '100%' }}
+              format="YYYY-MM-DD HH:mm"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item
             name="cleanerId"

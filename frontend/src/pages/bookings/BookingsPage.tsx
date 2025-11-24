@@ -701,10 +701,16 @@ const BookingsPage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="checkinDate" label="Check-in Date" rules={[{ required: true }]}>
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              style={{ width: '100%' }}
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item name="checkoutDate" label="Check-out Date" rules={[{ required: true }]}>
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              style={{ width: '100%' }}
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item name="totalAmount" label="Total Amount" rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} />

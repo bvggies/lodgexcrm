@@ -396,7 +396,10 @@ const FinancePage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="date" label="Date" initialValue={dayjs()} rules={[{ required: true }]}>
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker
+              style={{ width: '100%' }}
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item name="propertyId" label="Property">
             <Select

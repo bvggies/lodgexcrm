@@ -47,6 +47,7 @@ export const getThemeConfig = (mode: ThemeMode) => {
           borderRadius: 8,
           colorBgContainer: '#ffffff',
           colorBorder: '#e2e8f0',
+          zIndexPopup: 1050,
         },
         Table: {
           borderRadius: 8,
@@ -117,6 +118,7 @@ export const getThemeConfig = (mode: ThemeMode) => {
         borderRadius: 8,
         colorBgContainer: '#0f172a',
         colorBorder: '#334155',
+        zIndexPopup: 1050,
       },
       Table: {
         borderRadius: 8,

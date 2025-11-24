@@ -434,7 +434,10 @@ const GuestDashboardPage: React.FC = () => {
             label="Check-in / Check-out"
             rules={[{ required: true, message: 'Please select dates' }]}
           >
-            <RangePicker style={{ width: '100%' }} />
+            <RangePicker
+              style={{ width: '100%' }}
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            />
           </Form.Item>
           <Form.Item
             name="totalAmount"

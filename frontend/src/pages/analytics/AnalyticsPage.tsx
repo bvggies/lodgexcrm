@@ -175,6 +175,7 @@ const AnalyticsPage: React.FC = () => {
               <RangePicker
                 value={customDateRange}
                 onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
+                getPopupContainer={(trigger) => trigger.parentElement || document.body}
               />
             )}
             <Button icon={<ReloadOutlined />} onClick={loadAnalytics} loading={loading}>

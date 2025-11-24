@@ -150,7 +150,12 @@ const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ collapsed
   };
 
   return (
-    <Dropdown menu={menuItems} placement="topRight" trigger={['click']}>
+    <Dropdown
+      menu={menuItems}
+      placement="topRight"
+      trigger={['click']}
+      getPopupContainer={(trigger) => trigger.parentElement || document.body}
+    >
       <div
         style={{
           cursor: 'pointer',
@@ -163,6 +168,9 @@ const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ collapsed
           width: '100%',
           color: '#e2e8f0',
           justifyContent: collapsed ? 'center' : 'flex-start',
+        }}
+        onClick={(e) => {
+          e.stopPropagation();
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
@@ -177,7 +185,6 @@ const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ collapsed
               fontSize: 18,
               cursor: 'pointer',
               color: unreadCount > 0 ? '#1890ff' : '#e2e8f0',
-              pointerEvents: 'none',
             }}
           />
         </Badge>

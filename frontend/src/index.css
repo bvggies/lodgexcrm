@@ -300,6 +300,10 @@ body {
   z-index: 1050 !important;
 }
 
+.ant-dropdown {
+  z-index: 1050 !important;
+}
+
 /* Ensure dropdowns are visible in Modals */
 .ant-modal .ant-select-dropdown {
   z-index: 1051 !important;
@@ -307,6 +311,27 @@ body {
 
 .ant-modal .ant-picker-dropdown {
   z-index: 1051 !important;
+}
+
+.ant-modal .ant-dropdown {
+  z-index: 1051 !important;
+}
+
+/* Prevent overflow clipping - ensure dropdowns are always visible */
+.ant-select-dropdown,
+.ant-picker-dropdown,
+.ant-dropdown {
+  pointer-events: auto !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+/* Ensure dropdowns render outside clipped containers */
+body > .ant-select-dropdown,
+body > .ant-picker-dropdown,
+body > .ant-dropdown {
+  position: fixed !important;
 }
 
 /* Reduce motion for better performance */
