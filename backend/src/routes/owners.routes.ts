@@ -144,35 +144,6 @@ router.delete(
 
 /**
  * @swagger
- * /api/owners/{id}/statements:
- *   get:
- *     summary: Get owner statements
- *     tags: [Owners]
- *     security:
- *       - bearerAuth: []
- *     parameters:
- *       - in: query
- *         name: month
- *         schema:
- *           type: string
- *           format: YYYY-MM
- *     responses:
- *       200:
- *         description: Statements retrieved successfully
- */
-router.get(
-  '/:id/statements',
-  authenticate,
-  [
-    param('id').isUUID(),
-    query('month').optional().matches(/^\d{4}-\d{2}$/),
-  ],
-  validateRequest,
-  getOwnerStatements
-);
-
-/**
- * @swagger
  * /api/owners/me/data:
  *   get:
  *     summary: Get owner's own data (properties, units, bookings, statistics)
@@ -227,6 +198,35 @@ router.get(
 
 /**
  * @swagger
+ * /api/owners/{id}/statements:
+ *   get:
+ *     summary: Get owner statements
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: month
+ *         schema:
+ *           type: string
+ *           format: YYYY-MM
+ *     responses:
+ *       200:
+ *         description: Statements retrieved successfully
+ */
+router.get(
+  '/:id/statements',
+  authenticate,
+  [
+    param('id').isUUID(),
+    query('month').optional().matches(/^\d{4}-\d{2}$/),
+  ],
+  validateRequest,
+  getOwnerStatements
+);
+
+/**
+ * @swagger
  * /api/owners/{id}/statements/pdf:
  *   get:
  *     summary: Export owner statement as PDF
@@ -261,7 +261,7 @@ router.get(
   '/:id/statements/pdf',
   authenticate,
   [
-    param('id').optional().isUUID(),
+    param('id').isUUID(),
     query('month').optional().matches(/^\d{4}-\d{2}$/),
     query('startDate').optional().isISO8601(),
     query('endDate').optional().isISO8601(),

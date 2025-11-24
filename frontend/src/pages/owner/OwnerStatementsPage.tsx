@@ -78,9 +78,18 @@ const OwnerStatementsPage: React.FC = () => {
         params.endDate = dateRange[1].format('YYYY-MM-DD');
       }
       const response = await ownersApi.getMyStatements(params);
-      setData(response.data.data);
+      if (response.data.success && response.data.data) {
+        setData(response.data.data);
+      } else {
+        message.error('Failed to load statements: Invalid response');
+      }
     } catch (error: any) {
-      message.error('Failed to load statements');
+      const errorMessage =
+        error.response?.data?.error?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to load statements';
+      message.error(errorMessage);
       console.error('Failed to load statements:', error);
     } finally {
       setLoading(false);

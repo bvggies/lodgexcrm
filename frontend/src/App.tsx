@@ -61,6 +61,14 @@ function App() {
                               </PageTransition>
                             }
                           />
+                          <Route
+                            path="/settings"
+                            element={
+                              <PageTransition>
+                                <SettingsPage />
+                              </PageTransition>
+                            }
+                          />
                           <Route path="/" element={<Navigate to="/guest/dashboard" replace />} />
                           <Route path="*" element={<Navigate to="/guest/dashboard" replace />} />
                         </>
@@ -84,6 +92,14 @@ function App() {
                               </PageTransition>
                             }
                           />
+                          <Route
+                            path="/settings"
+                            element={
+                              <PageTransition>
+                                <SettingsPage />
+                              </PageTransition>
+                            }
+                          />
                           <Route path="/" element={<Navigate to="/owner/dashboard" replace />} />
                           <Route path="*" element={<Navigate to="/owner/dashboard" replace />} />
                         </>
@@ -98,6 +114,14 @@ function App() {
                               element={
                                 <PageTransition>
                                   <StaffDashboardPage />
+                                </PageTransition>
+                              }
+                            />
+                            <Route
+                              path="/settings"
+                              element={
+                                <PageTransition>
+                                  <SettingsPage />
                                 </PageTransition>
                               }
                             />

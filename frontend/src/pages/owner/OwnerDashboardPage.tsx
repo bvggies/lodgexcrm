@@ -72,9 +72,18 @@ const OwnerDashboardPage: React.FC = () => {
     try {
       setLoading(true);
       const response = await ownersApi.getMyData();
-      setData(response.data.data);
+      if (response.data.success && response.data.data) {
+        setData(response.data.data);
+      } else {
+        message.error('Failed to load dashboard data: Invalid response');
+      }
     } catch (error: any) {
-      message.error('Failed to load dashboard data');
+      const errorMessage =
+        error.response?.data?.error?.message ||
+        error.response?.data?.message ||
+        error.message ||
+        'Failed to load dashboard data';
+      message.error(errorMessage);
       console.error('Failed to load dashboard data:', error);
     } finally {
       setLoading(false);
