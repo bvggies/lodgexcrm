@@ -406,6 +406,7 @@ const GuestDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
             >
               {properties.map((p) => (
@@ -421,7 +422,7 @@ const GuestDashboardPage: React.FC = () => {
             initialValue="direct"
             rules={[{ required: true }]}
           >
-            <Select>
+            <Select getPopupContainer={(trigger) => trigger.parentElement || document.body}>
               <Option value="direct">Direct</Option>
               <Option value="airbnb">Airbnb</Option>
               <Option value="booking_com">Booking.com</Option>

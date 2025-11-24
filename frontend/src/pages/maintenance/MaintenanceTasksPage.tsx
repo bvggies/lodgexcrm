@@ -365,6 +365,7 @@ const MaintenanceTasksPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -409,7 +410,7 @@ const MaintenanceTasksPage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="type" label="Type" rules={[{ required: true }]}>
-            <Select>
+            <Select getPopupContainer={(trigger) => trigger.parentElement || document.body}>
               <Option value="ac">AC</Option>
               <Option value="plumbing">Plumbing</Option>
               <Option value="electrical">Electrical</Option>
@@ -418,7 +419,7 @@ const MaintenanceTasksPage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="priority" label="Priority" initialValue="medium">
-            <Select>
+            <Select getPopupContainer={(trigger) => trigger.parentElement || document.body}>
               <Option value="low">Low</Option>
               <Option value="medium">Medium</Option>
               <Option value="high">High</Option>
@@ -436,6 +437,7 @@ const MaintenanceTasksPage: React.FC = () => {
             <Select
               placeholder="Optional: Select staff member"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               disabled={!isManagerOrAdmin}
               notFoundContent={staff.length === 0 ? 'No maintenance staff available' : undefined}
               filterOption={(input, option) =>
@@ -452,7 +454,7 @@ const MaintenanceTasksPage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="open">
-            <Select>
+            <Select getPopupContainer={(trigger) => trigger.parentElement || document.body}>
               <Option value="open">Open</Option>
               <Option value="in_progress">In Progress</Option>
               <Option value="completed">Completed</Option>

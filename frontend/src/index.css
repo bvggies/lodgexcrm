@@ -291,6 +291,24 @@ body {
   will-change: transform, opacity;
 }
 
+/* Fix Select dropdown z-index and visibility issues */
+.ant-select-dropdown {
+  z-index: 1050 !important;
+}
+
+.ant-picker-dropdown {
+  z-index: 1050 !important;
+}
+
+/* Ensure dropdowns are visible in Modals */
+.ant-modal .ant-select-dropdown {
+  z-index: 1051 !important;
+}
+
+.ant-modal .ant-picker-dropdown {
+  z-index: 1051 !important;
+}
+
 /* Reduce motion for better performance */
 @media (prefers-reduced-motion: reduce) {
   *,

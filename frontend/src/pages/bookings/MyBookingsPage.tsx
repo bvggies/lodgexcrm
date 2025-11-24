@@ -299,7 +299,11 @@ const MyBookingsPage: React.FC = () => {
             label="Property"
             rules={[{ required: true, message: 'Please select a property' }]}
           >
-            <Select placeholder="Select a property" showSearch>
+            <Select
+              placeholder="Select a property"
+              showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            >
               {properties.map((p) => (
                 <Option key={p.id} value={p.id}>
                   {p.name} ({p.code})

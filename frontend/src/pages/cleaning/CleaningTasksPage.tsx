@@ -360,6 +360,7 @@ const CleaningTasksPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -407,6 +408,7 @@ const CleaningTasksPage: React.FC = () => {
             <Select
               placeholder="Optional: Select a booking"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={
                 !selectedPropertyId
                   ? 'Please select a property first'
@@ -443,6 +445,7 @@ const CleaningTasksPage: React.FC = () => {
             <Select
               placeholder="Optional: Select a cleaner"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               disabled={!isManagerOrAdmin}
               notFoundContent={staff.length === 0 ? 'No cleaners available' : undefined}
               filterOption={(input, option) =>

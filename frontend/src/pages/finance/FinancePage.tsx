@@ -363,7 +363,10 @@ const FinancePage: React.FC = () => {
             label="Type"
             rules={[{ required: true, message: 'Please select a type' }]}
           >
-            <Select placeholder="Select type">
+            <Select
+              placeholder="Select type"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            >
               <Option value="revenue">Revenue</Option>
               <Option value="expense">Expense</Option>
             </Select>
@@ -380,7 +383,10 @@ const FinancePage: React.FC = () => {
             label="Category"
             rules={[{ required: true, message: 'Please select a category' }]}
           >
-            <Select placeholder="Select category">
+            <Select
+              placeholder="Select category"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            >
               <Option value="guest_payment">Guest Payment</Option>
               <Option value="cleaning">Cleaning</Option>
               <Option value="maintenance">Maintenance</Option>
@@ -397,6 +403,7 @@ const FinancePage: React.FC = () => {
               placeholder="Optional: Select a property"
               showSearch
               allowClear
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -418,6 +425,7 @@ const FinancePage: React.FC = () => {
               placeholder="Optional: Select a booking"
               showSearch
               allowClear
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               disabled={!selectedPropertyId}
               notFoundContent={
                 !selectedPropertyId
@@ -438,7 +446,10 @@ const FinancePage: React.FC = () => {
             />
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="paid">
-            <Select placeholder="Select status">
+            <Select
+              placeholder="Select status"
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+            >
               <Option value="paid">Paid</Option>
               <Option value="pending">Pending</Option>
             </Select>

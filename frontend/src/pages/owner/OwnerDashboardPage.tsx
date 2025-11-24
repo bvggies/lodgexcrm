@@ -787,6 +787,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={
                 data?.properties.length === 0 ? 'No properties available' : undefined
               }
@@ -850,6 +851,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               onChange={handlePropertyChange}
               notFoundContent={
                 data?.properties.length === 0 ? 'No properties available' : undefined
@@ -866,6 +868,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a unit"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               disabled={!selectedPropertyId}
               notFoundContent={
                 !selectedPropertyId
@@ -890,6 +893,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a guest"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()

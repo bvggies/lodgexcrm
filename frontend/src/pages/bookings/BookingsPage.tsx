@@ -658,6 +658,7 @@ const BookingsPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -678,6 +679,7 @@ const BookingsPage: React.FC = () => {
             <Select
               placeholder="Select a guest"
               showSearch
+              getPopupContainer={(trigger) => trigger.parentElement || document.body}
               notFoundContent={guests.length === 0 ? 'No guests available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
