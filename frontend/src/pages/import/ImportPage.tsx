@@ -198,15 +198,33 @@ const ImportPage: React.FC = () => {
                 showSearch
                 optionFilterProp="label"
               >
-                <Option value="properties" label="Properties">Properties</Option>
-                <Option value="units" label="Units">Units</Option>
-                <Option value="guests" label="Guests">Guests</Option>
-                <Option value="bookings" label="Bookings">Bookings</Option>
-                <Option value="finance" label="Finance Records">Finance Records</Option>
-                <Option value="owners" label="Owners">Owners</Option>
-                <Option value="staff" label="Staff">Staff</Option>
-                <Option value="cleaning_tasks" label="Cleaning Tasks">Cleaning Tasks</Option>
-                <Option value="maintenance_tasks" label="Maintenance Tasks">Maintenance Tasks</Option>
+                <Option value="properties" label="Properties">
+                  Properties
+                </Option>
+                <Option value="units" label="Units">
+                  Units
+                </Option>
+                <Option value="guests" label="Guests">
+                  Guests
+                </Option>
+                <Option value="bookings" label="Bookings">
+                  Bookings
+                </Option>
+                <Option value="finance" label="Finance Records">
+                  Finance Records
+                </Option>
+                <Option value="owners" label="Owners">
+                  Owners
+                </Option>
+                <Option value="staff" label="Staff">
+                  Staff
+                </Option>
+                <Option value="cleaning_tasks" label="Cleaning Tasks">
+                  Cleaning Tasks
+                </Option>
+                <Option value="maintenance_tasks" label="Maintenance Tasks">
+                  Maintenance Tasks
+                </Option>
               </Select>
             </div>
 

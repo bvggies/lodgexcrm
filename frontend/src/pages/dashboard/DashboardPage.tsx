@@ -394,6 +394,12 @@ const DashboardPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             data-aos="fade-down"
+            onAnimationComplete={(e: any) => {
+              if (e?.target) {
+                e.target.style.opacity = '1';
+                e.target.style.transform = 'translateY(0)';
+              }
+            }}
             style={{
               display: 'flex',
               justifyContent: 'space-between',

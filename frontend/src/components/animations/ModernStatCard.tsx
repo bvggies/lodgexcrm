@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { Card, Statistic } from 'antd';
 import { motion } from 'framer-motion';
 import type { StatisticProps } from 'antd/es/statistic';
@@ -22,8 +22,23 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
   trend,
   ...statisticProps
 }) => {
+  const motionRef = useRef<HTMLDivElement>(null);
+
+  // Force visibility after animation should complete
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (motionRef.current) {
+        motionRef.current.style.opacity = '1';
+        motionRef.current.style.transform = 'translateY(0)';
+      }
+    }, (index * 0.05 + 0.5) * 1000); // Animation delay + duration + buffer
+
+    return () => clearTimeout(timer);
+  }, [index]);
+
   return (
     <motion.div
+      ref={motionRef}
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
@@ -37,7 +52,15 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
       }}
       data-aos="fade-up"
       data-aos-delay={index * 50}
-      style={{ willChange: 'transform' }}
+      style={{ 
+        willChange: 'transform',
+      }}
+      onAnimationComplete={() => {
+        if (motionRef.current) {
+          motionRef.current.style.opacity = '1';
+          motionRef.current.style.transform = 'translateY(0)';
+        }
+      }}
     >
       <Card
         style={{
