@@ -385,3 +385,266 @@ export const getOwnerStatements = async (
   }
 };
 
+// Get owner's own data (for owner_view role)
+export const getMyOwnerData = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      return next(createError('Authentication required', 401));
+    }
+
+    // Find owner by user email
+    const owner = await prisma.owner.findFirst({
+      where: { email: req.user.email },
+    });
+
+    if (!owner) {
+      return next(createError('Owner record not found for this user', 404));
+    }
+
+    // Get properties
+    const properties = await prisma.property.findMany({
+      where: { ownerId: owner.id },
+      include: {
+        units: true,
+        _count: {
+          select: {
+            bookings: true,
+            units: true,
+          },
+        },
+      },
+    });
+
+    // Get all units
+    const propertyIds = properties.map((p) => p.id);
+    const units = await prisma.unit.findMany({
+      where: { propertyId: { in: propertyIds } },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+      },
+    });
+
+    // Get bookings
+    const now = new Date();
+    const bookings = await prisma.booking.findMany({
+      where: { propertyId: { in: propertyIds } },
+      include: {
+        guest: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            phone: true,
+          },
+        },
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        unit: {
+          select: {
+            id: true,
+            unitCode: true,
+          },
+        },
+      },
+      orderBy: {
+        checkinDate: 'desc',
+      },
+    });
+
+    // Calculate statistics
+    const totalBookings = bookings.length;
+    const pendingBookings = bookings.filter(
+      (b) => b.paymentStatus === 'pending' && new Date(b.checkinDate) > now
+    ).length;
+    const upcomingBookings = bookings.filter(
+      (b) => new Date(b.checkinDate) > now && new Date(b.checkinDate) <= new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000)
+    ).length;
+    const currentBookings = bookings.filter(
+      (b) => new Date(b.checkinDate) <= now && new Date(b.checkoutDate) > now
+    ).length;
+
+    // Calculate occupancy rate (for current month)
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    const monthBookings = bookings.filter(
+      (b) => new Date(b.checkinDate) <= monthEnd && new Date(b.checkoutDate) >= monthStart
+    );
+    const totalNights = monthBookings.reduce((sum, b) => {
+      const checkin = new Date(b.checkinDate);
+      const checkout = new Date(b.checkoutDate);
+      const nights = Math.ceil((checkout.getTime() - checkin.getTime()) / (1000 * 60 * 60 * 24));
+      return sum + nights;
+    }, 0);
+    const totalAvailableNights = units.length * monthEnd.getDate();
+    const occupancyRate = totalAvailableNights > 0 ? (totalNights / totalAvailableNights) * 100 : 0;
+
+    // Calculate revenue (current month)
+    const financeRecords = await prisma.financeRecord.findMany({
+      where: {
+        propertyId: { in: propertyIds },
+        type: 'revenue',
+        date: {
+          gte: monthStart,
+          lte: monthEnd,
+        },
+      },
+    });
+    const revenue = financeRecords.reduce((sum, r) => sum + Number(r.amount), 0);
+
+    res.json({
+      success: true,
+      data: {
+        owner: {
+          id: owner.id,
+          name: owner.name,
+          email: owner.email,
+          phone: owner.phone,
+        },
+        properties,
+        units,
+        bookings,
+        statistics: {
+          totalProperties: properties.length,
+          totalUnits: units.length,
+          totalBookings,
+          pendingBookings,
+          upcomingBookings,
+          currentBookings,
+          occupancyRate: Math.round(occupancyRate * 100) / 100,
+          monthlyRevenue: revenue,
+        },
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// Get owner's own statements with date range
+export const getMyOwnerStatements = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      return next(createError('Authentication required', 401));
+    }
+
+    // Find owner by user email
+    const owner = await prisma.owner.findFirst({
+      where: { email: req.user.email },
+    });
+
+    if (!owner) {
+      return next(createError('Owner record not found for this user', 404));
+    }
+
+    const { month, startDate, endDate } = req.query;
+
+    let start: Date;
+    let end: Date;
+
+    if (startDate && endDate) {
+      start = new Date(startDate as string);
+      end = new Date(endDate as string);
+      end.setHours(23, 59, 59, 999);
+    } else if (month) {
+      const [year, monthNum] = (month as string).split('-').map(Number);
+      start = new Date(year, monthNum - 1, 1);
+      end = new Date(year, monthNum, 0, 23, 59, 59);
+    } else {
+      // Current month
+      const now = new Date();
+      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    }
+
+    // Get properties for this owner
+    const properties = await prisma.property.findMany({
+      where: { ownerId: owner.id },
+      select: { id: true },
+    });
+
+    const propertyIds = properties.map((p) => p.id);
+
+    // Get finance records
+    const financeRecords = await prisma.financeRecord.findMany({
+      where: {
+        propertyId: { in: propertyIds },
+        date: {
+          gte: start,
+          lte: end,
+        },
+      },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            reference: true,
+          },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+    });
+
+    // Calculate totals
+    const revenue = financeRecords
+      .filter((r) => r.type === 'revenue')
+      .reduce((sum, r) => sum + Number(r.amount), 0);
+
+    const expenses = financeRecords
+      .filter((r) => r.type === 'expense')
+      .reduce((sum, r) => sum + Number(r.amount), 0);
+
+    const netIncome = revenue - expenses;
+
+    res.json({
+      success: true,
+      data: {
+        owner: {
+          id: owner.id,
+          name: owner.name,
+        },
+        period: {
+          start: start.toISOString(),
+          end: end.toISOString(),
+        },
+        summary: {
+          revenue,
+          expenses,
+          netIncome,
+        },
+        records: financeRecords,
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
