@@ -1,6 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React from 'react';
 import { Card } from 'antd';
-import { motion } from 'framer-motion';
 import type { CardProps } from 'antd/es/card';
 import { useAppSelector } from '../../store/hooks';
 
@@ -9,104 +8,30 @@ interface GlassCardProps extends CardProps {
   glowColor?: string;
 }
 
+// Animations temporarily disabled
 const GlassCard: React.FC<GlassCardProps> = ({
   children,
-  index = 0,
   glowColor = 'rgba(102, 126, 234, 0.1)',
   ...cardProps
 }) => {
-  const motionRef = useRef<HTMLDivElement>(null);
-  const [isLargeScreen, setIsLargeScreen] = useState(false);
   const { mode: themeMode } = useAppSelector((state) => state.theme);
 
-  // Check screen size on mount and resize
-  useEffect(() => {
-    const checkScreenSize = () => {
-      setIsLargeScreen(window.innerWidth >= 768);
-    };
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
-  // Force visibility after animation should complete - with immediate fallback for large screens
-  useEffect(() => {
-    // Immediate visibility for larger screens
-    if (isLargeScreen && motionRef.current) {
-      // Force immediate visibility on large screens
-      motionRef.current.style.opacity = '1';
-      motionRef.current.style.transform = 'translateY(0)';
-    }
-
-    // Also set a timeout as backup
-    const timer = setTimeout(
-      () => {
-        if (motionRef.current) {
-          motionRef.current.style.opacity = '1';
-          motionRef.current.style.transform = 'translateY(0)';
-        }
-      },
-      isLargeScreen ? 100 : (index * 0.03 + 0.5) * 1000
-    ); // Shorter delay for large screens
-
-    return () => clearTimeout(timer);
-  }, [index, isLargeScreen]);
-
   return (
-    <motion.div
-      ref={motionRef}
-      initial={{ opacity: isLargeScreen ? 1 : 0, y: isLargeScreen ? 0 : 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        delay: isLargeScreen ? 0 : index * 0.03,
-        duration: isLargeScreen ? 0 : 0.25,
-        ease: 'easeOut',
-      }}
-      whileHover={{
-        y: -2,
-        transition: { duration: 0.15 },
-      }}
-      data-aos="fade-up"
-      data-aos-delay={index * 30}
+    <Card
+      {...cardProps}
       style={{
-        willChange: 'transform',
-      }}
-      onAnimationComplete={() => {
-        if (motionRef.current) {
-          motionRef.current.style.opacity = '1';
-          motionRef.current.style.transform = 'translateY(0)';
-        }
+        background: themeMode === 'light' ? '#ffffff' : '#1e293b',
+        backdropFilter: 'blur(20px)',
+        borderRadius: '16px',
+        border: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
+        boxShadow:
+          themeMode === 'light' ? '0 8px 32px rgba(0, 0, 0, 0.1)' : `0 8px 32px ${glowColor}`,
+        overflow: 'hidden',
+        ...cardProps.style,
       }}
     >
-      <Card
-        {...cardProps}
-        style={{
-          background: themeMode === 'light' ? '#ffffff' : '#1e293b',
-          backdropFilter: 'blur(20px)',
-          borderRadius: '16px',
-          border: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
-          boxShadow:
-            themeMode === 'light' ? '0 8px 32px rgba(0, 0, 0, 0.1)' : `0 8px 32px ${glowColor}`,
-          overflow: 'hidden',
-          transition: 'all 0.2s ease',
-          ...cardProps.style,
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow =
-            themeMode === 'light' ? '0 12px 40px rgba(0, 0, 0, 0.15)' : `0 12px 40px ${glowColor}`;
-          e.currentTarget.style.borderColor = themeMode === 'light' ? '#cbd5e1' : '#475569';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow =
-            themeMode === 'light' ? '0 8px 32px rgba(0, 0, 0, 0.1)' : `0 8px 32px ${glowColor}`;
-          e.currentTarget.style.borderColor = themeMode === 'light' ? '#e2e8f0' : '#334155';
-        }}
-      >
-        {children}
-      </Card>
-    </motion.div>
+      {children}
+    </Card>
   );
 };
 

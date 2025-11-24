@@ -255,7 +255,7 @@ const MyBookingsPage: React.FC = () => {
           </Select>
         </Space>
 
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+        <div>
           <Card title="Upcoming Bookings" style={{ marginBottom: 24 }}>
             {upcomingBookings.length > 0 ? (
               <Table
@@ -283,7 +283,7 @@ const MyBookingsPage: React.FC = () => {
               <Empty description="No past bookings" />
             )}
           </Card>
-        </motion.div>
+        </div>
       </FadeIn>
 
       <Modal

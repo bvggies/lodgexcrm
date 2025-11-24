@@ -160,7 +160,7 @@ const ArchivePage: React.FC = () => {
         </div>
       </FadeIn>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <div>
         <Card>
           <Table
             columns={columns}
@@ -213,7 +213,7 @@ const ArchivePage: React.FC = () => {
             />
           </div>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 };

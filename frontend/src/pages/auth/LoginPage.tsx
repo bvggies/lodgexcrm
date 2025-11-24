@@ -9,7 +9,6 @@ import {
   UserAddOutlined,
   ToolOutlined,
 } from '@ant-design/icons';
-import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginUser } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
@@ -140,11 +139,7 @@ const LoginPage: React.FC = () => {
       >
         <ThemeToggle />
       </div>
-      <motion.div
-        initial={{ opacity: 0, y: 20, scale: 0.95 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ duration: 0.5 }}
-      >
+      <div>
         <Card style={{ width: 500, maxWidth: '90vw', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div style={{ marginBottom: 16 }}>
@@ -234,7 +229,7 @@ const LoginPage: React.FC = () => {
             ))}
           </div>
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 };

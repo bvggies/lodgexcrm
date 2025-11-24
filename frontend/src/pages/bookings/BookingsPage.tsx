@@ -352,7 +352,7 @@ const BookingsPage: React.FC = () => {
         </Space>
       </FadeIn>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <div>
         <Tabs activeKey={activeTab} onChange={setActiveTab}>
           <Tabs.TabPane tab="Table View" key="table">
             <Table
@@ -640,7 +640,7 @@ const BookingsPage: React.FC = () => {
             )}
           </Tabs.TabPane>
         </Tabs>
-      </motion.div>
+      </div>
 
       <Modal
         title={editingBooking ? 'Edit Booking' : 'Create Booking'}

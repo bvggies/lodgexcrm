@@ -178,7 +178,7 @@ const GuestsPage: React.FC = () => {
         />
       </FadeIn>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <div>
         <Table
           columns={columns}
           dataSource={guests}
@@ -186,7 +186,7 @@ const GuestsPage: React.FC = () => {
           rowKey="id"
           pagination={{ pageSize: 10 }}
         />
-      </motion.div>
+      </div>
 
       <Modal
         title={editingGuest ? 'Edit Guest' : 'Create Guest'}

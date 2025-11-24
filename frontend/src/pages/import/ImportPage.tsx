@@ -184,7 +184,7 @@ const ImportPage: React.FC = () => {
         </Text>
       </FadeIn>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <div>
         <Card style={{ marginTop: 24 }}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <div>
@@ -416,7 +416,7 @@ const ImportPage: React.FC = () => {
             showIcon
           />
         </Card>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -336,7 +336,7 @@ const MaintenanceTasksPage: React.FC = () => {
         </Space>
       </FadeIn>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <div>
         <Table
           columns={columns}
           dataSource={tasks}
@@ -344,7 +344,7 @@ const MaintenanceTasksPage: React.FC = () => {
           rowKey="id"
           pagination={{ pageSize: 10 }}
         />
-      </motion.div>
+      </div>
 
       <Modal
         title={editingTask ? 'Edit Maintenance Task' : 'Create Maintenance Task'}

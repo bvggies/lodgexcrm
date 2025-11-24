@@ -334,7 +334,7 @@ const CleaningTasksPage: React.FC = () => {
         </Select>
       </FadeIn>
 
-      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+      <div>
         <Table
           columns={columns}
           dataSource={tasks}
@@ -342,7 +342,7 @@ const CleaningTasksPage: React.FC = () => {
           rowKey="id"
           pagination={{ pageSize: 10 }}
         />
-      </motion.div>
+      </div>
 
       <Modal
         title={editingTask ? 'Edit Cleaning Task' : 'Create Cleaning Task'}
