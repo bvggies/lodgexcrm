@@ -40,6 +40,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { mode: themeMode } = useAppSelector((state) => state.theme);
   const isGuest = user?.role === 'guest';
   const isStaff = user?.role !== 'guest' && user?.role !== 'admin';
 
@@ -217,7 +218,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         collapsible
         collapsed={collapsed}
         onCollapse={setCollapsed}
-        theme="dark"
+        theme={themeMode === 'light' ? 'light' : 'dark'}
         width={250}
         style={{ display: 'flex', flexDirection: 'column' }}
       >
@@ -230,7 +231,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            color: 'white',
+            color: themeMode === 'light' ? '#1e293b' : 'white',
             gap: 8,
             padding: '0 12px',
           }}
@@ -264,7 +265,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         </motion.div>
         <div style={{ flex: 1, overflow: 'auto' }}>
           <Menu
-            theme="dark"
+            theme={themeMode === 'light' ? 'light' : 'dark'}
             mode="inline"
             selectedKeys={[location.pathname]}
             items={menuItems}
@@ -275,9 +276,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {/* Bottom section with notifications and profile */}
         <div
           style={{
-            borderTop: '1px solid #334155',
+            borderTop: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
             padding: collapsed ? '8px' : '12px',
-            background: '#1e293b',
           }}
         >
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -303,12 +303,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   padding: '8px 12px',
                   borderRadius: '6px',
                   transition: 'background-color 0.2s',
-                  color: '#e2e8f0',
+                  color: 'inherit',
                   width: '100%',
                   justifyContent: collapsed ? 'center' : 'flex-start',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+                  e.currentTarget.style.backgroundColor =
+                    themeMode === 'light' ? 'rgba(0, 0, 0, 0.05)' : 'rgba(255, 255, 255, 0.1)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.backgroundColor = 'transparent';
@@ -320,7 +321,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                     <div style={{ fontSize: 14, fontWeight: 500, lineHeight: 1.2 }}>
                       {user?.firstName} {user?.lastName}
                     </div>
-                    <div style={{ fontSize: 12, color: '#94a3b8', lineHeight: 1.2 }}>
+                    <div
+                      style={{
+                        fontSize: 12,
+                        color: themeMode === 'light' ? '#64748b' : '#94a3b8',
+                        lineHeight: 1.2,
+                      }}
+                    >
                       {user?.email}
                     </div>
                   </div>

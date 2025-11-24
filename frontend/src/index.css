@@ -62,15 +62,31 @@ code {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    border-color 0.2s ease !important;
-  border: 1px solid #334155;
-  background: #1e293b;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    border-color 0.2s ease,
+    background-color 0.3s ease !important;
   will-change: transform;
   cursor: pointer;
 }
 
-.ant-card:hover {
+[data-theme='light'] .ant-card {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+[data-theme='light'] .ant-card:hover {
+  box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15) !important;
+  transform: translateY(-2px) !important;
+  border-color: #cbd5e1 !important;
+}
+
+[data-theme='dark'] .ant-card {
+  border: 1px solid #334155;
+  background: #1e293b;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme='dark'] .ant-card:hover {
   box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2) !important;
   transform: translateY(-2px) !important;
   border-color: #475569 !important;

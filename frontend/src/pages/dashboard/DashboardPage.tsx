@@ -35,6 +35,7 @@ import {
   CheckCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
 import { analyticsApi } from '../../services/api/analyticsApi';
 import { bookingsApi } from '../../services/api/bookingsApi';
 import {
@@ -89,6 +90,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
+  const { mode: themeMode } = useAppSelector((state) => state.theme);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<DashboardData>({
@@ -370,11 +372,16 @@ const DashboardPage: React.FC = () => {
     },
   ];
 
+  const backgroundGradient =
+    themeMode === 'light'
+      ? 'linear-gradient(135deg, #f5f7fa 0%, #e2e8f0 50%, #cbd5e1 100%)'
+      : 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)';
+
   return (
     <div
       style={{
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
+        background: backgroundGradient,
         padding: '24px',
         position: 'relative',
         width: '100%',
@@ -391,19 +398,23 @@ const DashboardPage: React.FC = () => {
             justifyContent: 'space-between',
             alignItems: 'center',
             marginBottom: 32,
-            background: 'rgba(255, 255, 255, 0.1)',
+            background:
+              themeMode === 'light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
             padding: '20px 24px',
             borderRadius: '16px',
-            border: '1px solid rgba(255, 255, 255, 0.2)',
+            border:
+              themeMode === 'light'
+                ? '1px solid rgba(0, 0, 0, 0.1)'
+                : '1px solid rgba(255, 255, 255, 0.2)',
           }}
         >
           <Title
             level={2}
             style={{
               margin: 0,
-              color: '#fff',
-              textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+              color: themeMode === 'light' ? '#1e293b' : '#fff',
+              textShadow: themeMode === 'light' ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.2)',
               fontSize: '32px',
               fontWeight: 700,
             }}

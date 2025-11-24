@@ -41,6 +41,7 @@ import {
   Area,
 } from 'recharts';
 import { analyticsApi } from '../../services/api/analyticsApi';
+import { useAppSelector } from '../../store/hooks';
 import dayjs from 'dayjs';
 
 const { Title } = Typography;
@@ -49,6 +50,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 const AnalyticsPage: React.FC = () => {
+  const { mode: themeMode } = useAppSelector((state) => state.theme);
   const [loading, setLoading] = useState(false);
   const [revenueExpenseData, setRevenueExpenseData] = useState<any[]>([]);
   const [occupancyData, setOccupancyData] = useState<any>(null);
@@ -396,7 +398,7 @@ const AnalyticsPage: React.FC = () => {
                           style={{
                             marginBottom: 12,
                             padding: 12,
-                            background: '#f5f5f5',
+                            background: themeMode === 'light' ? '#f5f5f5' : '#1e293b',
                             borderRadius: 4,
                             display: 'flex',
                             justifyContent: 'space-between',

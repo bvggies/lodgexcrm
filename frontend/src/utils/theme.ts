@@ -59,6 +59,7 @@ export const getThemeConfig = (mode: ThemeMode) => {
           colorBgHeader: '#ffffff',
           colorBgBody: '#f5f7fa',
           colorBgTrigger: '#e2e8f0',
+          colorBgSider: '#ffffff',
         },
         Menu: {
           colorItemBg: 'transparent',
@@ -128,6 +129,7 @@ export const getThemeConfig = (mode: ThemeMode) => {
         colorBgHeader: '#1e293b',
         colorBgBody: '#0f172a',
         colorBgTrigger: '#334155',
+        colorBgSider: '#1e293b',
       },
       Menu: {
         colorItemBg: 'transparent',
