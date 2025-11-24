@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown } from 'antd';
+import { Layout, Menu, Avatar, Dropdown, Space } from 'antd';
 import { motion } from 'framer-motion';
 import {
   DashboardOutlined,
@@ -25,6 +25,7 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { logout } from '../../store/slices/authSlice';
 import NotificationsDropdown from '../NotificationsDropdown';
 import GlobalSearch from '../GlobalSearch';
+import ThemeToggle from '../ThemeToggle';
 import type { MenuProps } from 'antd';
 
 const { Header, Sider, Content } = Layout;
@@ -332,17 +333,56 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header
           style={{
-            background: '#1e293b',
             padding: '0 24px',
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-start',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-            borderBottom: '1px solid #334155',
+            justifyContent: 'space-between',
             flexShrink: 0,
           }}
         >
           <GlobalSearch />
+          <Space>
+            <ThemeToggle />
+            <NotificationsDropdown collapsed={collapsed} />
+            <Dropdown
+              menu={{
+                items: userMenuItems,
+                onClick: handleUserMenuClick,
+              }}
+              placement="bottomRight"
+            >
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  cursor: 'pointer',
+                  gap: 8,
+                  padding: '4px 8px',
+                  borderRadius: 8,
+                  transition: 'background 0.2s',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'transparent';
+                }}
+              >
+                <Avatar
+                  style={{
+                    backgroundColor: '#6366f1',
+                  }}
+                >
+                  {user?.firstName?.[0] || 'U'}
+                </Avatar>
+                {!collapsed && (
+                  <span style={{ color: 'inherit' }}>
+                    {user?.firstName} {user?.lastName}
+                  </span>
+                )}
+              </div>
+            </Dropdown>
+          </Space>
         </Header>
         <Content style={{ flex: 1, overflow: 'auto' }}>{children}</Content>
       </Layout>
