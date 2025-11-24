@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Card } from 'antd';
 import { motion } from 'framer-motion';
 import type { CardProps } from 'antd/es/card';
+import { useAppSelector } from '../../store/hooks';
 
 interface GlassCardProps extends CardProps {
   index?: number;
@@ -16,6 +17,7 @@ const GlassCard: React.FC<GlassCardProps> = ({
 }) => {
   const motionRef = useRef<HTMLDivElement>(null);
   const [isLargeScreen, setIsLargeScreen] = useState(false);
+  const { mode: themeMode } = useAppSelector((state) => state.theme);
 
   // Check screen size on mount and resize
   useEffect(() => {
@@ -79,24 +81,27 @@ const GlassCard: React.FC<GlassCardProps> = ({
       <Card
         {...cardProps}
         style={{
-          background: '#1e293b',
+          background: themeMode === 'light' ? '#ffffff' : '#1e293b',
           backdropFilter: 'blur(20px)',
           borderRadius: '16px',
-          border: '1px solid #334155',
-          boxShadow: `0 8px 32px ${glowColor}`,
+          border: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
+          boxShadow:
+            themeMode === 'light' ? '0 8px 32px rgba(0, 0, 0, 0.1)' : `0 8px 32px ${glowColor}`,
           overflow: 'hidden',
           transition: 'all 0.2s ease',
           ...cardProps.style,
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-2px)';
-          e.currentTarget.style.boxShadow = `0 12px 40px ${glowColor}`;
-          e.currentTarget.style.borderColor = '#475569';
+          e.currentTarget.style.boxShadow =
+            themeMode === 'light' ? '0 12px 40px rgba(0, 0, 0, 0.15)' : `0 12px 40px ${glowColor}`;
+          e.currentTarget.style.borderColor = themeMode === 'light' ? '#cbd5e1' : '#475569';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = `0 8px 32px ${glowColor}`;
-          e.currentTarget.style.borderColor = '#334155';
+          e.currentTarget.style.boxShadow =
+            themeMode === 'light' ? '0 8px 32px rgba(0, 0, 0, 0.1)' : `0 8px 32px ${glowColor}`;
+          e.currentTarget.style.borderColor = themeMode === 'light' ? '#e2e8f0' : '#334155';
         }}
       >
         {children}

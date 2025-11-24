@@ -188,77 +188,68 @@ const ImportPage: React.FC = () => {
         <Card style={{ marginTop: 24 }}>
           <Space direction="vertical" size="large" style={{ width: '100%' }}>
             <div>
-              <Text strong>Step 1: Select Data Type</Text>
+              <Text strong>Step 1: Select Data Type and Download Template</Text>
               <br />
-              <Select
-                value={importType}
-                onChange={(value) => setImportType(value as ImportType)}
-                style={{ width: '100%', maxWidth: 400, marginTop: 8 }}
-                placeholder="Select data type to import"
-                showSearch
-                optionFilterProp="label"
+              <Text
+                type="secondary"
+                style={{ fontSize: 12, display: 'block', marginTop: 8, marginBottom: 16 }}
               >
-                <Option value="properties" label="Properties">
-                  Properties
-                </Option>
-                <Option value="units" label="Units">
-                  Units
-                </Option>
-                <Option value="guests" label="Guests">
-                  Guests
-                </Option>
-                <Option value="bookings" label="Bookings">
-                  Bookings
-                </Option>
-                <Option value="finance" label="Finance Records">
-                  Finance Records
-                </Option>
-                <Option value="owners" label="Owners">
-                  Owners
-                </Option>
-                <Option value="staff" label="Staff">
-                  Staff
-                </Option>
-                <Option value="cleaning_tasks" label="Cleaning Tasks">
-                  Cleaning Tasks
-                </Option>
-                <Option value="maintenance_tasks" label="Maintenance Tasks">
-                  Maintenance Tasks
-                </Option>
-              </Select>
+                Choose a data type below and download its template. Each template includes
+                instructions and example data.
+              </Text>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                  gap: 16,
+                }}
+              >
+                {[
+                  { value: 'properties', label: 'Properties', icon: '🏠' },
+                  { value: 'units', label: 'Units', icon: '🏢' },
+                  { value: 'guests', label: 'Guests', icon: '👤' },
+                  { value: 'bookings', label: 'Bookings', icon: '📅' },
+                  { value: 'finance', label: 'Finance Records', icon: '💰' },
+                  { value: 'owners', label: 'Owners', icon: '👥' },
+                  { value: 'staff', label: 'Staff', icon: '👨‍💼' },
+                  { value: 'cleaning_tasks', label: 'Cleaning Tasks', icon: '🧹' },
+                  { value: 'maintenance_tasks', label: 'Maintenance Tasks', icon: '🔧' },
+                ].map((type) => (
+                  <Card
+                    key={type.value}
+                    hoverable
+                    style={{
+                      textAlign: 'center',
+                      border: importType === type.value ? '2px solid #1890ff' : '1px solid #d9d9d9',
+                    }}
+                    onClick={() => setImportType(type.value as ImportType)}
+                  >
+                    <div style={{ fontSize: 32, marginBottom: 8 }}>{type.icon}</div>
+                    <Text strong style={{ display: 'block', marginBottom: 8 }}>
+                      {type.label}
+                    </Text>
+                    <Button
+                      type={importType === type.value ? 'primary' : 'default'}
+                      icon={<DownloadOutlined />}
+                      size="small"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setImportType(type.value as ImportType);
+                        setTimeout(() => handleDownloadTemplate(), 100);
+                      }}
+                      loading={loading && importType === type.value}
+                    >
+                      Download
+                    </Button>
+                  </Card>
+                ))}
+              </div>
             </div>
 
             <Divider />
 
             <div>
-              <Text strong>Step 2: Download Template</Text>
-              <br />
-              <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-                Download the Excel template for {importType}. The template includes:
-              </Text>
-              <ul style={{ fontSize: 12, color: '#666', marginTop: 8, marginBottom: 8 }}>
-                <li>An "Instructions" sheet with detailed field descriptions</li>
-                <li>Example rows showing the correct format</li>
-                <li>All required and optional fields clearly marked</li>
-              </ul>
-              <Text type="secondary" style={{ fontSize: 12, display: 'block', marginTop: 8 }}>
-                Fill the template with your data (delete example rows), then upload it.
-              </Text>
-              <Button
-                type="primary"
-                icon={<DownloadOutlined />}
-                onClick={handleDownloadTemplate}
-                loading={loading}
-                style={{ marginTop: 8 }}
-              >
-                Download Template
-              </Button>
-            </div>
-
-            <Divider />
-
-            <div>
-              <Text strong>Step 3: Historical Data Options (Optional)</Text>
+              <Text strong>Step 2: Historical Data Options (Optional)</Text>
               <br />
               <Space direction="vertical" style={{ marginTop: 8, width: '100%' }}>
                 <div>
@@ -298,7 +289,7 @@ const ImportPage: React.FC = () => {
             <Divider />
 
             <div>
-              <Text strong>Step 4: Upload Filled Excel File</Text>
+              <Text strong>Step 3: Upload Filled Excel File</Text>
               <br />
               <Upload {...uploadProps} style={{ marginTop: 8 }}>
                 <Button icon={<UploadOutlined />}>Select Excel File</Button>

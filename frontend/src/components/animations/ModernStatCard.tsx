@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Card, Statistic } from 'antd';
 import { motion } from 'framer-motion';
 import type { StatisticProps } from 'antd/es/statistic';
+import { useAppSelector } from '../../store/hooks';
 
 interface ModernStatCardProps extends Omit<StatisticProps, 'value'> {
   value: number | string;
@@ -23,6 +24,7 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
   ...statisticProps
 }) => {
   const motionRef = useRef<HTMLDivElement>(null);
+  const { mode: themeMode } = useAppSelector((state) => state.theme);
 
   // Force visibility after animation should complete
   useEffect(() => {
@@ -67,11 +69,14 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
     >
       <Card
         style={{
-          background: '#1e293b',
+          background: themeMode === 'light' ? '#ffffff' : '#1e293b',
           backdropFilter: 'blur(10px)',
           borderRadius: '16px',
-          border: '1px solid #334155',
-          boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
+          border: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
+          boxShadow:
+            themeMode === 'light'
+              ? '0 8px 32px rgba(0, 0, 0, 0.1)'
+              : '0 8px 32px rgba(0, 0, 0, 0.3)',
           overflow: 'hidden',
           position: 'relative',
           cursor: 'pointer',
@@ -80,13 +85,19 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
         bodyStyle={{ padding: '24px' }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = 'translateY(-4px)';
-          e.currentTarget.style.boxShadow = '0 12px 40px rgba(99, 102, 241, 0.3)';
-          e.currentTarget.style.borderColor = '#475569';
+          e.currentTarget.style.boxShadow =
+            themeMode === 'light'
+              ? '0 12px 40px rgba(99, 102, 241, 0.15)'
+              : '0 12px 40px rgba(99, 102, 241, 0.3)';
+          e.currentTarget.style.borderColor = themeMode === 'light' ? '#cbd5e1' : '#475569';
         }}
         onMouseLeave={(e) => {
           e.currentTarget.style.transform = 'translateY(0)';
-          e.currentTarget.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.3)';
-          e.currentTarget.style.borderColor = '#334155';
+          e.currentTarget.style.boxShadow =
+            themeMode === 'light'
+              ? '0 8px 32px rgba(0, 0, 0, 0.1)'
+              : '0 8px 32px rgba(0, 0, 0, 0.3)';
+          e.currentTarget.style.borderColor = themeMode === 'light' ? '#e2e8f0' : '#334155';
         }}
       >
         {/* Gradient overlay */}
@@ -138,12 +149,18 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
           valueStyle={{
             fontSize: '28px',
             fontWeight: 700,
-            color: '#e2e8f0',
+            color: themeMode === 'light' ? '#1e293b' : '#e2e8f0',
             ...statisticProps.valueStyle,
           }}
           title={
             statisticProps.title ? (
-              <span style={{ color: '#94a3b8', fontSize: '14px', fontWeight: 500 }}>
+              <span
+                style={{
+                  color: themeMode === 'light' ? '#64748b' : '#94a3b8',
+                  fontSize: '14px',
+                  fontWeight: 500,
+                }}
+              >
                 {statisticProps.title}
               </span>
             ) : null

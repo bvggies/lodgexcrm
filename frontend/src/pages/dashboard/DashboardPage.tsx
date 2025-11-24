@@ -458,9 +458,9 @@ const DashboardPage: React.FC = () => {
                 onClick={handleRefresh}
                 loading={refreshing}
                 style={{
-                  background: '#1e293b',
-                  border: '1px solid #334155',
-                  color: '#e2e8f0',
+                  background: themeMode === 'light' ? '#ffffff' : '#1e293b',
+                  border: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
+                  color: themeMode === 'light' ? '#1e293b' : '#e2e8f0',
                   borderRadius: '8px',
                   fontWeight: 500,
                   cursor: 'pointer',
