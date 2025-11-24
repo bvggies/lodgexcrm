@@ -26,12 +26,15 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
 
   // Force visibility after animation should complete
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (motionRef.current) {
-        motionRef.current.style.opacity = '1';
-        motionRef.current.style.transform = 'translateY(0)';
-      }
-    }, (index * 0.05 + 0.5) * 1000); // Animation delay + duration + buffer
+    const timer = setTimeout(
+      () => {
+        if (motionRef.current) {
+          motionRef.current.style.opacity = '1';
+          motionRef.current.style.transform = 'translateY(0)';
+        }
+      },
+      (index * 0.05 + 0.5) * 1000
+    ); // Animation delay + duration + buffer
 
     return () => clearTimeout(timer);
   }, [index]);
@@ -52,7 +55,7 @@ const ModernStatCard: React.FC<ModernStatCardProps> = ({
       }}
       data-aos="fade-up"
       data-aos-delay={index * 50}
-      style={{ 
+      style={{
         willChange: 'transform',
       }}
       onAnimationComplete={() => {

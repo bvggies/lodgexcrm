@@ -32,10 +32,10 @@ const StaggerContainer: React.FC<StaggerContainerProps> = ({ children, staggerDe
   }, []);
 
   return (
-    <motion.div 
+    <motion.div
       ref={containerRef}
-      variants={containerVariants} 
-      initial="hidden" 
+      variants={containerVariants}
+      initial="hidden"
       animate="visible"
       onAnimationComplete={() => {
         if (containerRef.current) {

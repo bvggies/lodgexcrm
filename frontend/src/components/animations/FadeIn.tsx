@@ -24,12 +24,15 @@ const FadeIn: React.FC<FadeInProps> = ({
 
   // Force visibility after animation should complete
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (motionRef.current) {
-        motionRef.current.style.opacity = '1';
-        motionRef.current.style.transform = 'translate(0, 0)';
-      }
-    }, (delay + duration) * 1000 + 100); // Animation delay + duration + buffer
+    const timer = setTimeout(
+      () => {
+        if (motionRef.current) {
+          motionRef.current.style.opacity = '1';
+          motionRef.current.style.transform = 'translate(0, 0)';
+        }
+      },
+      (delay + duration) * 1000 + 100
+    ); // Animation delay + duration + buffer
 
     return () => clearTimeout(timer);
   }, [delay, duration]);
