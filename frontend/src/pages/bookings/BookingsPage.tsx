@@ -658,6 +658,7 @@ const BookingsPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -677,6 +678,7 @@ const BookingsPage: React.FC = () => {
             <Select
               placeholder="Select a guest"
               showSearch
+              notFoundContent={guests.length === 0 ? 'No guests available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()

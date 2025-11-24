@@ -365,6 +365,7 @@ const MaintenanceTasksPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -386,6 +387,13 @@ const MaintenanceTasksPage: React.FC = () => {
             <Select
               placeholder="Optional: Select a unit"
               showSearch
+              notFoundContent={
+                !selectedPropertyId
+                  ? 'Please select a property first'
+                  : units.length === 0
+                    ? 'No units available'
+                    : undefined
+              }
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -429,6 +437,7 @@ const MaintenanceTasksPage: React.FC = () => {
               placeholder="Optional: Select staff member"
               showSearch
               disabled={!isManagerOrAdmin}
+              notFoundContent={staff.length === 0 ? 'No maintenance staff available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()

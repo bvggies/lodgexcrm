@@ -264,6 +264,11 @@ const UnitsPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
+              notFoundContent={
+                properties.length === 0
+                  ? 'No properties available. Please create a property first.'
+                  : undefined
+              }
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()

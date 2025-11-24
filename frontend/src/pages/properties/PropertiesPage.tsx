@@ -286,6 +286,11 @@ const PropertiesPage: React.FC = () => {
             <Select
               placeholder="Select an owner"
               showSearch
+              notFoundContent={
+                owners.length === 0
+                  ? 'No owners available. Please create an owner first.'
+                  : undefined
+              }
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()

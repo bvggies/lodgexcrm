@@ -384,6 +384,7 @@ const FinancePage: React.FC = () => {
             <Select
               placeholder="Optional: Select a property"
               showSearch
+              notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -406,6 +407,13 @@ const FinancePage: React.FC = () => {
             <Select
               placeholder="Optional: Select a booking"
               showSearch
+              notFoundContent={
+                !selectedPropertyId
+                  ? 'Please select a property first'
+                  : bookings.length === 0
+                    ? 'No bookings available'
+                    : undefined
+              }
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()

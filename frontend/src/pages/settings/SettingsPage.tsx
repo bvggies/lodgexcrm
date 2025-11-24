@@ -37,6 +37,22 @@ const SettingsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'profile';
 
+  // Load saved settings from localStorage
+  React.useEffect(() => {
+    if (user?.id) {
+      const settingsKey = `user_settings_${user.id}`;
+      const savedSettings = localStorage.getItem(settingsKey);
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          form.setFieldsValue(settings);
+        } catch (error) {
+          console.error('Failed to load settings:', error);
+        }
+      }
+    }
+  }, [user?.id, form]);
+
   const handleTabChange = (key: string) => {
     setSearchParams({ tab: key });
   };
@@ -44,8 +60,16 @@ const SettingsPage: React.FC = () => {
   const handleSave = async (values: any) => {
     try {
       setLoading(true);
-      // Save settings logic here
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      // Save settings to localStorage (backend API can be added later)
+      const settingsKey = `user_settings_${user?.id}`;
+      const existingSettings = JSON.parse(localStorage.getItem(settingsKey) || '{}');
+      const updatedSettings = { ...existingSettings, ...values };
+      localStorage.setItem(settingsKey, JSON.stringify(updatedSettings));
+
+      // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
       message.success('Settings saved successfully');
     } catch (error) {
       message.error('Failed to save settings');

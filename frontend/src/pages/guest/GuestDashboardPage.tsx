@@ -403,7 +403,11 @@ const GuestDashboardPage: React.FC = () => {
             label="Property"
             rules={[{ required: true, message: 'Please select a property' }]}
           >
-            <Select placeholder="Select a property" showSearch>
+            <Select
+              placeholder="Select a property"
+              showSearch
+              notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
+            >
               {properties.map((p) => (
                 <Option key={p.id} value={p.id}>
                   {p.name} ({p.code})
