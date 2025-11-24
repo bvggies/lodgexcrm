@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { register, login, refresh, getMe } from '../controllers/auth.controller';
+import { register, registerGuest, login, refresh, getMe } from '../controllers/auth.controller';
 import { authenticate } from '../middleware/auth';
 import { authRateLimiter } from '../middleware/rateLimiter';
 import { validateRequest } from '../middleware/validateRequest';
@@ -52,6 +52,59 @@ router.post(
   ],
   validateRequest,
   register
+);
+
+/**
+ * @swagger
+ * /api/auth/register-guest:
+ *   post:
+ *     summary: Register a new guest user
+ *     tags: [Auth]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *               - firstName
+ *               - lastName
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               nationality:
+ *                 type: string
+ *     responses:
+ *       201:
+ *         description: Guest registered successfully
+ *       409:
+ *         description: User already exists
+ */
+router.post(
+  '/register-guest',
+  authRateLimiter,
+  [
+    body('email').isEmail().normalizeEmail(),
+    body('password').isLength({ min: 8 }),
+    body('firstName').trim().notEmpty(),
+    body('lastName').trim().notEmpty(),
+    body('phone').optional().isString(),
+    body('nationality').optional().isString(),
+  ],
+  validateRequest,
+  registerGuest
 );
 
 /**

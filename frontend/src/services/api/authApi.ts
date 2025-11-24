@@ -21,7 +21,17 @@ export interface AuthResponse {
     firstName: string;
     lastName: string;
     role: string;
+    guestId?: string | null;
   };
+}
+
+export interface RegisterGuestData {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone?: string;
+  nationality?: string;
 }
 
 export const authApi = {
@@ -33,6 +43,13 @@ export const authApi = {
     return apiClient.post<{ success: boolean; data: { user: any } }>('/auth/register', data);
   },
 
+  registerGuest: (data: RegisterGuestData) => {
+    return apiClient.post<{ success: boolean; data: { user: any; guest: any } }>(
+      '/auth/register-guest',
+      data
+    );
+  },
+
   refreshToken: (refreshToken: string) => {
     return apiClient.post<{ success: boolean; data: { accessToken: string } }>('/auth/refresh', {
       refreshToken,
@@ -40,6 +57,6 @@ export const authApi = {
   },
 
   getMe: () => {
-    return apiClient.get<{ success: boolean; data: { user: any } }>('/auth/me');
+    return apiClient.get<{ success: boolean; data: { user: any; guest?: any } }>('/auth/me');
   },
 };

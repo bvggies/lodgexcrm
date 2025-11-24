@@ -97,6 +97,7 @@ export const getBookings = async (
     const {
       propertyId,
       guestId,
+      guestEmail,
       status,
       channel,
       startDate,
@@ -112,6 +113,12 @@ export const getBookings = async (
 
     if (guestId) {
       where.guestId = guestId as string;
+    }
+
+    if (guestEmail) {
+      where.guest = {
+        email: guestEmail as string,
+      };
     }
 
     if (status) {

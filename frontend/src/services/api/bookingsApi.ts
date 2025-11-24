@@ -41,6 +41,7 @@ export const bookingsApi = {
   getAll: (params?: {
     propertyId?: string;
     guestId?: string;
+    guestEmail?: string;
     status?: string;
     channel?: string;
     startDate?: string;

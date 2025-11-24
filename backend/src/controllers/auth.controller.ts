@@ -18,7 +18,7 @@ export const register = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const { email, password, firstName, lastName, role } = req.body;
+    const { email, password, firstName, lastName, role, phone } = req.body;
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -42,6 +42,7 @@ export const register = async (
         firstName,
         lastName,
         role: userRole,
+        phone,
       },
       select: {
         id: true,
@@ -49,6 +50,8 @@ export const register = async (
         firstName: true,
         lastName: true,
         role: true,
+        phone: true,
+        guestId: true,
         createdAt: true,
       },
     });
@@ -57,6 +60,88 @@ export const register = async (
       success: true,
       data: { user },
       message: 'User registered successfully',
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+export const registerGuest = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { email, password, firstName, lastName, phone, nationality } = req.body;
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
+      return next(createError('User already exists', 409));
+    }
+
+    // Check if guest exists with this email
+    let guest = await prisma.guest.findFirst({
+      where: { email },
+    });
+
+    // Hash password
+    const passwordHash = await hashPassword(password);
+
+    // Create or update guest record
+    if (!guest) {
+      guest = await prisma.guest.create({
+        data: {
+          email,
+          firstName,
+          lastName,
+          phone,
+          nationality,
+        },
+      });
+    } else {
+      // Update guest if exists but no user
+      guest = await prisma.guest.update({
+        where: { id: guest.id },
+        data: {
+          firstName,
+          lastName,
+          phone,
+          nationality,
+        },
+      });
+    }
+
+    // Create user with guest role and link to guest
+    const user = await prisma.user.create({
+      data: {
+        email,
+        passwordHash,
+        firstName,
+        lastName,
+        role: StaffRole.guest,
+        phone,
+        guestId: guest.id,
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        phone: true,
+        guestId: true,
+        createdAt: true,
+      },
+    });
+
+    res.status(201).json({
+      success: true,
+      data: { user, guest },
+      message: 'Guest registered successfully',
     });
   } catch (error: any) {
     next(error);
@@ -126,6 +211,7 @@ export const login = async (
           firstName: user.firstName,
           lastName: user.lastName,
           role: user.role,
+          guestId: user.guestId,
         },
       },
     });
@@ -209,6 +295,7 @@ export const getMe = async (
         phone: true,
         isActive: true,
         lastLogin: true,
+        guestId: true,
         createdAt: true,
       },
     });
@@ -217,9 +304,26 @@ export const getMe = async (
       return next(createError('User not found', 404));
     }
 
+    // If user is a guest, include guest data
+    let guest = null;
+    if (user.guestId) {
+      guest = await prisma.guest.findUnique({
+        where: { id: user.guestId },
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          email: true,
+          phone: true,
+          nationality: true,
+          totalSpend: true,
+        },
+      });
+    }
+
     res.json({
       success: true,
-      data: { user },
+      data: { user, guest },
     });
   } catch (error: any) {
     next(error);

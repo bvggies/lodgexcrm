@@ -81,6 +81,7 @@ enum StaffRole {
   cleaner
   maintenance
   owner_view
+  guest
 }
 
 model User {
@@ -95,10 +96,12 @@ model User {
   lastLogin     DateTime?
   refreshToken  String?
   refreshTokenExpiry DateTime?
+  guestId       String?  @unique  // Link to Guest record if user is a guest
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
   // Relations
+  guest         Guest?   @relation(fields: [guestId], references: [id], onDelete: Cascade)
   auditLogs     AuditLog[]
   assignedCleaningTasks CleaningTask[]
   assignedMaintenanceTasks MaintenanceTask[]
@@ -176,6 +179,7 @@ model Guest {
   updatedAt     DateTime @updatedAt
 
   // Relations
+  user          User?
   bookings      Booking[]
   financeRecords FinanceRecord[]
 

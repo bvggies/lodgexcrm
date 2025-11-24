@@ -17,7 +17,16 @@ const LoginPage: React.FC = () => {
   const onFinish = async (values: { email: string; password: string }) => {
     const result = await dispatch(loginUser(values));
     if (loginUser.fulfilled.match(result)) {
-      navigate('/');
+      const user = result.payload.user;
+      // Redirect based on role
+      if (user.role === 'guest') {
+        navigate('/guest/dashboard');
+      } else if (user.role === 'admin') {
+        navigate('/');
+      } else {
+        // staff roles (assistant, cleaner, maintenance, owner_view)
+        navigate('/staff/dashboard');
+      }
     }
   };
 

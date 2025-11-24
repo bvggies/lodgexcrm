@@ -40,102 +40,138 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const isAdmin = user?.role === 'admin';
+  const isGuest = user?.role === 'guest';
+  const isStaff = user?.role !== 'guest' && user?.role !== 'admin';
 
-  const menuItems: MenuProps['items'] = [
-    {
-      key: '/',
-      icon: <DashboardOutlined />,
-      label: 'Dashboard',
-    },
-    {
-      key: '/properties',
-      icon: <HomeOutlined />,
-      label: 'Properties',
-    },
-    {
-      key: '/units',
-      icon: <AppstoreOutlined />,
-      label: 'Units',
-    },
-    {
-      key: '/guests',
-      icon: <UserOutlined />,
-      label: 'Guests',
-    },
-    {
-      key: '/bookings',
-      icon: <CalendarOutlined />,
-      label: 'Bookings',
-    },
-    ...(user?.role === 'owner_view' || user?.email
-      ? [
-          {
-            key: '/my-bookings',
-            icon: <CalendarOutlined />,
-            label: 'My Bookings',
-          },
-        ]
-      : []),
-    {
-      key: '/owners',
-      icon: <TeamOutlined />,
-      label: 'Owners',
-    },
-    {
-      key: '/cleaning',
-      icon: <ToolOutlined />,
-      label: 'Cleaning',
-    },
-    {
-      key: '/maintenance',
-      icon: <ToolOutlined />,
-      label: 'Maintenance',
-    },
-    {
-      key: '/finance',
-      icon: <DollarOutlined />,
-      label: 'Finance',
-    },
-    {
-      key: '/staff',
-      icon: <UsergroupAddOutlined />,
-      label: 'Staff',
-    },
-    {
-      key: '/analytics',
-      icon: <BarChartOutlined />,
-      label: 'Analytics',
-    },
-    {
-      key: '/audit',
-      icon: <FileTextOutlined />,
-      label: 'Audit Log',
-    },
-    {
-      key: '/integrations',
-      icon: <ApiOutlined />,
-      label: 'Integrations',
-    },
-    {
-      key: '/automations',
-      icon: <RobotOutlined />,
-      label: 'Automations',
-    },
-    {
-      key: '/archive',
-      icon: <InboxOutlined />,
-      label: 'Archive',
-    },
-    ...(isAdmin
-      ? [
-          {
-            key: '/import',
-            icon: <UploadOutlined />,
-            label: 'Data Import',
-          },
-        ]
-      : []),
-  ];
+  const getMenuItems = (): MenuProps['items'] => {
+    // Guest menu - only dashboard
+    if (isGuest) {
+      return [
+        {
+          key: '/guest/dashboard',
+          icon: <DashboardOutlined />,
+          label: 'Dashboard',
+        },
+      ];
+    }
+
+    // Staff menu - dashboard and tasks
+    if (isStaff) {
+      const items: MenuProps['items'] = [
+        {
+          key: '/staff/dashboard',
+          icon: <DashboardOutlined />,
+          label: 'Dashboard',
+        },
+      ];
+
+      // Add cleaning tasks if user is cleaner
+      if (user?.role === 'cleaner') {
+        items.push({
+          key: '/cleaning',
+          icon: <ToolOutlined />,
+          label: 'Cleaning Tasks',
+        });
+      }
+
+      // Add maintenance tasks if user is maintenance
+      if (user?.role === 'maintenance') {
+        items.push({
+          key: '/maintenance',
+          icon: <ToolOutlined />,
+          label: 'Maintenance Tasks',
+        });
+      }
+
+      return items;
+    }
+
+    // Admin menu - full access
+    return [
+      {
+        key: '/',
+        icon: <DashboardOutlined />,
+        label: 'Dashboard',
+      },
+      {
+        key: '/properties',
+        icon: <HomeOutlined />,
+        label: 'Properties',
+      },
+      {
+        key: '/units',
+        icon: <AppstoreOutlined />,
+        label: 'Units',
+      },
+      {
+        key: '/guests',
+        icon: <UserOutlined />,
+        label: 'Guests',
+      },
+      {
+        key: '/bookings',
+        icon: <CalendarOutlined />,
+        label: 'Bookings',
+      },
+      {
+        key: '/owners',
+        icon: <TeamOutlined />,
+        label: 'Owners',
+      },
+      {
+        key: '/cleaning',
+        icon: <ToolOutlined />,
+        label: 'Cleaning',
+      },
+      {
+        key: '/maintenance',
+        icon: <ToolOutlined />,
+        label: 'Maintenance',
+      },
+      {
+        key: '/finance',
+        icon: <DollarOutlined />,
+        label: 'Finance',
+      },
+      {
+        key: '/staff',
+        icon: <UsergroupAddOutlined />,
+        label: 'Staff',
+      },
+      {
+        key: '/analytics',
+        icon: <BarChartOutlined />,
+        label: 'Analytics',
+      },
+      {
+        key: '/audit',
+        icon: <FileTextOutlined />,
+        label: 'Audit Log',
+      },
+      {
+        key: '/integrations',
+        icon: <ApiOutlined />,
+        label: 'Integrations',
+      },
+      {
+        key: '/automations',
+        icon: <RobotOutlined />,
+        label: 'Automations',
+      },
+      {
+        key: '/archive',
+        icon: <InboxOutlined />,
+        label: 'Archive',
+      },
+      {
+        key: '/import',
+        icon: <UploadOutlined />,
+        label: 'Data Import',
+      },
+    ];
+  };
+
+  const menuItems = getMenuItems();
 
   const userMenuItems: MenuProps['items'] = [
     {
