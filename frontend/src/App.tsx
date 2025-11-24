@@ -25,6 +25,7 @@ import ArchivePage from './pages/archive/ArchivePage';
 import ImportPage from './pages/import/ImportPage';
 import MyBookingsPage from './pages/bookings/MyBookingsPage';
 import SettingsPage from './pages/settings/SettingsPage';
+import OwnerStatementsPage from './pages/owners/OwnerStatementsPage';
 import { useAppSelector } from './store/hooks';
 
 const { Content } = Layout;
@@ -98,6 +99,14 @@ function App() {
                         element={
                           <PageTransition>
                             <OwnersPage />
+                          </PageTransition>
+                        }
+                      />
+                      <Route
+                        path="/owners/:id/statements"
+                        element={
+                          <PageTransition>
+                            <OwnerStatementsPage />
                           </PageTransition>
                         }
                       />

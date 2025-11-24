@@ -669,6 +669,7 @@ const DashboardPage: React.FC = () => {
                 </Tooltip>
               }
               data-aos="fade-right"
+              style={{ height: '100%', minHeight: '400px' }}
             >
               <ResponsiveContainer width="100%" height={300}>
                 <AreaChart
@@ -759,6 +760,7 @@ const DashboardPage: React.FC = () => {
                 </Space>
               }
               data-aos="fade-left"
+              style={{ height: '100%', minHeight: '400px' }}
             >
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -804,6 +806,7 @@ const DashboardPage: React.FC = () => {
                 </Space>
               }
               data-aos="fade-up"
+              style={{ height: '100%', minHeight: '400px' }}
             >
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart
@@ -863,6 +866,7 @@ const DashboardPage: React.FC = () => {
               }
               data-aos="fade-up"
               data-aos-delay="100"
+              style={{ height: '100%', minHeight: '400px' }}
             >
               <ResponsiveContainer width="100%" height={300}>
                 <PieChart>
@@ -917,6 +921,7 @@ const DashboardPage: React.FC = () => {
                 </Space>
               }
               data-aos="zoom-in"
+              style={{ height: '100%', minHeight: '400px' }}
             >
               <Row gutter={[16, 16]}>
                 <Col span={12}>
@@ -975,6 +980,7 @@ const DashboardPage: React.FC = () => {
               }
               data-aos="zoom-in"
               data-aos-delay="100"
+              style={{ height: '100%', minHeight: '400px' }}
             >
               <Table
                 columns={[
@@ -1013,7 +1019,7 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={6}
               glowColor="rgba(16, 185, 129, 0.2)"
-              style={{ textAlign: 'center', padding: '24px' }}
+              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
               data-aos="zoom-in"
             >
               <Progress
@@ -1041,7 +1047,7 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={7}
               glowColor="rgba(99, 102, 241, 0.2)"
-              style={{ textAlign: 'center', padding: '24px' }}
+              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
               data-aos="zoom-in"
               data-aos-delay="100"
             >
@@ -1064,7 +1070,7 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={8}
               glowColor="rgba(245, 158, 11, 0.2)"
-              style={{ textAlign: 'center', padding: '24px' }}
+              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
               data-aos="zoom-in"
               data-aos-delay="200"
             >
@@ -1094,7 +1100,7 @@ const DashboardPage: React.FC = () => {
             <GlassCard
               index={9}
               glowColor="rgba(239, 68, 68, 0.2)"
-              style={{ textAlign: 'center', padding: '24px' }}
+              style={{ textAlign: 'center', padding: '24px', height: '100%', minHeight: '200px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
               data-aos="zoom-in"
               data-aos-delay="300"
             >
