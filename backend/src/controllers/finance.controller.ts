@@ -632,6 +632,76 @@ export const exportFinanceRecordsPDF = async (
     const margin = 50;
     const lineHeight = 20;
 
+    // Try to load logo
+    try {
+      const logoPath = path.join(process.cwd(), 'frontend', 'public', 'chlogo.png');
+      if (fs.existsSync(logoPath)) {
+        const logoBytes = fs.readFileSync(logoPath);
+        // Try PNG first, then JPG
+        let logoImage;
+        try {
+          logoImage = await pdfDoc.embedPng(logoBytes);
+        } catch {
+          try {
+            logoImage = await pdfDoc.embedJpg(logoBytes);
+          } catch {
+            console.warn('Logo is not a valid PNG or JPG');
+          }
+        }
+        if (logoImage) {
+          const logoDims = logoImage.scale(0.15); // Scale down logo
+          page.drawImage(logoImage, {
+            x: margin,
+            y: y - 30,
+            width: logoDims.width,
+            height: logoDims.height,
+          });
+        }
+      }
+    } catch (error) {
+      console.warn('Could not load logo:', error);
+    }
+
+    // Company name and contact info
+    const companyName = 'Creative Homes Vacation Rental LLC';
+    const companyPhone = process.env.COMPANY_PHONE || '+971 4 XXX XXXX';
+    const companyAddress = process.env.COMPANY_ADDRESS || 'Dubai, United Arab Emirates';
+
+    // Company name (right-aligned)
+    const companyNameWidth = boldFont.widthOfTextAtSize(companyName, 18);
+    page.drawText(companyName, {
+      x: 612 - margin - companyNameWidth,
+      y: y,
+      size: 18,
+      font: boldFont,
+      color: rgb(0.2, 0.2, 0.2),
+    });
+
+    y -= 25;
+
+    // Phone and address (right-aligned)
+    const phoneWidth = font.widthOfTextAtSize(companyPhone, 10);
+    page.drawText(companyPhone, {
+      x: 612 - margin - phoneWidth,
+      y,
+      size: 10,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    y -= 15;
+
+    const addressWidth = font.widthOfTextAtSize(companyAddress, 10);
+    page.drawText(companyAddress, {
+      x: 612 - margin - addressWidth,
+      y,
+      size: 10,
+      font,
+      color: rgb(0.4, 0.4, 0.4),
+    });
+
+    y -= 40;
+
     // Title
     page.drawText('Finance Report', {
       x: margin,
