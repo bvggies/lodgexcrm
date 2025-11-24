@@ -381,11 +381,13 @@ const DashboardPage: React.FC = () => {
         background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)',
         padding: '24px',
         position: 'relative',
+        width: '100%',
+        overflowX: 'hidden',
       }}
     >
       {/* Simplified background - removed heavy animations for performance */}
 
-      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh' }}>
+      <div style={{ position: 'relative', zIndex: 1, minHeight: '100vh', width: '100%' }}>
         <FadeIn>
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -521,7 +523,7 @@ const DashboardPage: React.FC = () => {
 
         {/* Summary Statistics */}
         <StaggerContainer>
-          <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+          <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={12} lg={6}>
               <ModernStatCard
                 title="Monthly Revenue"
@@ -571,7 +573,7 @@ const DashboardPage: React.FC = () => {
             </Col>
           </Row>
 
-          <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
+          <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={12} lg={6}>
               <ModernStatCard
                 title="Monthly Expenses"
@@ -642,8 +644,8 @@ const DashboardPage: React.FC = () => {
         </StaggerContainer>
 
         {/* Charts Row 1 */}
-        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
-          <Col xs={24} md={16} lg={16}>
+        <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={24} md={16} lg={16} xl={16}>
             <GlassCard
               index={0}
               glowColor="rgba(102, 126, 234, 0.2)"
@@ -740,7 +742,7 @@ const DashboardPage: React.FC = () => {
               </ResponsiveContainer>
             </GlassCard>
           </Col>
-          <Col xs={24} md={8} lg={8}>
+          <Col xs={24} sm={24} md={8} lg={8} xl={8}>
             <GlassCard
               index={1}
               glowColor="rgba(245, 87, 108, 0.2)"
@@ -782,8 +784,8 @@ const DashboardPage: React.FC = () => {
         </Row>
 
         {/* Charts Row 2 */}
-        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
-          <Col xs={24} md={12} lg={12}>
+        <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <GlassCard
               index={2}
               glowColor="rgba(67, 233, 123, 0.2)"
@@ -841,7 +843,7 @@ const DashboardPage: React.FC = () => {
               </ResponsiveContainer>
             </GlassCard>
           </Col>
-          <Col xs={24} md={12} lg={12}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <GlassCard
               index={3}
               glowColor="rgba(79, 172, 254, 0.2)"
@@ -897,8 +899,8 @@ const DashboardPage: React.FC = () => {
         </Row>
 
         {/* Repeat Guests Widget */}
-        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
-          <Col xs={24} md={12} lg={12}>
+        <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <GlassCard
               index={4}
               glowColor="rgba(168, 237, 234, 0.2)"
@@ -946,7 +948,7 @@ const DashboardPage: React.FC = () => {
               </div>
             </GlassCard>
           </Col>
-          <Col xs={24} md={12} lg={12}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <GlassCard
               index={5}
               glowColor="rgba(255, 236, 210, 0.2)"
@@ -1000,8 +1002,8 @@ const DashboardPage: React.FC = () => {
         </Row>
 
         {/* Performance Metrics Row */}
-        <Row gutter={[20, 20]} style={{ marginBottom: 32 }}>
-          <Col xs={24} sm={12} md={6} lg={6}>
+        <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
             <GlassCard
               index={6}
               glowColor="rgba(16, 185, 129, 0.2)"
@@ -1029,7 +1031,7 @@ const DashboardPage: React.FC = () => {
               </div>
             </GlassCard>
           </Col>
-          <Col xs={24} sm={12} md={6} lg={6}>
+          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
             <GlassCard
               index={7}
               glowColor="rgba(99, 102, 241, 0.2)"
@@ -1052,7 +1054,7 @@ const DashboardPage: React.FC = () => {
               </Text>
             </GlassCard>
           </Col>
-          <Col xs={24} sm={12} md={6} lg={6}>
+          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
             <GlassCard
               index={8}
               glowColor="rgba(245, 158, 11, 0.2)"
@@ -1082,7 +1084,7 @@ const DashboardPage: React.FC = () => {
               </Text>
             </GlassCard>
           </Col>
-          <Col xs={24} sm={12} md={6} lg={6}>
+          <Col xs={24} sm={12} md={6} lg={6} xl={6}>
             <GlassCard
               index={9}
               glowColor="rgba(239, 68, 68, 0.2)"
@@ -1106,8 +1108,8 @@ const DashboardPage: React.FC = () => {
         </Row>
 
         {/* Tables Row */}
-        <Row gutter={[20, 20]}>
-          <Col xs={24} md={12} lg={12}>
+        <Row gutter={[20, 20]} style={{ display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <GlassCard
               index={10}
               glowColor="rgba(102, 126, 234, 0.2)"
@@ -1138,7 +1140,7 @@ const DashboardPage: React.FC = () => {
               />
             </GlassCard>
           </Col>
-          <Col xs={24} md={12} lg={12}>
+          <Col xs={24} sm={24} md={12} lg={12} xl={12}>
             <GlassCard
               index={11}
               glowColor="rgba(250, 112, 154, 0.2)"
