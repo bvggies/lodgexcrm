@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Card } from 'antd';
 import { motion } from 'framer-motion';
 import type { CardProps } from 'antd/es/card';
@@ -15,9 +15,28 @@ const GlassCard: React.FC<GlassCardProps> = ({
   ...cardProps
 }) => {
   const motionRef = useRef<HTMLDivElement>(null);
+  const [isLargeScreen, setIsLargeScreen] = useState(false);
 
-  // Force visibility after animation should complete
+  // Check screen size on mount and resize
   useEffect(() => {
+    const checkScreenSize = () => {
+      setIsLargeScreen(window.innerWidth >= 768);
+    };
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
+
+  // Force visibility after animation should complete - with immediate fallback for large screens
+  useEffect(() => {
+    // Immediate visibility for larger screens
+    if (isLargeScreen && motionRef.current) {
+      // Force immediate visibility on large screens
+      motionRef.current.style.opacity = '1';
+      motionRef.current.style.transform = 'translateY(0)';
+    }
+
+    // Also set a timeout as backup
     const timer = setTimeout(
       () => {
         if (motionRef.current) {
@@ -25,20 +44,20 @@ const GlassCard: React.FC<GlassCardProps> = ({
           motionRef.current.style.transform = 'translateY(0)';
         }
       },
-      (index * 0.03 + 0.5) * 1000
-    ); // Animation delay + duration + buffer
+      isLargeScreen ? 100 : (index * 0.03 + 0.5) * 1000
+    ); // Shorter delay for large screens
 
     return () => clearTimeout(timer);
-  }, [index]);
+  }, [index, isLargeScreen]);
 
   return (
     <motion.div
       ref={motionRef}
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: isLargeScreen ? 1 : 0, y: isLargeScreen ? 0 : 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{
-        delay: index * 0.03,
-        duration: 0.25,
+        delay: isLargeScreen ? 0 : index * 0.03,
+        duration: isLargeScreen ? 0 : 0.25,
         ease: 'easeOut',
       }}
       whileHover={{
