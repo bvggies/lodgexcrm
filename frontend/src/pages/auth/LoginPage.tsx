@@ -1,13 +1,74 @@
 import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, Alert } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import { Form, Input, Button, Card, Typography, Alert, Space, Divider } from 'antd';
+import {
+  UserOutlined,
+  LockOutlined,
+  CrownOutlined,
+  TeamOutlined,
+  HomeOutlined,
+  UserAddOutlined,
+  ToolOutlined,
+} from '@ant-design/icons';
 import { motion } from 'framer-motion';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginUser } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import ThemeToggle from '../../components/ThemeToggle';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+
+interface DemoAccount {
+  email: string;
+  password: string;
+  role: string;
+  icon: React.ReactNode;
+  color: string;
+}
+
+const demoAccounts: DemoAccount[] = [
+  {
+    email: 'admin@lodgexcrm.com',
+    password: 'admin123',
+    role: 'Admin',
+    icon: <CrownOutlined />,
+    color: '#ff4d4f',
+  },
+  {
+    email: 'owner@lodgexcrm.com',
+    password: 'owner123',
+    role: 'Owner',
+    icon: <HomeOutlined />,
+    color: '#1890ff',
+  },
+  {
+    email: 'assistant@lodgexcrm.com',
+    password: 'assistant123',
+    role: 'Assistant',
+    icon: <TeamOutlined />,
+    color: '#52c41a',
+  },
+  {
+    email: 'cleaner@lodgexcrm.com',
+    password: 'cleaner123',
+    role: 'Cleaner',
+    icon: <ToolOutlined />,
+    color: '#faad14',
+  },
+  {
+    email: 'maintenance@lodgexcrm.com',
+    password: 'maintenance123',
+    role: 'Maintenance',
+    icon: <ToolOutlined />,
+    color: '#722ed1',
+  },
+  {
+    email: 'guest1@example.com',
+    password: 'guest123',
+    role: 'Guest',
+    icon: <UserAddOutlined />,
+    color: '#13c2c2',
+  },
+];
 
 const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -16,6 +77,32 @@ const LoginPage: React.FC = () => {
   const [form] = Form.useForm();
 
   const onFinish = async (values: { email: string; password: string }) => {
+    const result = await dispatch(loginUser(values));
+    if (loginUser.fulfilled.match(result)) {
+      const user = result.payload.user;
+      // Redirect based on role
+      if (user.role === 'guest') {
+        navigate('/guest/dashboard');
+      } else if (user.role === 'admin') {
+        navigate('/');
+      } else if (user.role === 'owner_view') {
+        navigate('/owner/dashboard');
+      } else {
+        // staff roles (assistant, cleaner, maintenance)
+        navigate('/staff/dashboard');
+      }
+    }
+  };
+
+  const handleDemoLogin = async (account: DemoAccount) => {
+    // Fill form fields
+    form.setFieldsValue({
+      email: account.email,
+      password: account.password,
+    });
+
+    // Submit the form
+    const values = { email: account.email, password: account.password };
     const result = await dispatch(loginUser(values));
     if (loginUser.fulfilled.match(result)) {
       const user = result.payload.user;
@@ -58,7 +145,7 @@ const LoginPage: React.FC = () => {
         animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        <Card style={{ width: 400, boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
+        <Card style={{ width: 500, maxWidth: '90vw', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
           <div style={{ textAlign: 'center', marginBottom: 32 }}>
             <div style={{ marginBottom: 16 }}>
               <img
@@ -106,9 +193,45 @@ const LoginPage: React.FC = () => {
             </Form.Item>
           </Form>
 
-          <div style={{ textAlign: 'center', marginTop: 16, color: '#666' }}>
-            <p>Demo credentials:</p>
-            <p style={{ fontSize: 12 }}>admin@lodgexcrm.com / admin123</p>
+          <Divider>
+            <Text type="secondary" style={{ fontSize: 12 }}>
+              Or try a demo account
+            </Text>
+          </Divider>
+
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(2, 1fr)',
+              gap: 8,
+              marginTop: 16,
+            }}
+          >
+            {demoAccounts.map((account) => (
+              <Button
+                key={account.email}
+                icon={account.icon}
+                onClick={() => handleDemoLogin(account)}
+                loading={isLoading}
+                block
+                style={{
+                  height: 'auto',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  borderColor: account.color,
+                  color: account.color,
+                }}
+              >
+                <div style={{ textAlign: 'left', flex: 1 }}>
+                  <div style={{ fontWeight: 500, fontSize: 13 }}>{account.role}</div>
+                  <div style={{ fontSize: 10, opacity: 0.7, marginTop: 2 }}>
+                    {account.email.split('@')[0]}
+                  </div>
+                </div>
+              </Button>
+            ))}
           </div>
         </Card>
       </motion.div>
