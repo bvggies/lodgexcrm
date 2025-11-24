@@ -19,10 +19,6 @@ import {
   Timeline,
   Badge,
 } from 'antd';
-import { motion, AnimatePresence } from 'framer-motion';
-import AnimatedCard from '../../components/animations/AnimatedCard';
-import StaggerContainer from '../../components/animations/StaggerContainer';
-import FadeIn from '../../components/animations/FadeIn';
 import ModernStatCard from '../../components/animations/ModernStatCard';
 import GlassCard from '../../components/animations/GlassCard';
 import {
@@ -389,266 +385,242 @@ const DashboardPage: React.FC = () => {
       {/* Simplified background - removed heavy animations for performance */}
 
       <div style={{ position: 'relative', zIndex: 1, width: '100%', paddingBottom: '24px' }}>
-        <FadeIn>
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            data-aos="fade-down"
-            onAnimationComplete={(e: any) => {
-              if (e?.target) {
-                e.target.style.opacity = '1';
-                e.target.style.transform = 'translateY(0)';
-              }
-            }}
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: 32,
+            background: 'rgba(255, 255, 255, 0.1)',
+            backdropFilter: 'blur(10px)',
+            padding: '20px 24px',
+            borderRadius: '16px',
+            border: '1px solid rgba(255, 255, 255, 0.2)',
+          }}
+        >
+          <Title
+            level={2}
             style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: 32,
-              background: 'rgba(255, 255, 255, 0.1)',
-              backdropFilter: 'blur(10px)',
-              padding: '20px 24px',
-              borderRadius: '16px',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
+              margin: 0,
+              color: '#fff',
+              textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
+              fontSize: '32px',
+              fontWeight: 700,
             }}
           >
-            <Title
-              level={2}
+            Dashboard
+          </Title>
+          <Space>
+            <Select
+              value={timeRange}
+              onChange={(value) => {
+                setTimeRange(value);
+                if (value !== 'custom') {
+                  setCustomDateRange(null);
+                }
+              }}
               style={{
-                margin: 0,
-                color: '#fff',
-                textShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-                fontSize: '32px',
-                fontWeight: 700,
+                width: 150,
+                background: 'rgba(255, 255, 255, 0.9)',
+                borderRadius: '8px',
               }}
             >
-              Dashboard
-            </Title>
-            <Space>
-              <Select
-                value={timeRange}
-                onChange={(value) => {
-                  setTimeRange(value);
-                  if (value !== 'custom') {
-                    setCustomDateRange(null);
-                  }
-                }}
+              <Option value="7d">Last 7 Days</Option>
+              <Option value="30d">Last 30 Days</Option>
+              <Option value="90d">Last 90 Days</Option>
+              <Option value="1y">Last Year</Option>
+              <Option value="custom">Custom Range</Option>
+            </Select>
+            {timeRange === 'custom' && (
+              <RangePicker
+                value={customDateRange}
+                onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
                 style={{
-                  width: 150,
                   background: 'rgba(255, 255, 255, 0.9)',
                   borderRadius: '8px',
                 }}
+              />
+            )}
+            <Tooltip title="Refresh Data">
+              <Button
+                icon={<ReloadOutlined spin={refreshing} />}
+                onClick={handleRefresh}
+                loading={refreshing}
+                style={{
+                  background: '#1e293b',
+                  border: '1px solid #334155',
+                  color: '#e2e8f0',
+                  borderRadius: '8px',
+                  fontWeight: 500,
+                  cursor: 'pointer',
+                }}
               >
-                <Option value="7d">Last 7 Days</Option>
-                <Option value="30d">Last 30 Days</Option>
-                <Option value="90d">Last 90 Days</Option>
-                <Option value="1y">Last Year</Option>
-                <Option value="custom">Custom Range</Option>
-              </Select>
-              {timeRange === 'custom' && (
-                <RangePicker
-                  value={customDateRange}
-                  onChange={(dates) =>
-                    setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)
-                  }
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: '8px',
-                  }}
-                />
-              )}
-              <Tooltip title="Refresh Data">
-                <Button
-                  icon={<ReloadOutlined spin={refreshing} />}
-                  onClick={handleRefresh}
-                  loading={refreshing}
-                  style={{
-                    background: '#1e293b',
-                    border: '1px solid #334155',
-                    color: '#e2e8f0',
-                    borderRadius: '8px',
-                    fontWeight: 500,
-                    cursor: 'pointer',
-                  }}
-                >
-                  Refresh
-                </Button>
-              </Tooltip>
-              <Space>
-                <Button
-                  type="primary"
-                  icon={<PlusOutlined />}
-                  onClick={() => navigate('/bookings')}
-                  style={{
-                    background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
-                    border: 'none',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Add Booking
-                </Button>
-                <Button
-                  type="default"
-                  icon={<ToolOutlined />}
-                  onClick={() => navigate('/cleaning')}
-                  style={{
-                    background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                    border: 'none',
-                    color: 'white',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Add Cleaning Task
-                </Button>
-                <Button
-                  type="default"
-                  icon={<CheckCircleOutlined />}
-                  onClick={() => navigate('/maintenance')}
-                  style={{
-                    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                    border: 'none',
-                    color: 'white',
-                    borderRadius: '8px',
-                    fontWeight: 600,
-                    boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
-                    cursor: 'pointer',
-                  }}
-                >
-                  Add Maintenance Task
-                </Button>
-              </Space>
+                Refresh
+              </Button>
+            </Tooltip>
+            <Space>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => navigate('/bookings')}
+                style={{
+                  background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 15px rgba(99, 102, 241, 0.4)',
+                  cursor: 'pointer',
+                }}
+              >
+                Add Booking
+              </Button>
+              <Button
+                type="default"
+                icon={<ToolOutlined />}
+                onClick={() => navigate('/cleaning')}
+                style={{
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  border: 'none',
+                  color: 'white',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
+                  cursor: 'pointer',
+                }}
+              >
+                Add Cleaning Task
+              </Button>
+              <Button
+                type="default"
+                icon={<CheckCircleOutlined />}
+                onClick={() => navigate('/maintenance')}
+                style={{
+                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                  border: 'none',
+                  color: 'white',
+                  borderRadius: '8px',
+                  fontWeight: 600,
+                  boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
+                  cursor: 'pointer',
+                }}
+              >
+                Add Maintenance Task
+              </Button>
             </Space>
-          </motion.div>
-        </FadeIn>
+          </Space>
+        </div>
 
         {/* Summary Statistics */}
-        <StaggerContainer>
-          <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Monthly Revenue"
-                value={data?.financial.monthlyRevenue || 0}
-                prefix="AED "
-                precision={2}
-                loading={loading}
-                icon={<DollarOutlined />}
-                gradient="linear-gradient(135deg, #1e293b 0%, #0f172a 100%)"
-                index={0}
-                valueStyle={{ color: '#3f8600' }}
-              />
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Active Bookings"
-                value={data?.summary.activeBookings || 0}
-                loading={loading}
-                icon={<CalendarOutlined />}
-                gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
-                index={1}
-              />
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Properties"
-                value={data?.summary.totalProperties || 0}
-                loading={loading}
-                icon={<HomeOutlined />}
-                gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
-                index={2}
-              />
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Occupancy Rate"
-                value={data?.occupancy.rate || 0}
-                suffix="%"
-                precision={1}
-                loading={loading}
-                gradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
-                index={3}
-                valueStyle={{
-                  color: data?.occupancy.rate && data.occupancy.rate > 70 ? '#3f8600' : '#cf1322',
-                }}
-              />
-            </Col>
-          </Row>
+        <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Monthly Revenue"
+              value={data?.financial.monthlyRevenue || 0}
+              prefix="AED "
+              precision={2}
+              loading={loading}
+              icon={<DollarOutlined />}
+              gradient="linear-gradient(135deg, #1e293b 0%, #0f172a 100%)"
+              valueStyle={{ color: '#3f8600' }}
+            />
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Active Bookings"
+              value={data?.summary.activeBookings || 0}
+              loading={loading}
+              icon={<CalendarOutlined />}
+              gradient="linear-gradient(135deg, #f093fb 0%, #f5576c 100%)"
+            />
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Properties"
+              value={data?.summary.totalProperties || 0}
+              loading={loading}
+              icon={<HomeOutlined />}
+              gradient="linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)"
+            />
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Occupancy Rate"
+              value={data?.occupancy.rate || 0}
+              suffix="%"
+              precision={1}
+              loading={loading}
+              gradient="linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)"
+              valueStyle={{
+                color: data?.occupancy.rate && data.occupancy.rate > 70 ? '#3f8600' : '#cf1322',
+              }}
+            />
+          </Col>
+        </Row>
 
-          <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Monthly Expenses"
-                value={data?.financial.monthlyExpenses || 0}
-                prefix="AED "
-                precision={2}
-                loading={loading}
-                icon={<DollarOutlined />}
-                gradient="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
-                index={4}
-                valueStyle={{ color: '#cf1322' }}
-              />
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Net Income"
-                value={data?.financial.monthlyNetIncome || 0}
-                prefix="AED "
-                precision={2}
-                valueStyle={{
-                  color: (data?.financial.monthlyNetIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
-                }}
-                loading={loading}
-                icon={<DollarOutlined />}
-                gradient="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
-                index={5}
-              />
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Pending Cleaning"
-                value={data?.summary.pendingCleaningTasks || 0}
-                loading={loading}
-                gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
-                index={6}
-                suffix={
-                  <Button
-                    type="link"
-                    size="small"
-                    onClick={() => navigate('/cleaning')}
-                    style={{ padding: 0, fontSize: '12px' }}
-                  >
-                    View
-                  </Button>
-                }
-              />
-            </Col>
-            <Col xs={24} sm={12} lg={6}>
-              <ModernStatCard
-                title="Pending Maintenance"
-                value={data?.summary.pendingMaintenanceTasks || 0}
-                loading={loading}
-                gradient="linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
-                index={7}
-                suffix={
-                  <Button
-                    type="link"
-                    size="small"
-                    onClick={() => navigate('/maintenance')}
-                    style={{ padding: 0, fontSize: '12px' }}
-                  >
-                    View
-                  </Button>
-                }
-              />
-            </Col>
-          </Row>
-        </StaggerContainer>
+        <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Monthly Expenses"
+              value={data?.financial.monthlyExpenses || 0}
+              prefix="AED "
+              precision={2}
+              loading={loading}
+              icon={<DollarOutlined />}
+              gradient="linear-gradient(135deg, #fa709a 0%, #fee140 100%)"
+              valueStyle={{ color: '#cf1322' }}
+            />
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Net Income"
+              value={data?.financial.monthlyNetIncome || 0}
+              prefix="AED "
+              precision={2}
+              valueStyle={{
+                color: (data?.financial.monthlyNetIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
+              }}
+              loading={loading}
+              icon={<DollarOutlined />}
+              gradient="linear-gradient(135deg, #30cfd0 0%, #330867 100%)"
+            />
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Pending Cleaning"
+              value={data?.summary.pendingCleaningTasks || 0}
+              loading={loading}
+              gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
+              suffix={
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => navigate('/cleaning')}
+                  style={{ padding: 0, fontSize: '12px' }}
+                >
+                  View
+                </Button>
+              }
+            />
+          </Col>
+          <Col xs={24} sm={12} lg={6}>
+            <ModernStatCard
+              title="Pending Maintenance"
+              value={data?.summary.pendingMaintenanceTasks || 0}
+              loading={loading}
+              gradient="linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
+              suffix={
+                <Button
+                  type="link"
+                  size="small"
+                  onClick={() => navigate('/maintenance')}
+                  style={{ padding: 0, fontSize: '12px' }}
+                >
+                  View
+                </Button>
+              }
+            />
+          </Col>
+        </Row>
 
         {/* Charts Row 1 */}
         <div
@@ -663,7 +635,6 @@ const DashboardPage: React.FC = () => {
           <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={24} md={16} lg={16} xl={16}>
               <GlassCard
-                index={0}
                 glowColor="rgba(102, 126, 234, 0.2)"
                 title={
                   <Space>
@@ -678,7 +649,6 @@ const DashboardPage: React.FC = () => {
                     </Text>
                   </Tooltip>
                 }
-                data-aos="fade-right"
                 style={{ height: '100%', minHeight: '400px' }}
               >
                 <ResponsiveContainer width="100%" height={300}>
@@ -761,7 +731,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={24} md={8} lg={8} xl={8}>
               <GlassCard
-                index={1}
                 glowColor="rgba(245, 87, 108, 0.2)"
                 title={
                   <Space>
@@ -769,7 +738,6 @@ const DashboardPage: React.FC = () => {
                     <span style={{ fontSize: '18px', fontWeight: 600 }}>Booking Channels</span>
                   </Space>
                 }
-                data-aos="fade-left"
                 style={{ height: '100%', minHeight: '400px' }}
               >
                 <ResponsiveContainer width="100%" height={300}>
@@ -815,7 +783,6 @@ const DashboardPage: React.FC = () => {
           <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <GlassCard
-                index={2}
                 glowColor="rgba(67, 233, 123, 0.2)"
                 title={
                   <Space>
@@ -825,7 +792,6 @@ const DashboardPage: React.FC = () => {
                     </span>
                   </Space>
                 }
-                data-aos="fade-up"
                 style={{ height: '100%', minHeight: '400px' }}
               >
                 <ResponsiveContainer width="100%" height={300}>
@@ -874,7 +840,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <GlassCard
-                index={3}
                 glowColor="rgba(79, 172, 254, 0.2)"
                 title={
                   <Space>
@@ -884,8 +849,6 @@ const DashboardPage: React.FC = () => {
                     </span>
                   </Space>
                 }
-                data-aos="fade-up"
-                data-aos-delay="100"
                 style={{ height: '100%', minHeight: '400px' }}
               >
                 <ResponsiveContainer width="100%" height={300}>
@@ -932,7 +895,6 @@ const DashboardPage: React.FC = () => {
           <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <GlassCard
-                index={4}
                 glowColor="rgba(168, 237, 234, 0.2)"
                 title={
                   <Space>
@@ -942,7 +904,6 @@ const DashboardPage: React.FC = () => {
                     </span>
                   </Space>
                 }
-                data-aos="zoom-in"
                 style={{ height: '100%', minHeight: '400px' }}
               >
                 <Row gutter={[16, 16]}>
@@ -983,7 +944,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <GlassCard
-                index={5}
                 glowColor="rgba(255, 236, 210, 0.2)"
                 title={
                   <Space>
@@ -1000,8 +960,6 @@ const DashboardPage: React.FC = () => {
                     View All
                   </Button>
                 }
-                data-aos="zoom-in"
-                data-aos-delay="100"
                 style={{ height: '100%', minHeight: '400px' }}
               >
                 <Table
@@ -1051,7 +1009,6 @@ const DashboardPage: React.FC = () => {
           <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={12} md={6} lg={6} xl={6}>
               <GlassCard
-                index={6}
                 glowColor="rgba(16, 185, 129, 0.2)"
                 style={{
                   textAlign: 'center',
@@ -1062,7 +1019,6 @@ const DashboardPage: React.FC = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                 }}
-                data-aos="zoom-in"
               >
                 <Progress
                   type="circle"
@@ -1087,7 +1043,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={12} md={6} lg={6} xl={6}>
               <GlassCard
-                index={7}
                 glowColor="rgba(99, 102, 241, 0.2)"
                 style={{
                   textAlign: 'center',
@@ -1098,8 +1053,6 @@ const DashboardPage: React.FC = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                 }}
-                data-aos="zoom-in"
-                data-aos-delay="100"
               >
                 <Statistic
                   title="Avg. Booking Value"
@@ -1118,7 +1071,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={12} md={6} lg={6} xl={6}>
               <GlassCard
-                index={8}
                 glowColor="rgba(245, 158, 11, 0.2)"
                 style={{
                   textAlign: 'center',
@@ -1129,8 +1081,6 @@ const DashboardPage: React.FC = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                 }}
-                data-aos="zoom-in"
-                data-aos-delay="200"
               >
                 <Statistic
                   title="Task Completion Rate"
@@ -1156,7 +1106,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={12} md={6} lg={6} xl={6}>
               <GlassCard
-                index={9}
                 glowColor="rgba(239, 68, 68, 0.2)"
                 style={{
                   textAlign: 'center',
@@ -1167,8 +1116,6 @@ const DashboardPage: React.FC = () => {
                   flexDirection: 'column',
                   justifyContent: 'center',
                 }}
-                data-aos="zoom-in"
-                data-aos-delay="300"
               >
                 <Statistic
                   title="Revenue Growth"
@@ -1199,7 +1146,6 @@ const DashboardPage: React.FC = () => {
           <Row gutter={[20, 20]} style={{ display: 'flex', flexWrap: 'wrap' }}>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <GlassCard
-                index={10}
                 glowColor="rgba(102, 126, 234, 0.2)"
                 title={
                   <span style={{ fontSize: '18px', fontWeight: 600 }}>
@@ -1216,7 +1162,6 @@ const DashboardPage: React.FC = () => {
                   </Button>
                 }
                 style={{ height: 400 }}
-                data-aos="fade-up"
               >
                 <Table
                   columns={checkinColumns}
@@ -1230,7 +1175,6 @@ const DashboardPage: React.FC = () => {
             </Col>
             <Col xs={24} sm={24} md={12} lg={12} xl={12}>
               <GlassCard
-                index={11}
                 glowColor="rgba(250, 112, 154, 0.2)"
                 title={<span style={{ fontSize: '18px', fontWeight: 600 }}>Unpaid Bookings</span>}
                 extra={
@@ -1243,8 +1187,6 @@ const DashboardPage: React.FC = () => {
                   </Button>
                 }
                 style={{ height: 400 }}
-                data-aos="fade-up"
-                data-aos-delay="100"
               >
                 <Table
                   columns={unpaidColumns}
