@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dropdown, Badge, List, Empty, Button, Space, Typography } from 'antd';
+import { Dropdown, Badge, List, Empty, Button, Typography } from 'antd';
 import {
   BellOutlined,
   CheckCircleOutlined,
