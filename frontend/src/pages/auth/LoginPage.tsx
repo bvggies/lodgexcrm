@@ -12,6 +12,7 @@ import {
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { loginUser } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import { useMobile } from '../../hooks/useMobile';
 import ThemeToggle from '../../components/ThemeToggle';
 
 const { Title, Text } = Typography;
@@ -73,6 +74,7 @@ const LoginPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { isLoading, error } = useAppSelector((state) => state.auth);
+  const isMobile = useMobile();
   const [form] = Form.useForm();
 
   const onFinish = async (values: { email: string; password: string }) => {
@@ -133,15 +135,21 @@ const LoginPage: React.FC = () => {
       <div
         style={{
           position: 'absolute',
-          top: 24,
-          right: 24,
+          top: isMobile ? 12 : 24,
+          right: isMobile ? 12 : 24,
         }}
       >
         <ThemeToggle />
       </div>
-      <div>
-        <Card style={{ width: 500, maxWidth: '90vw', boxShadow: '0 4px 12px rgba(0,0,0,0.15)' }}>
-          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+      <div style={{ width: '100%', padding: isMobile ? '12px' : '0' }}>
+        <Card
+          style={{
+            width: isMobile ? '100%' : 500,
+            maxWidth: '90vw',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+          }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: isMobile ? 24 : 32 }}>
             <div style={{ marginBottom: 16 }}>
               <img
                 src="/logo.svg"
@@ -197,7 +205,7 @@ const LoginPage: React.FC = () => {
           <div
             style={{
               display: 'grid',
-              gridTemplateColumns: 'repeat(2, 1fr)',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
               gap: 8,
               marginTop: 16,
             }}
