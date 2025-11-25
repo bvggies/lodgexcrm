@@ -128,30 +128,30 @@ const OwnersPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Owners
-          </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Owner
-          </Button>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Owners
+        </Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          Add Owner
+        </Button>
+      </div>
 
-        <Input
-          placeholder="Search owners..."
-          prefix={<SearchOutlined />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 400, marginBottom: 16 }}
-          allowClear
-        />
+      <Input
+        placeholder="Search owners..."
+        prefix={<SearchOutlined />}
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 400, marginBottom: 16 }}
+        allowClear
+      />
 
       <div>
         <Table

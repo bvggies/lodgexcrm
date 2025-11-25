@@ -293,29 +293,29 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Settings
+        </Title>
+        <Button
+          type="primary"
+          icon={<SaveOutlined />}
+          onClick={() => form.submit()}
+          loading={loading}
+          size="large"
         >
-          <Title level={2} style={{ margin: 0 }}>
-            Settings
-          </Title>
-          <Button
-            type="primary"
-            icon={<SaveOutlined />}
-            onClick={() => form.submit()}
-            loading={loading}
-            size="large"
-          >
-            Save All Settings
-          </Button>
-        </div>
+          Save All Settings
+        </Button>
+      </div>
 
-        <Tabs items={tabItems} size="large" activeKey={activeTab} onChange={handleTabChange} />
+      <Tabs items={tabItems} size="large" activeKey={activeTab} onChange={handleTabChange} />
     </div>
   );
 };

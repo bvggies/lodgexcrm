@@ -171,21 +171,21 @@ const UnitsPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Units
-          </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Unit
-          </Button>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Units
+        </Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          Add Unit
+        </Button>
+      </div>
 
       <Space style={{ marginBottom: 16 }}>
         <Input

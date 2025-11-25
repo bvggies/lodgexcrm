@@ -300,35 +300,35 @@ const CleaningTasksPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Cleaning Tasks
-          </Title>
-          {isManagerOrAdmin && (
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-              Add Task
-            </Button>
-          )}
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Cleaning Tasks
+        </Title>
+        {isManagerOrAdmin && (
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            Add Task
+          </Button>
+        )}
+      </div>
 
-        <Select
-          placeholder="Filter by status"
-          style={{ width: 200, marginBottom: 16 }}
-          allowClear
-          value={statusFilter}
-          onChange={setStatusFilter}
-        >
-          <Option value="not_started">Not Started</Option>
-          <Option value="in_progress">In Progress</Option>
-          <Option value="completed">Completed</Option>
-        </Select>
+      <Select
+        placeholder="Filter by status"
+        style={{ width: 200, marginBottom: 16 }}
+        allowClear
+        value={statusFilter}
+        onChange={setStatusFilter}
+      >
+        <Option value="not_started">Not Started</Option>
+        <Option value="in_progress">In Progress</Option>
+        <Option value="completed">Completed</Option>
+      </Select>
 
       <div>
         <Table

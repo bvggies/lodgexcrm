@@ -123,45 +123,45 @@ const AuditLogPage: React.FC = () => {
 
   return (
     <div>
-        <Title level={2}>Audit Log</Title>
+      <Title level={2}>Audit Log</Title>
 
-        <Space style={{ marginBottom: 16 }}>
-          <Select
-            placeholder="Filter by action"
-            style={{ width: 150 }}
-            allowClear
-            value={actionFilter}
-            onChange={setActionFilter}
-          >
-            <Option value="create">Create</Option>
-            <Option value="update">Update</Option>
-            <Option value="delete">Delete</Option>
-          </Select>
-          <Select
-            placeholder="Filter by table"
-            style={{ width: 200 }}
-            allowClear
-            value={tableFilter}
-            onChange={setTableFilter}
-          >
-            <Option value="bookings">Bookings</Option>
-            <Option value="guests">Guests</Option>
-            <Option value="properties">Properties</Option>
-            <Option value="owners">Owners</Option>
-            <Option value="units">Units</Option>
-            <Option value="staff">Staff</Option>
-            <Option value="cleaningTask">Cleaning Tasks</Option>
-            <Option value="maintenanceTask">Maintenance Tasks</Option>
-            <Option value="financeRecord">Finance Records</Option>
-          </Select>
-          <RangePicker
-            value={dateRange}
-            onChange={(dates) => setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-          />
-          <Button icon={<ReloadOutlined />} onClick={loadLogs}>
-            Refresh
-          </Button>
-        </Space>
+      <Space style={{ marginBottom: 16 }}>
+        <Select
+          placeholder="Filter by action"
+          style={{ width: 150 }}
+          allowClear
+          value={actionFilter}
+          onChange={setActionFilter}
+        >
+          <Option value="create">Create</Option>
+          <Option value="update">Update</Option>
+          <Option value="delete">Delete</Option>
+        </Select>
+        <Select
+          placeholder="Filter by table"
+          style={{ width: 200 }}
+          allowClear
+          value={tableFilter}
+          onChange={setTableFilter}
+        >
+          <Option value="bookings">Bookings</Option>
+          <Option value="guests">Guests</Option>
+          <Option value="properties">Properties</Option>
+          <Option value="owners">Owners</Option>
+          <Option value="units">Units</Option>
+          <Option value="staff">Staff</Option>
+          <Option value="cleaningTask">Cleaning Tasks</Option>
+          <Option value="maintenanceTask">Maintenance Tasks</Option>
+          <Option value="financeRecord">Finance Records</Option>
+        </Select>
+        <RangePicker
+          value={dateRange}
+          onChange={(dates) => setDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
+        />
+        <Button icon={<ReloadOutlined />} onClick={loadLogs}>
+          Refresh
+        </Button>
+      </Space>
 
       <Table
         columns={columns}

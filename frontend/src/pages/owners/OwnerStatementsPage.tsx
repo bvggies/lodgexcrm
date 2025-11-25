@@ -183,95 +183,95 @@ const OwnerStatementsPage: React.FC = () => {
 
   return (
     <div>
-        <Space direction="vertical" size="large" style={{ width: '100%' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <Space>
-              <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/owners')}>
-                Back to Owners
-              </Button>
-              <Title level={2} style={{ margin: 0 }}>
-                Statements - {data.owner.name}
-              </Title>
-            </Space>
-            <Space>
-              <DatePicker
-                picker="month"
-                value={dayjs(selectedMonth)}
-                onChange={handleMonthChange}
-                format="MMMM YYYY"
-              />
-              <Button
-                icon={<DownloadOutlined />}
-                type="primary"
-                onClick={handleExportPDF}
-                loading={exporting}
-              >
-                Download PDF
-              </Button>
-            </Space>
-          </div>
-
-          <Descriptions bordered column={{ xs: 1, sm: 2, md: 3 }} style={{ marginBottom: 24 }}>
-            <Descriptions.Item label="Period">
-              {dayjs(data.period.start).format('MMM DD, YYYY')} -{' '}
-              {dayjs(data.period.end).format('MMM DD, YYYY')}
-            </Descriptions.Item>
-            <Descriptions.Item label="Total Records">{data.records.length}</Descriptions.Item>
-          </Descriptions>
-
-          <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-            <Col xs={24} sm={8}>
-              <GlassCard index={0} glowColor="rgba(16, 185, 129, 0.2)">
-                <Statistic
-                  title="Total Revenue"
-                  value={data.summary.revenue}
-                  prefix="AED "
-                  precision={2}
-                  valueStyle={{ color: '#3f8600' }}
-                />
-              </GlassCard>
-            </Col>
-            <Col xs={24} sm={8}>
-              <GlassCard index={1} glowColor="rgba(239, 68, 68, 0.2)">
-                <Statistic
-                  title="Total Expenses"
-                  value={data.summary.expenses}
-                  prefix="AED "
-                  precision={2}
-                  valueStyle={{ color: '#cf1322' }}
-                />
-              </GlassCard>
-            </Col>
-            <Col xs={24} sm={8}>
-              <GlassCard
-                index={2}
-                glowColor={
-                  data.summary.netIncome >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
-                }
-              >
-                <Statistic
-                  title="Net Income"
-                  value={data.summary.netIncome}
-                  prefix="AED "
-                  precision={2}
-                  valueStyle={{
-                    color: data.summary.netIncome >= 0 ? '#3f8600' : '#cf1322',
-                  }}
-                />
-              </GlassCard>
-            </Col>
-          </Row>
-
-          <GlassCard index={3} glowColor="rgba(102, 126, 234, 0.2)" title="Statement Details">
-            <Table
-              columns={columns}
-              dataSource={data.records}
-              loading={loading}
-              rowKey="id"
-              pagination={{ pageSize: 20 }}
+      <Space direction="vertical" size="large" style={{ width: '100%' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Space>
+            <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/owners')}>
+              Back to Owners
+            </Button>
+            <Title level={2} style={{ margin: 0 }}>
+              Statements - {data.owner.name}
+            </Title>
+          </Space>
+          <Space>
+            <DatePicker
+              picker="month"
+              value={dayjs(selectedMonth)}
+              onChange={handleMonthChange}
+              format="MMMM YYYY"
             />
-          </GlassCard>
-        </Space>
+            <Button
+              icon={<DownloadOutlined />}
+              type="primary"
+              onClick={handleExportPDF}
+              loading={exporting}
+            >
+              Download PDF
+            </Button>
+          </Space>
+        </div>
+
+        <Descriptions bordered column={{ xs: 1, sm: 2, md: 3 }} style={{ marginBottom: 24 }}>
+          <Descriptions.Item label="Period">
+            {dayjs(data.period.start).format('MMM DD, YYYY')} -{' '}
+            {dayjs(data.period.end).format('MMM DD, YYYY')}
+          </Descriptions.Item>
+          <Descriptions.Item label="Total Records">{data.records.length}</Descriptions.Item>
+        </Descriptions>
+
+        <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
+          <Col xs={24} sm={8}>
+            <GlassCard index={0} glowColor="rgba(16, 185, 129, 0.2)">
+              <Statistic
+                title="Total Revenue"
+                value={data.summary.revenue}
+                prefix="AED "
+                precision={2}
+                valueStyle={{ color: '#3f8600' }}
+              />
+            </GlassCard>
+          </Col>
+          <Col xs={24} sm={8}>
+            <GlassCard index={1} glowColor="rgba(239, 68, 68, 0.2)">
+              <Statistic
+                title="Total Expenses"
+                value={data.summary.expenses}
+                prefix="AED "
+                precision={2}
+                valueStyle={{ color: '#cf1322' }}
+              />
+            </GlassCard>
+          </Col>
+          <Col xs={24} sm={8}>
+            <GlassCard
+              index={2}
+              glowColor={
+                data.summary.netIncome >= 0 ? 'rgba(16, 185, 129, 0.2)' : 'rgba(239, 68, 68, 0.2)'
+              }
+            >
+              <Statistic
+                title="Net Income"
+                value={data.summary.netIncome}
+                prefix="AED "
+                precision={2}
+                valueStyle={{
+                  color: data.summary.netIncome >= 0 ? '#3f8600' : '#cf1322',
+                }}
+              />
+            </GlassCard>
+          </Col>
+        </Row>
+
+        <GlassCard index={3} glowColor="rgba(102, 126, 234, 0.2)" title="Statement Details">
+          <Table
+            columns={columns}
+            dataSource={data.records}
+            loading={loading}
+            rowKey="id"
+            pagination={{ pageSize: 20 }}
+          />
+        </GlassCard>
+      </Space>
     </div>
   );
 };

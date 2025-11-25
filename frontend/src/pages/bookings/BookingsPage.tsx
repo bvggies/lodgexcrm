@@ -309,45 +309,45 @@ const BookingsPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Bookings
-          </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Booking
-          </Button>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Bookings
+        </Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          Add Booking
+        </Button>
+      </div>
 
-        <Space style={{ marginBottom: 16 }}>
-          <Input
-            placeholder="Search bookings..."
-            prefix={<SearchOutlined />}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            style={{ width: 300 }}
-            allowClear
-          />
-          <Select
-            placeholder="Filter by status"
-            style={{ width: 200 }}
-            allowClear
-            value={statusFilter}
-            onChange={setStatusFilter}
-            getPopupContainer={() => document.body}
-          >
-            <Option value="paid">Paid</Option>
-            <Option value="pending">Pending</Option>
-            <Option value="partial">Partial</Option>
-            <Option value="refunded">Refunded</Option>
-          </Select>
-        </Space>
+      <Space style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search bookings..."
+          prefix={<SearchOutlined />}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          style={{ width: 300 }}
+          allowClear
+        />
+        <Select
+          placeholder="Filter by status"
+          style={{ width: 200 }}
+          allowClear
+          value={statusFilter}
+          onChange={setStatusFilter}
+          getPopupContainer={() => document.body}
+        >
+          <Option value="paid">Paid</Option>
+          <Option value="pending">Pending</Option>
+          <Option value="partial">Partial</Option>
+          <Option value="refunded">Refunded</Option>
+        </Select>
+      </Space>
 
       <div>
         <Tabs activeKey={activeTab} onChange={setActiveTab}>

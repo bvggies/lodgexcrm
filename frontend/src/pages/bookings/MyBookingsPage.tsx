@@ -213,74 +213,74 @@ const MyBookingsPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          My Bookings
+        </Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          New Booking
+        </Button>
+      </div>
+
+      <Space style={{ marginBottom: 16 }}>
+        <Input
+          placeholder="Search bookings..."
+          prefix={<SearchOutlined />}
+          style={{ width: 300 }}
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          allowClear
+        />
+        <Select
+          placeholder="Filter by status"
+          style={{ width: 200 }}
+          allowClear
+          value={statusFilter}
+          onChange={setStatusFilter}
         >
-          <Title level={2} style={{ margin: 0 }}>
-            My Bookings
-          </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            New Booking
-          </Button>
-        </div>
+          <Option value="paid">Paid</Option>
+          <Option value="pending">Pending</Option>
+          <Option value="partial">Partial</Option>
+          <Option value="refunded">Refunded</Option>
+        </Select>
+      </Space>
 
-        <Space style={{ marginBottom: 16 }}>
-          <Input
-            placeholder="Search bookings..."
-            prefix={<SearchOutlined />}
-            style={{ width: 300 }}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            allowClear
-          />
-          <Select
-            placeholder="Filter by status"
-            style={{ width: 200 }}
-            allowClear
-            value={statusFilter}
-            onChange={setStatusFilter}
-          >
-            <Option value="paid">Paid</Option>
-            <Option value="pending">Pending</Option>
-            <Option value="partial">Partial</Option>
-            <Option value="refunded">Refunded</Option>
-          </Select>
-        </Space>
+      <div>
+        <Card title="Upcoming Bookings" style={{ marginBottom: 24 }}>
+          {upcomingBookings.length > 0 ? (
+            <Table
+              columns={columns}
+              dataSource={upcomingBookings}
+              rowKey="id"
+              loading={loading}
+              pagination={{ pageSize: 10 }}
+            />
+          ) : (
+            <Empty description="No upcoming bookings" />
+          )}
+        </Card>
 
-        <div>
-          <Card title="Upcoming Bookings" style={{ marginBottom: 24 }}>
-            {upcomingBookings.length > 0 ? (
-              <Table
-                columns={columns}
-                dataSource={upcomingBookings}
-                rowKey="id"
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-              />
-            ) : (
-              <Empty description="No upcoming bookings" />
-            )}
-          </Card>
-
-          <Card title="Past Bookings">
-            {pastBookings.length > 0 ? (
-              <Table
-                columns={columns}
-                dataSource={pastBookings}
-                rowKey="id"
-                loading={loading}
-                pagination={{ pageSize: 10 }}
-              />
-            ) : (
-              <Empty description="No past bookings" />
-            )}
-          </Card>
-        </div>
+        <Card title="Past Bookings">
+          {pastBookings.length > 0 ? (
+            <Table
+              columns={columns}
+              dataSource={pastBookings}
+              rowKey="id"
+              loading={loading}
+              pagination={{ pageSize: 10 }}
+            />
+          ) : (
+            <Empty description="No past bookings" />
+          )}
+        </Card>
+      </div>
 
       <Modal
         title="Create New Booking"

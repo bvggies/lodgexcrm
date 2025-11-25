@@ -40,26 +40,22 @@ export const permissions = {
   /**
    * Check if user can manage bookings
    */
-  canManageBookings: (role?: StaffRole): boolean =>
-    role === 'admin' || role === 'assistant',
+  canManageBookings: (role?: StaffRole): boolean => role === 'admin' || role === 'assistant',
 
   /**
    * Check if user can manage guests
    */
-  canManageGuests: (role?: StaffRole): boolean =>
-    role === 'admin' || role === 'assistant',
+  canManageGuests: (role?: StaffRole): boolean => role === 'admin' || role === 'assistant',
 
   /**
    * Check if user can manage properties
    */
-  canManageProperties: (role?: StaffRole): boolean =>
-    role === 'admin' || role === 'assistant',
+  canManageProperties: (role?: StaffRole): boolean => role === 'admin' || role === 'assistant',
 
   /**
    * Check if user can manage finance
    */
-  canManageFinance: (role?: StaffRole): boolean =>
-    role === 'admin' || role === 'assistant',
+  canManageFinance: (role?: StaffRole): boolean => role === 'admin' || role === 'assistant',
 
   /**
    * Check if user can manage staff
@@ -122,29 +118,29 @@ export const permissions = {
    */
   getAllowedActions: (role?: StaffRole): string[] => {
     if (!role) return [];
-    
+
     const actions: string[] = ['view'];
-    
+
     if (permissions.isAdmin(role)) {
       return ['view', 'create', 'edit', 'delete', 'manage'];
     }
-    
+
     if (permissions.isAssistant(role)) {
       return ['view', 'create', 'edit'];
     }
-    
+
     if (permissions.isCleaner(role)) {
       return ['view', 'edit']; // Can edit their own tasks
     }
-    
+
     if (permissions.isMaintenance(role)) {
       return ['view', 'edit']; // Can edit their own tasks
     }
-    
+
     if (permissions.isOwnerView(role)) {
       return ['view']; // Read-only
     }
-    
+
     return actions;
   },
 };
@@ -159,4 +155,3 @@ export const hasPermission = (
   if (!user) return false;
   return permission(user.role);
 };
-

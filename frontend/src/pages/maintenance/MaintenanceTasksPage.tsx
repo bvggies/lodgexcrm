@@ -288,51 +288,51 @@ const MaintenanceTasksPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Maintenance Tasks
-          </Title>
-          {isManagerOrAdmin && (
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-              Add Task
-            </Button>
-          )}
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Maintenance Tasks
+        </Title>
+        {isManagerOrAdmin && (
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            Add Task
+          </Button>
+        )}
+      </div>
 
-        <Space style={{ marginBottom: 16 }}>
-          <Select
-            placeholder="Filter by status"
-            style={{ width: 200 }}
-            allowClear
-            value={statusFilter}
-            onChange={setStatusFilter}
-            getPopupContainer={() => document.body}
-          >
-            <Option value="open">Open</Option>
-            <Option value="in_progress">In Progress</Option>
-            <Option value="completed">Completed</Option>
-          </Select>
-          <Select
-            placeholder="Filter by priority"
-            style={{ width: 200 }}
-            allowClear
-            value={priorityFilter}
-            onChange={setPriorityFilter}
-            getPopupContainer={() => document.body}
-          >
-            <Option value="low">Low</Option>
-            <Option value="medium">Medium</Option>
-            <Option value="high">High</Option>
-            <Option value="urgent">Urgent</Option>
-          </Select>
-        </Space>
+      <Space style={{ marginBottom: 16 }}>
+        <Select
+          placeholder="Filter by status"
+          style={{ width: 200 }}
+          allowClear
+          value={statusFilter}
+          onChange={setStatusFilter}
+          getPopupContainer={() => document.body}
+        >
+          <Option value="open">Open</Option>
+          <Option value="in_progress">In Progress</Option>
+          <Option value="completed">Completed</Option>
+        </Select>
+        <Select
+          placeholder="Filter by priority"
+          style={{ width: 200 }}
+          allowClear
+          value={priorityFilter}
+          onChange={setPriorityFilter}
+          getPopupContainer={() => document.body}
+        >
+          <Option value="low">Low</Option>
+          <Option value="medium">Medium</Option>
+          <Option value="high">High</Option>
+          <Option value="urgent">Urgent</Option>
+        </Select>
+      </Space>
 
       <div>
         <Table

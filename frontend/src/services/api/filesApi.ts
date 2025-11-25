@@ -24,4 +24,3 @@ export const filesApi = {
     return apiClient.get<{ success: boolean; data: { url: string } }>(`/files/signed-url/${key}`);
   },
 };
-

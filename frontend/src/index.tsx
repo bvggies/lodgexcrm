@@ -24,7 +24,6 @@ const getInitialTheme = (): 'light' | 'dark' => {
 const initialTheme = getInitialTheme();
 document.documentElement.setAttribute('data-theme', initialTheme);
 
-
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 
 root.render(

@@ -174,11 +174,11 @@ const ImportPage: React.FC = () => {
 
   return (
     <div>
-        <Title level={2}>Data Import</Title>
-        <Text type="secondary">
-          Import historical data from Excel files. Download a template, fill it with your data, and
-          upload it.
-        </Text>
+      <Title level={2}>Data Import</Title>
+      <Text type="secondary">
+        Import historical data from Excel files. Download a template, fill it with your data, and
+        upload it.
+      </Text>
 
       <div>
         <Card style={{ marginTop: 24 }}>

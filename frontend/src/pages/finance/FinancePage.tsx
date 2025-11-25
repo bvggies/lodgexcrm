@@ -237,29 +237,29 @@ const FinancePage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Finance
-          </Title>
-          <Space>
-            <Button icon={<DownloadOutlined />} onClick={() => handleExport('csv')}>
-              Export CSV
-            </Button>
-            <Button icon={<DownloadOutlined />} onClick={() => handleExport('pdf')}>
-              Export PDF
-            </Button>
-            <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-              Add Record
-            </Button>
-          </Space>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Finance
+        </Title>
+        <Space>
+          <Button icon={<DownloadOutlined />} onClick={() => handleExport('csv')}>
+            Export CSV
+          </Button>
+          <Button icon={<DownloadOutlined />} onClick={() => handleExport('pdf')}>
+            Export PDF
+          </Button>
+          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+            Add Record
+          </Button>
+        </Space>
+      </div>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={8}>
