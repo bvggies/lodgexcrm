@@ -134,9 +134,13 @@ const BookingsPage: React.FC = () => {
       const start = dayjs().startOf('month').toISOString();
       const end = dayjs().endOf('month').toISOString();
       const response = await bookingsApi.getCalendar({ start, end });
-      setCalendarEvents(response.data.data.events);
-    } catch (error) {
+      setCalendarEvents(response.data.data.events || []);
+    } catch (error: any) {
       console.error('Failed to load calendar:', error);
+      message.error(
+        error.response?.data?.message || 'Failed to load calendar. Please try again.'
+      );
+      setCalendarEvents([]);
     }
   };
 
