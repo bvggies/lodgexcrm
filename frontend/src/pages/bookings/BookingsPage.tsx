@@ -396,9 +396,43 @@ const BookingsPage: React.FC = () => {
                 endAccessor="end"
                 style={{ height: '100%' }}
                 view={calendarView}
-                onView={setCalendarView}
+                onView={(view) => {
+                  setCalendarView(view);
+                  // Reload calendar when view changes
+                  const start = dayjs(currentDate).startOf(view === Views.MONTH ? 'month' : view === Views.WEEK ? 'week' : 'day').toISOString();
+                  const end = dayjs(currentDate).endOf(view === Views.MONTH ? 'month' : view === Views.WEEK ? 'week' : 'day').toISOString();
+                  bookingsApi.getCalendar({ start, end })
+                    .then((response) => setCalendarEvents(response.data.data.events || []))
+                    .catch((error) => {
+                      console.error('Failed to load calendar:', error);
+                      setCalendarEvents([]);
+                    });
+                }}
                 date={currentDate}
-                onNavigate={setCurrentDate}
+                onNavigate={(date) => {
+                  setCurrentDate(date);
+                  // Reload calendar when navigating to different month/week/day
+                  const start = dayjs(date).startOf(calendarView === Views.MONTH ? 'month' : calendarView === Views.WEEK ? 'week' : 'day').toISOString();
+                  const end = dayjs(date).endOf(calendarView === Views.MONTH ? 'month' : calendarView === Views.WEEK ? 'week' : 'day').toISOString();
+                  bookingsApi.getCalendar({ start, end })
+                    .then((response) => setCalendarEvents(response.data.data.events || []))
+                    .catch((error) => {
+                      console.error('Failed to load calendar:', error);
+                      setCalendarEvents([]);
+                    });
+                }}
+                onRangeChange={(range) => {
+                  if (range && Array.isArray(range) && range.length > 0) {
+                    const start = dayjs(range[0]).startOf('day').toISOString();
+                    const end = dayjs(range[range.length - 1]).endOf('day').toISOString();
+                    bookingsApi.getCalendar({ start, end })
+                      .then((response) => setCalendarEvents(response.data.data.events || []))
+                      .catch((error) => {
+                        console.error('Failed to load calendar:', error);
+                        setCalendarEvents([]);
+                      });
+                  }
+                }}
                 onSelectEvent={(event) => navigate(`/bookings/${event.resource.bookingId}`)}
                 eventPropGetter={(event) => {
                   const status = event.resource?.paymentStatus;
