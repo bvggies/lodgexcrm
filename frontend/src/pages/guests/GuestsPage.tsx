@@ -224,16 +224,7 @@ const GuestsPage: React.FC = () => {
             <Switch />
           </Form.Item>
           <Form.Item name="totalSpend" label="Total Spend (AED)">
-            <InputNumber
-              style={{ width: '100%' }}
-              min={0}
-              step={0.01}
-              formatter={(value) => `${value || ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={(value) => {
-                const parsed = value?.replace(/\$\s?|(,*)/g, '') || '0';
-                return parseFloat(parsed) || 0;
-              }}
-            />
+            <InputNumber style={{ width: '100%' }} min={0} step={0.01} />
           </Form.Item>
         </Form>
       </Modal>
