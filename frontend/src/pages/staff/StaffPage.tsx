@@ -249,7 +249,7 @@ const StaffPage: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item name="role" label="Role" rules={[{ required: true }]}>
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="admin">Admin</Option>
               <Option value="assistant">Assistant</Option>
               <Option value="cleaner">Cleaner</Option>

@@ -20,6 +20,7 @@ import StaffPage from './pages/staff/StaffPage';
 import AnalyticsPage from './pages/analytics/AnalyticsPage';
 import AuditLogPage from './pages/audit/AuditLogPage';
 import UnitsPage from './pages/units/UnitsPage';
+import UnitDetailPage from './pages/units/UnitDetailPage';
 import IntegrationsPage from './pages/integrations/IntegrationsPage';
 import AutomationsPage from './pages/automations/AutomationsPage';
 import ArchivePage from './pages/archive/ArchivePage';
@@ -96,6 +97,7 @@ function App() {
                         <Route path="/properties" element={<PropertiesPage />} />
                         <Route path="/properties/:id" element={<PropertyDetailPage />} />
                         <Route path="/units" element={<UnitsPage />} />
+                        <Route path="/units/:id" element={<UnitDetailPage />} />
                         <Route path="/guests" element={<GuestsPage />} />
                         <Route path="/guests/:id" element={<GuestDetailPage />} />
                         <Route path="/bookings" element={<BookingsPage />} />
