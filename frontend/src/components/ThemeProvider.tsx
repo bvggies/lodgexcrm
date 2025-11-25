@@ -14,15 +14,15 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
   return (
     <ConfigProvider
       theme={themeConfig}
-      getPopupContainer={(trigger) => {
+      getPopupContainer={(trigger): HTMLElement => {
         // Find the closest scrollable container or modal
         // This ensures dropdowns are visible and can properly detect click-outside events
         if (!trigger) return document.body;
-
+        
         // Check if trigger is inside a modal
-        const modal = trigger.closest('.ant-modal');
+        const modal = trigger.closest('.ant-modal') as HTMLElement;
         if (modal) return modal;
-
+        
         // Find closest scrollable container
         let parent = trigger.parentElement;
         while (parent && parent !== document.body) {
@@ -36,7 +36,7 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
           }
           parent = parent.parentElement;
         }
-
+        
         // Default to body for maximum compatibility
         return document.body;
       }}
