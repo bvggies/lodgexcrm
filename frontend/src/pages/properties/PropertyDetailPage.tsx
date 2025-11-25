@@ -227,9 +227,13 @@ const PropertyDetailPage: React.FC = () => {
           </Descriptions.Item>
           <Descriptions.Item label="Code">{property.code}</Descriptions.Item>
           <Descriptions.Item label="Type">{(property as any).type || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Address">{(property as any).address || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Address">
+            {(property as any).address || 'N/A'}
+          </Descriptions.Item>
           <Descriptions.Item label="City">{(property as any).city || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Country">{(property as any).country || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Country">
+            {(property as any).country || 'N/A'}
+          </Descriptions.Item>
           <Descriptions.Item label="Postal Code">
             {(property as any).postalCode || 'N/A'}
           </Descriptions.Item>
@@ -244,7 +248,9 @@ const PropertyDetailPage: React.FC = () => {
             </Tag>
           </Descriptions.Item>
           {(property as any).description && (
-            <Descriptions.Item label="Description">{(property as any).description}</Descriptions.Item>
+            <Descriptions.Item label="Description">
+              {(property as any).description}
+            </Descriptions.Item>
           )}
           <Descriptions.Item label="Created At">
             {dayjs(property.createdAt).format('MMMM DD, YYYY HH:mm')}
