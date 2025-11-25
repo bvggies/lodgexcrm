@@ -121,6 +121,13 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  // Background image - you can replace this with your own image
+  // Option 1: Use a local image from public folder (e.g., '/real-estate-bg.jpg')
+  // Option 2: Use the Unsplash URL below
+  // To use a local image, place it in frontend/public/ and change the path below
+  const backgroundImage =
+    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1973&q=80';
+
   return (
     <div
       style={{
@@ -128,25 +135,52 @@ const LoginPage: React.FC = () => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: 'var(--login-bg, linear-gradient(135deg, #667eea 0%, #764ba2 100%))',
         position: 'relative',
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        backgroundAttachment: 'fixed',
       }}
     >
+      {/* Gradient Overlay */}
+      <div
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          background:
+            'linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%)',
+          zIndex: 1,
+        }}
+      />
       <div
         style={{
           position: 'absolute',
           top: isMobile ? 12 : 24,
           right: isMobile ? 12 : 24,
+          zIndex: 2,
         }}
       >
         <ThemeToggle />
       </div>
-      <div style={{ width: '100%', padding: isMobile ? '12px' : '0' }}>
+      <div
+        style={{
+          width: '100%',
+          padding: isMobile ? '12px' : '0',
+          position: 'relative',
+          zIndex: 2,
+        }}
+      >
         <Card
           style={{
             width: isMobile ? '100%' : 500,
             maxWidth: '90vw',
             boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            backgroundColor: 'rgba(255, 255, 255, 0.98)',
+            backdropFilter: 'blur(10px)',
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: isMobile ? 24 : 32 }}>
