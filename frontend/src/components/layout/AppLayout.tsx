@@ -261,7 +261,13 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <img
               src="/chlogo.png"
               alt="Creative Homes Vacation Rental LLC"
-              style={{ height: isMobile ? 28 : 32, width: 'auto', flexShrink: 0 }}
+              style={{
+                height: isMobile ? 28 : 32,
+                width: 'auto',
+                flexShrink: 0,
+                objectFit: 'contain',
+                maxHeight: isMobile ? 28 : 32,
+              }}
               onError={(e) => {
                 (e.target as HTMLImageElement).style.display = 'none';
               }}
@@ -367,7 +373,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         <Drawer
           title={
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <img src="/chlogo.png" alt="Creative Homes" style={{ height: 28, width: 'auto' }} />
+              <img
+                src="/chlogo.png"
+                alt="Creative Homes"
+                style={{ height: 28, width: 'auto', objectFit: 'contain', maxHeight: 28 }}
+              />
               <span style={{ fontSize: 14, fontWeight: 'bold' }}>
                 Creative Homes Vacation Rental LLC
               </span>

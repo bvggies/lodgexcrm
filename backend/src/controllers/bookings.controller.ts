@@ -864,6 +864,10 @@ export const getCalendarBookings = async (
       },
     });
   } catch (error: any) {
+    console.error('Calendar bookings error:', error);
+    if (error.message) {
+      return next(createError(error.message, 500));
+    }
     next(error);
   }
 };

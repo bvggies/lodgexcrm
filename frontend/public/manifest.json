@@ -1,11 +1,16 @@
 {
-  "short_name": "Lodgex CRM",
-  "name": "Lodgex CRM - Property Management System",
+  "short_name": "Creative Homes",
+  "name": "Creative Homes Vacation Rental LLC",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "src": "chlogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "chlogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
   ],
   "start_url": ".",
