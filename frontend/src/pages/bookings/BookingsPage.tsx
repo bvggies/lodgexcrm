@@ -137,9 +137,7 @@ const BookingsPage: React.FC = () => {
       setCalendarEvents(response.data.data.events || []);
     } catch (error: any) {
       console.error('Failed to load calendar:', error);
-      message.error(
-        error.response?.data?.message || 'Failed to load calendar. Please try again.'
-      );
+      message.error(error.response?.data?.message || 'Failed to load calendar. Please try again.');
       setCalendarEvents([]);
     }
   };
@@ -399,9 +397,14 @@ const BookingsPage: React.FC = () => {
                 onView={(view) => {
                   setCalendarView(view);
                   // Reload calendar when view changes
-                  const start = dayjs(currentDate).startOf(view === Views.MONTH ? 'month' : view === Views.WEEK ? 'week' : 'day').toISOString();
-                  const end = dayjs(currentDate).endOf(view === Views.MONTH ? 'month' : view === Views.WEEK ? 'week' : 'day').toISOString();
-                  bookingsApi.getCalendar({ start, end })
+                  const start = dayjs(currentDate)
+                    .startOf(view === Views.MONTH ? 'month' : view === Views.WEEK ? 'week' : 'day')
+                    .toISOString();
+                  const end = dayjs(currentDate)
+                    .endOf(view === Views.MONTH ? 'month' : view === Views.WEEK ? 'week' : 'day')
+                    .toISOString();
+                  bookingsApi
+                    .getCalendar({ start, end })
                     .then((response) => setCalendarEvents(response.data.data.events || []))
                     .catch((error) => {
                       console.error('Failed to load calendar:', error);
@@ -412,9 +415,26 @@ const BookingsPage: React.FC = () => {
                 onNavigate={(date) => {
                   setCurrentDate(date);
                   // Reload calendar when navigating to different month/week/day
-                  const start = dayjs(date).startOf(calendarView === Views.MONTH ? 'month' : calendarView === Views.WEEK ? 'week' : 'day').toISOString();
-                  const end = dayjs(date).endOf(calendarView === Views.MONTH ? 'month' : calendarView === Views.WEEK ? 'week' : 'day').toISOString();
-                  bookingsApi.getCalendar({ start, end })
+                  const start = dayjs(date)
+                    .startOf(
+                      calendarView === Views.MONTH
+                        ? 'month'
+                        : calendarView === Views.WEEK
+                          ? 'week'
+                          : 'day'
+                    )
+                    .toISOString();
+                  const end = dayjs(date)
+                    .endOf(
+                      calendarView === Views.MONTH
+                        ? 'month'
+                        : calendarView === Views.WEEK
+                          ? 'week'
+                          : 'day'
+                    )
+                    .toISOString();
+                  bookingsApi
+                    .getCalendar({ start, end })
                     .then((response) => setCalendarEvents(response.data.data.events || []))
                     .catch((error) => {
                       console.error('Failed to load calendar:', error);
@@ -424,8 +444,11 @@ const BookingsPage: React.FC = () => {
                 onRangeChange={(range) => {
                   if (range && Array.isArray(range) && range.length > 0) {
                     const start = dayjs(range[0]).startOf('day').toISOString();
-                    const end = dayjs(range[range.length - 1]).endOf('day').toISOString();
-                    bookingsApi.getCalendar({ start, end })
+                    const end = dayjs(range[range.length - 1])
+                      .endOf('day')
+                      .toISOString();
+                    bookingsApi
+                      .getCalendar({ start, end })
                       .then((response) => setCalendarEvents(response.data.data.events || []))
                       .catch((error) => {
                         console.error('Failed to load calendar:', error);
