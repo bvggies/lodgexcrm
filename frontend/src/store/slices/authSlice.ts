@@ -141,6 +141,16 @@ const authSlice = createSlice({
       // Get current user
       .addCase(getCurrentUser.fulfilled, (state, action) => {
         state.user = action.payload;
+        state.isAuthenticated = true;
+      })
+      .addCase(getCurrentUser.rejected, (state) => {
+        // If getCurrentUser fails, user is not authenticated
+        state.user = null;
+        state.isAuthenticated = false;
+        state.accessToken = null;
+        state.refreshToken = null;
+        storage.removeItem('accessToken');
+        storage.removeItem('refreshToken');
       });
   },
 });

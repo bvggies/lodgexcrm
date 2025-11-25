@@ -11,6 +11,7 @@ import {
   message,
   Popconfirm,
   Switch,
+  InputNumber,
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
@@ -149,30 +150,30 @@ const GuestsPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Guests
-          </Title>
-          <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Guest
-          </Button>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Guests
+        </Title>
+        <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
+          Add Guest
+        </Button>
+      </div>
 
-        <Input
-          placeholder="Search guests by name, email, or phone..."
-          prefix={<SearchOutlined />}
-          value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
-          style={{ width: 400, marginBottom: 16 }}
-          allowClear
-        />
+      <Input
+        placeholder="Search guests by name, email, or phone..."
+        prefix={<SearchOutlined />}
+        value={searchText}
+        onChange={(e) => setSearchText(e.target.value)}
+        style={{ width: 400, marginBottom: 16 }}
+        allowClear
+      />
 
       <div>
         <Table
@@ -221,6 +222,15 @@ const GuestsPage: React.FC = () => {
           </Form.Item>
           <Form.Item name="blacklist" label="Blacklist" valuePropName="checked">
             <Switch />
+          </Form.Item>
+          <Form.Item name="totalSpend" label="Total Spend (AED)">
+            <InputNumber
+              style={{ width: '100%' }}
+              min={0}
+              step={0.01}
+              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+            />
           </Form.Item>
         </Form>
       </Modal>

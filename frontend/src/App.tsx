@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Layout } from 'antd';
 import AppLayout from './components/layout/AppLayout';
@@ -31,13 +31,22 @@ import GuestDashboardPage from './pages/guest/GuestDashboardPage';
 import StaffDashboardPage from './pages/staff/StaffDashboardPage';
 import OwnerDashboardPage from './pages/owner/OwnerDashboardPage';
 import OwnerMyStatementsPage from './pages/owner/OwnerStatementsPage';
-import { useAppSelector } from './store/hooks';
+import { useAppSelector, useAppDispatch } from './store/hooks';
+import { getCurrentUser } from './store/slices/authSlice';
 
 const { Content } = Layout;
 
 function App() {
-  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
+  const { isAuthenticated, user, accessToken } = useAppSelector((state) => state.auth);
   const location = useLocation();
+
+  // Restore user session on page refresh
+  useEffect(() => {
+    if (accessToken && !user) {
+      dispatch(getCurrentUser());
+    }
+  }, [accessToken, user, dispatch]);
 
   return (
     <ErrorBoundary>
