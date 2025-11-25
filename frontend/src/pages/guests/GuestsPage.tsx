@@ -228,8 +228,11 @@ const GuestsPage: React.FC = () => {
               style={{ width: '100%' }}
               min={0}
               step={0.01}
-              formatter={(value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
-              parser={(value) => value!.replace(/\$\s?|(,*)/g, '')}
+              formatter={(value) => `${value || ''}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+              parser={(value) => {
+                const parsed = value?.replace(/\$\s?|(,*)/g, '') || '0';
+                return parseFloat(parsed) || 0;
+              }}
             />
           </Form.Item>
         </Form>
