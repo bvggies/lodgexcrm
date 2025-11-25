@@ -167,9 +167,7 @@ const GuestDetailPage: React.FC = () => {
           <Descriptions.Item label="Email">{guest.email || 'N/A'}</Descriptions.Item>
           <Descriptions.Item label="Phone">{guest.phone || 'N/A'}</Descriptions.Item>
           <Descriptions.Item label="Nationality">{guest.nationality || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="ID Type">
-            {(guest as any).idType || 'N/A'}
-          </Descriptions.Item>
+          <Descriptions.Item label="ID Type">{(guest as any).idType || 'N/A'}</Descriptions.Item>
           <Descriptions.Item label="ID Number">
             {(guest as any).idNumber || 'N/A'}
           </Descriptions.Item>
