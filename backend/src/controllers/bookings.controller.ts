@@ -827,34 +827,62 @@ export const getCalendarBookings = async (
 
     // Format for calendar view
     const calendarEvents = bookings
-      .filter((booking) => booking.property && booking.guest)
+      .filter((booking) => {
+        // Filter out bookings with missing required data
+        if (!booking.property || !booking.guest) {
+          return false;
+        }
+        // Validate dates
+        try {
+          const checkinDate =
+            booking.checkinDate instanceof Date
+              ? booking.checkinDate
+              : new Date(booking.checkinDate);
+          const checkoutDate =
+            booking.checkoutDate instanceof Date
+              ? booking.checkoutDate
+              : new Date(booking.checkoutDate);
+          if (isNaN(checkinDate.getTime()) || isNaN(checkoutDate.getTime())) {
+            return false;
+          }
+        } catch (error) {
+          return false;
+        }
+        return true;
+      })
       .map((booking) => {
-        const checkinDate =
-          booking.checkinDate instanceof Date
-            ? booking.checkinDate
-            : new Date(booking.checkinDate);
-        const checkoutDate =
-          booking.checkoutDate instanceof Date
-            ? booking.checkoutDate
-            : new Date(booking.checkoutDate);
+        try {
+          const checkinDate =
+            booking.checkinDate instanceof Date
+              ? booking.checkinDate
+              : new Date(booking.checkinDate);
+          const checkoutDate =
+            booking.checkoutDate instanceof Date
+              ? booking.checkoutDate
+              : new Date(booking.checkoutDate);
 
-        return {
-          id: booking.id,
-          title: `${booking.property?.name || 'N/A'} - ${booking.guest?.firstName || ''} ${booking.guest?.lastName || ''}`,
-          start: checkinDate.toISOString(),
-          end: checkoutDate.toISOString(),
-          resource: {
-            bookingId: booking.id,
-            reference: booking.reference,
-            property: booking.property,
-            unit: booking.unit,
-            guest: booking.guest,
-            nights: booking.nights,
-            totalAmount: booking.totalAmount,
-            paymentStatus: booking.paymentStatus,
-          },
-        };
-      });
+          return {
+            id: booking.id,
+            title: `${booking.property?.name || 'N/A'} - ${booking.guest?.firstName || ''} ${booking.guest?.lastName || ''}`,
+            start: checkinDate.toISOString(),
+            end: checkoutDate.toISOString(),
+            resource: {
+              bookingId: booking.id,
+              reference: booking.reference || '',
+              property: booking.property,
+              unit: booking.unit,
+              guest: booking.guest,
+              nights: booking.nights || 0,
+              totalAmount: booking.totalAmount || 0,
+              paymentStatus: booking.paymentStatus || 'pending',
+            },
+          };
+        } catch (error) {
+          console.error('Error formatting calendar event for booking:', booking.id, error);
+          return null;
+        }
+      })
+      .filter((event) => event !== null);
 
     res.json({
       success: true,
