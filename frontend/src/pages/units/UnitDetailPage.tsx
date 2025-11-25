@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import {
-  Card,
-  Descriptions,
-  Button,
-  Space,
-  Tag,
-  Typography,
-  Spin,
-  message,
-  Empty,
-} from 'antd';
+import { Card, Descriptions, Button, Space, Tag, Typography, Spin, message, Empty } from 'antd';
 import { ArrowLeftOutlined, EditOutlined } from '@ant-design/icons';
 import { unitsApi, Unit } from '../../services/api/unitsApi';
 
@@ -51,10 +41,7 @@ const UnitDetailPage: React.FC = () => {
 
   if (!unit) {
     return (
-      <Empty
-        description="Unit not found"
-        style={{ marginTop: '50px' }}
-      >
+      <Empty description="Unit not found" style={{ marginTop: '50px' }}>
         <Button type="primary" onClick={() => navigate('/units')}>
           Back to Units
         </Button>
@@ -100,12 +87,8 @@ const UnitDetailPage: React.FC = () => {
                 {unit.availabilityStatus.toUpperCase()}
               </Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Bedrooms">
-              {unit.bedrooms || 'N/A'}
-            </Descriptions.Item>
-            <Descriptions.Item label="Bathrooms">
-              {unit.bathrooms || 'N/A'}
-            </Descriptions.Item>
+            <Descriptions.Item label="Bedrooms">{unit.bedrooms || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Bathrooms">{unit.bathrooms || 'N/A'}</Descriptions.Item>
             <Descriptions.Item label="Max Occupancy">
               {unit.maxOccupancy || 'N/A'}
             </Descriptions.Item>
@@ -144,4 +127,3 @@ const UnitDetailPage: React.FC = () => {
 };
 
 export default UnitDetailPage;
-
