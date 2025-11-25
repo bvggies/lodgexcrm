@@ -128,21 +128,33 @@ const SettingsPage: React.FC = () => {
               <Input placeholder="Enter company name" />
             </Form.Item>
             <Form.Item name="timezone" label="Timezone">
-              <Select placeholder="Select timezone" defaultValue="Asia/Dubai">
+              <Select
+                placeholder="Select timezone"
+                defaultValue="Asia/Dubai"
+                getPopupContainer={() => document.body}
+              >
                 <Option value="Asia/Dubai">Asia/Dubai (GMT+4)</Option>
                 <Option value="UTC">UTC (GMT+0)</Option>
                 <Option value="America/New_York">America/New_York (GMT-5)</Option>
               </Select>
             </Form.Item>
             <Form.Item name="currency" label="Default Currency">
-              <Select placeholder="Select currency" defaultValue="AED">
+              <Select
+                placeholder="Select currency"
+                defaultValue="AED"
+                getPopupContainer={() => document.body}
+              >
                 <Option value="AED">AED - UAE Dirham</Option>
                 <Option value="USD">USD - US Dollar</Option>
                 <Option value="EUR">EUR - Euro</Option>
               </Select>
             </Form.Item>
             <Form.Item name="dateFormat" label="Date Format">
-              <Select placeholder="Select date format" defaultValue="DD/MM/YYYY">
+              <Select
+                placeholder="Select date format"
+                defaultValue="DD/MM/YYYY"
+                getPopupContainer={() => document.body}
+              >
                 <Option value="DD/MM/YYYY">DD/MM/YYYY</Option>
                 <Option value="MM/DD/YYYY">MM/DD/YYYY</Option>
                 <Option value="YYYY-MM-DD">YYYY-MM-DD</Option>

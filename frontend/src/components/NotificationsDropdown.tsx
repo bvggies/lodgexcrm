@@ -154,7 +154,7 @@ const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({ collapsed
       menu={menuItems}
       placement="topRight"
       trigger={['click']}
-      getPopupContainer={(trigger) => trigger.parentElement || document.body}
+      getPopupContainer={() => document.body}
     >
       <div
         style={{

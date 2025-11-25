@@ -303,7 +303,7 @@ const PropertiesPage: React.FC = () => {
             />
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="active">
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="active">Active</Option>
               <Option value="inactive">Inactive</Option>
             </Select>

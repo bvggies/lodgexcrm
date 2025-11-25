@@ -360,7 +360,7 @@ const CleaningTasksPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -408,7 +408,7 @@ const CleaningTasksPage: React.FC = () => {
             <Select
               placeholder="Optional: Select a booking"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               notFoundContent={
                 !selectedPropertyId
                   ? 'Please select a property first'
@@ -439,7 +439,7 @@ const CleaningTasksPage: React.FC = () => {
               showTime
               style={{ width: '100%' }}
               format="YYYY-MM-DD HH:mm"
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
             />
           </Form.Item>
           <Form.Item
@@ -450,7 +450,7 @@ const CleaningTasksPage: React.FC = () => {
             <Select
               placeholder="Optional: Select a cleaner"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               disabled={!isManagerOrAdmin}
               notFoundContent={staff.length === 0 ? 'No cleaners available' : undefined}
               filterOption={(input, option) =>
@@ -467,7 +467,7 @@ const CleaningTasksPage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="status" label="Status" initialValue="not_started">
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="not_started">Not Started</Option>
               <Option value="in_progress">In Progress</Option>
               <Option value="completed">Completed</Option>

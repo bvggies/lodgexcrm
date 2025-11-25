@@ -652,7 +652,12 @@ const OwnerDashboardPage: React.FC = () => {
         <Tabs defaultActiveKey="bookings">
           <TabPane tab="Bookings" key="bookings" tabKey="bookings">
             <Space style={{ marginBottom: 16, width: '100%', justifyContent: 'space-between' }}>
-              <Select value={bookingFilter} onChange={setBookingFilter} style={{ width: 150 }}>
+              <Select
+                value={bookingFilter}
+                onChange={setBookingFilter}
+                style={{ width: 150 }}
+                getPopupContainer={() => document.body}
+              >
                 <Option value="all">All Bookings</Option>
                 <Option value="pending">Pending</Option>
                 <Option value="upcoming">Upcoming</Option>
@@ -711,7 +716,7 @@ const OwnerDashboardPage: React.FC = () => {
                   onChange={(dates) =>
                     setFinanceDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)
                   }
-                  getPopupContainer={(trigger) => trigger.parentElement || document.body}
+                  getPopupContainer={() => document.body}
                 />
                 <Button onClick={loadFinanceRecords} loading={financeLoading}>
                   Load Report
@@ -788,7 +793,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               notFoundContent={
                 data?.properties.length === 0 ? 'No properties available' : undefined
               }
@@ -817,7 +822,7 @@ const OwnerDashboardPage: React.FC = () => {
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="0.00" />
           </Form.Item>
           <Form.Item name="availabilityStatus" label="Availability Status" initialValue="available">
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="available">Available</Option>
               <Option value="occupied">Occupied</Option>
               <Option value="maintenance">Maintenance</Option>
@@ -852,7 +857,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               onChange={handlePropertyChange}
               notFoundContent={
                 data?.properties.length === 0 ? 'No properties available' : undefined
@@ -869,7 +874,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a unit"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               disabled={!selectedPropertyId}
               notFoundContent={
                 !selectedPropertyId
@@ -894,7 +899,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a guest"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -913,7 +918,7 @@ const OwnerDashboardPage: React.FC = () => {
             rules={[{ required: true }]}
             initialValue="direct"
           >
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="direct">Direct</Option>
               <Option value="airbnb">Airbnb</Option>
               <Option value="booking_com">Booking.com</Option>
@@ -925,20 +930,14 @@ const OwnerDashboardPage: React.FC = () => {
             label="Check-in Date"
             rules={[{ required: true, message: 'Please select check-in date' }]}
           >
-            <DatePicker
-              style={{ width: '100%' }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
-            />
+            <DatePicker style={{ width: '100%' }} getPopupContainer={() => document.body} />
           </Form.Item>
           <Form.Item
             name="checkoutDate"
             label="Check-out Date"
             rules={[{ required: true, message: 'Please select check-out date' }]}
           >
-            <DatePicker
-              style={{ width: '100%' }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
-            />
+            <DatePicker style={{ width: '100%' }} getPopupContainer={() => document.body} />
           </Form.Item>
           <Form.Item
             name="totalAmount"
@@ -951,7 +950,7 @@ const OwnerDashboardPage: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item name="paymentStatus" label="Payment Status" initialValue="pending">
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="paid">Paid</Option>
               <Option value="pending">Pending</Option>
               <Option value="partial">Partial</Option>

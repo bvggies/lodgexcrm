@@ -343,6 +343,7 @@ const BookingsPage: React.FC = () => {
             allowClear
             value={statusFilter}
             onChange={setStatusFilter}
+            getPopupContainer={() => document.body}
           >
             <Option value="paid">Paid</Option>
             <Option value="pending">Pending</Option>
@@ -658,7 +659,7 @@ const BookingsPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -679,7 +680,7 @@ const BookingsPage: React.FC = () => {
             <Select
               placeholder="Select a guest"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               notFoundContent={guests.length === 0 ? 'No guests available' : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
@@ -693,7 +694,7 @@ const BookingsPage: React.FC = () => {
             />
           </Form.Item>
           <Form.Item name="channel" label="Channel" rules={[{ required: true }]}>
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="direct">Direct</Option>
               <Option value="airbnb">Airbnb</Option>
               <Option value="booking_com">Booking.com</Option>
@@ -701,16 +702,10 @@ const BookingsPage: React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item name="checkinDate" label="Check-in Date" rules={[{ required: true }]}>
-            <DatePicker
-              style={{ width: '100%' }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
-            />
+            <DatePicker style={{ width: '100%' }} getPopupContainer={() => document.body} />
           </Form.Item>
           <Form.Item name="checkoutDate" label="Check-out Date" rules={[{ required: true }]}>
-            <DatePicker
-              style={{ width: '100%' }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
-            />
+            <DatePicker style={{ width: '100%' }} getPopupContainer={() => document.body} />
           </Form.Item>
           <Form.Item name="totalAmount" label="Total Amount" rules={[{ required: true }]}>
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} />
@@ -719,7 +714,7 @@ const BookingsPage: React.FC = () => {
             <Input />
           </Form.Item>
           <Form.Item name="paymentStatus" label="Payment Status" initialValue="pending">
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="paid">Paid</Option>
               <Option value="pending">Pending</Option>
               <Option value="partial">Partial</Option>

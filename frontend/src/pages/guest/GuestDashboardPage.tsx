@@ -406,7 +406,7 @@ const GuestDashboardPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
               notFoundContent={properties.length === 0 ? 'No properties available' : undefined}
             >
               {properties.map((p) => (
@@ -422,7 +422,7 @@ const GuestDashboardPage: React.FC = () => {
             initialValue="direct"
             rules={[{ required: true }]}
           >
-            <Select getPopupContainer={(trigger) => trigger.parentElement || document.body}>
+            <Select getPopupContainer={() => document.body}>
               <Option value="direct">Direct</Option>
               <Option value="airbnb">Airbnb</Option>
               <Option value="booking_com">Booking.com</Option>
@@ -434,10 +434,7 @@ const GuestDashboardPage: React.FC = () => {
             label="Check-in / Check-out"
             rules={[{ required: true, message: 'Please select dates' }]}
           >
-            <RangePicker
-              style={{ width: '100%' }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
-            />
+            <RangePicker style={{ width: '100%' }} getPopupContainer={() => document.body} />
           </Form.Item>
           <Form.Item
             name="totalAmount"

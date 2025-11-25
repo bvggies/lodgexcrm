@@ -292,7 +292,7 @@ const UnitsPage: React.FC = () => {
             <InputNumber style={{ width: '100%' }} min={0} step={0.01} placeholder="0.00" />
           </Form.Item>
           <Form.Item name="availabilityStatus" label="Availability Status" initialValue="available">
-            <Select>
+            <Select getPopupContainer={() => document.body}>
               <Option value="available">Available</Option>
               <Option value="occupied">Occupied</Option>
               <Option value="maintenance">Maintenance</Option>

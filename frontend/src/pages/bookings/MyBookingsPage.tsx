@@ -302,7 +302,7 @@ const MyBookingsPage: React.FC = () => {
             <Select
               placeholder="Select a property"
               showSearch
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
             >
               {properties.map((p) => (
                 <Option key={p.id} value={p.id}>
@@ -316,10 +316,7 @@ const MyBookingsPage: React.FC = () => {
             label="Check-in / Check-out"
             rules={[{ required: true, message: 'Please select dates' }]}
           >
-            <RangePicker
-              style={{ width: '100%' }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
-            />
+            <RangePicker style={{ width: '100%' }} getPopupContainer={() => document.body} />
           </Form.Item>
           <Form.Item
             name="totalAmount"

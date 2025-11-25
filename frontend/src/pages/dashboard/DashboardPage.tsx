@@ -460,7 +460,7 @@ const DashboardPage: React.FC = () => {
                 background: 'rgba(255, 255, 255, 0.9)',
                 borderRadius: '8px',
               }}
-              getPopupContainer={(trigger) => trigger.parentElement || document.body}
+              getPopupContainer={() => document.body}
             >
               <Option value="7d">Last 7 Days</Option>
               <Option value="30d">Last 30 Days</Option>
