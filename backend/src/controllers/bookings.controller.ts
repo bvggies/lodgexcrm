@@ -822,22 +822,35 @@ export const getCalendarBookings = async (
     });
 
     // Format for calendar view
-    const calendarEvents = bookings.map((booking) => ({
-      id: booking.id,
-      title: `${booking.property.name} - ${booking.guest.firstName} ${booking.guest.lastName}`,
-      start: booking.checkinDate.toISOString(),
-      end: booking.checkoutDate.toISOString(),
-      resource: {
-        bookingId: booking.id,
-        reference: booking.reference,
-        property: booking.property,
-        unit: booking.unit,
-        guest: booking.guest,
-        nights: booking.nights,
-        totalAmount: booking.totalAmount,
-        paymentStatus: booking.paymentStatus,
-      },
-    }));
+    const calendarEvents = bookings
+      .filter((booking) => booking.property && booking.guest)
+      .map((booking) => {
+        const checkinDate =
+          booking.checkinDate instanceof Date
+            ? booking.checkinDate
+            : new Date(booking.checkinDate);
+        const checkoutDate =
+          booking.checkoutDate instanceof Date
+            ? booking.checkoutDate
+            : new Date(booking.checkoutDate);
+
+        return {
+          id: booking.id,
+          title: `${booking.property?.name || 'N/A'} - ${booking.guest?.firstName || ''} ${booking.guest?.lastName || ''}`,
+          start: checkinDate.toISOString(),
+          end: checkoutDate.toISOString(),
+          resource: {
+            bookingId: booking.id,
+            reference: booking.reference,
+            property: booking.property,
+            unit: booking.unit,
+            guest: booking.guest,
+            nights: booking.nights,
+            totalAmount: booking.totalAmount,
+            paymentStatus: booking.paymentStatus,
+          },
+        };
+      });
 
     res.json({
       success: true,
