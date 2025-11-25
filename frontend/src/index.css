@@ -222,10 +222,7 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* Optimize animations */
-[data-aos] {
-  will-change: transform, opacity;
-}
+/* Animations removed */
 
 /* Fix Select dropdown z-index and visibility issues */
 .ant-select-dropdown {
