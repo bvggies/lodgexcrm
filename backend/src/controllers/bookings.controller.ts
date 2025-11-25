@@ -761,6 +761,10 @@ export const getCalendarBookings = async (
     const startDate = parseISO(start as string);
     const endDate = parseISO(end as string);
 
+    if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+      return next(createError('Invalid date format', 400));
+    }
+
     const where: any = {
       OR: [
         // Bookings that start in range
