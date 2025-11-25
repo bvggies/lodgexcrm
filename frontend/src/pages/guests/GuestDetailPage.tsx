@@ -194,7 +194,9 @@ const GuestDetailPage: React.FC = () => {
           <Descriptions.Item label="Blacklist">
             <Tag color={guest.blacklist ? 'red' : 'green'}>{guest.blacklist ? 'Yes' : 'No'}</Tag>
           </Descriptions.Item>
-          {guest.notes && <Descriptions.Item label="Notes">{guest.notes}</Descriptions.Item>}
+          {(guest as any).notes && (
+            <Descriptions.Item label="Notes">{(guest as any).notes}</Descriptions.Item>
+          )}
           <Descriptions.Item label="Created At">
             {dayjs(guest.createdAt).format('MMMM DD, YYYY HH:mm')}
           </Descriptions.Item>
