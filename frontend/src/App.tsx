@@ -8,8 +8,11 @@ import NotFound from './components/NotFound';
 import LoginPage from './pages/auth/LoginPage';
 import DashboardPage from './pages/dashboard/DashboardPage';
 import PropertiesPage from './pages/properties/PropertiesPage';
+import PropertyDetailPage from './pages/properties/PropertyDetailPage';
 import GuestsPage from './pages/guests/GuestsPage';
+import GuestDetailPage from './pages/guests/GuestDetailPage';
 import BookingsPage from './pages/bookings/BookingsPage';
+import BookingDetailPage from './pages/bookings/BookingDetailPage';
 import OwnersPage from './pages/owners/OwnersPage';
 import CleaningTasksPage from './pages/cleaning/CleaningTasksPage';
 import MaintenanceTasksPage from './pages/maintenance/MaintenanceTasksPage';
@@ -147,6 +150,14 @@ function App() {
                           }
                         />
                         <Route
+                          path="/properties/:id"
+                          element={
+                            <PageTransition>
+                              <PropertyDetailPage />
+                            </PageTransition>
+                          }
+                        />
+                        <Route
                           path="/units"
                           element={
                             <PageTransition>
@@ -163,10 +174,26 @@ function App() {
                           }
                         />
                         <Route
+                          path="/guests/:id"
+                          element={
+                            <PageTransition>
+                              <GuestDetailPage />
+                            </PageTransition>
+                          }
+                        />
+                        <Route
                           path="/bookings"
                           element={
                             <PageTransition>
                               <BookingsPage />
+                            </PageTransition>
+                          }
+                        />
+                        <Route
+                          path="/bookings/:id"
+                          element={
+                            <PageTransition>
+                              <BookingDetailPage />
                             </PageTransition>
                           }
                         />
