@@ -176,10 +176,12 @@ const GuestDetailPage: React.FC = () => {
               ? dayjs((guest as any).dateOfBirth).format('MMMM DD, YYYY')
               : 'N/A'}
           </Descriptions.Item>
-          <Descriptions.Item label="Address">{guest.address || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="City">{guest.city || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Country">{guest.country || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Postal Code">{guest.postalCode || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Address">{(guest as any).address || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="City">{(guest as any).city || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Country">{(guest as any).country || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Postal Code">
+            {(guest as any).postalCode || 'N/A'}
+          </Descriptions.Item>
           <Descriptions.Item label="Total Spend">
             <strong>
               AED{' '}
