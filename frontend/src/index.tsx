@@ -7,12 +7,13 @@ import 'aos/dist/aos.css';
 import App from './App';
 import { store } from './store/store';
 import ThemeProvider from './components/ThemeProvider';
+import { storage } from './utils/storage';
 import './index.css';
 
 // Initialize theme attribute on document
 const getInitialTheme = (): 'light' | 'dark' => {
   if (typeof window === 'undefined') return 'dark';
-  const savedTheme = localStorage.getItem('theme');
+  const savedTheme = storage.getItem('theme');
   if (savedTheme === 'light' || savedTheme === 'dark') {
     return savedTheme;
   }

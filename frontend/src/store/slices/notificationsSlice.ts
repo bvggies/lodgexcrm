@@ -1,4 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { storage } from '../../utils/storage';
 
 export interface Notification {
   id: string;
@@ -23,7 +24,7 @@ const initialState: NotificationsState = {
 // Load notifications from localStorage on init
 const loadNotificationsFromStorage = (): Notification[] => {
   try {
-    const stored = localStorage.getItem('notifications');
+    const stored = storage.getItem('notifications');
     if (stored) {
       return JSON.parse(stored);
     }
@@ -36,7 +37,7 @@ const loadNotificationsFromStorage = (): Notification[] => {
 // Save notifications to localStorage
 const saveNotificationsToStorage = (notifications: Notification[]) => {
   try {
-    localStorage.setItem('notifications', JSON.stringify(notifications));
+    storage.setItem('notifications', JSON.stringify(notifications));
   } catch (error) {
     console.error('Failed to save notifications to storage:', error);
   }

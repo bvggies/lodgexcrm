@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { authApi } from '../../services/api/authApi';
 import { User } from '../../types/auth';
+import { storage } from '../../utils/storage';
 
 interface AuthState {
   user: User | null;
@@ -13,9 +14,9 @@ interface AuthState {
 
 const initialState: AuthState = {
   user: null,
-  accessToken: localStorage.getItem('accessToken'),
-  refreshToken: localStorage.getItem('refreshToken'),
-  isAuthenticated: !!localStorage.getItem('accessToken'),
+  accessToken: storage.getItem('accessToken'),
+  refreshToken: storage.getItem('refreshToken'),
+  isAuthenticated: !!storage.getItem('accessToken'),
   isLoading: false,
   error: null,
 };
@@ -89,8 +90,8 @@ const authSlice = createSlice({
       state.accessToken = null;
       state.refreshToken = null;
       state.isAuthenticated = false;
-      localStorage.removeItem('accessToken');
-      localStorage.removeItem('refreshToken');
+      storage.removeItem('accessToken');
+      storage.removeItem('refreshToken');
     },
     clearError: (state) => {
       state.error = null;
@@ -113,8 +114,8 @@ const authSlice = createSlice({
         state.accessToken = action.payload.accessToken;
         state.refreshToken = action.payload.refreshToken;
         state.isAuthenticated = true;
-        localStorage.setItem('accessToken', action.payload.accessToken);
-        localStorage.setItem('refreshToken', action.payload.refreshToken);
+        storage.setItem('accessToken', action.payload.accessToken);
+        storage.setItem('refreshToken', action.payload.refreshToken);
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.isLoading = false;
@@ -135,7 +136,7 @@ const authSlice = createSlice({
       // Refresh token
       .addCase(refreshAccessToken.fulfilled, (state, action) => {
         state.accessToken = action.payload.accessToken;
-        localStorage.setItem('accessToken', action.payload.accessToken);
+        storage.setItem('accessToken', action.payload.accessToken);
       })
       // Get current user
       .addCase(getCurrentUser.fulfilled, (state, action) => {

@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { storage } from '../../utils/storage';
 
 export type ThemeMode = 'light' | 'dark';
 
@@ -8,7 +9,7 @@ interface ThemeState {
 
 // Get theme from localStorage or default to 'dark'
 const getInitialTheme = (): ThemeMode => {
-  const savedTheme = localStorage.getItem('theme');
+  const savedTheme = storage.getItem('theme');
   if (savedTheme === 'light' || savedTheme === 'dark') {
     return savedTheme;
   }
@@ -29,14 +30,14 @@ const themeSlice = createSlice({
   reducers: {
     setTheme: (state, action: PayloadAction<ThemeMode>) => {
       state.mode = action.payload;
-      localStorage.setItem('theme', action.payload);
+      storage.setItem('theme', action.payload);
       // Update document class for CSS variables
       document.documentElement.setAttribute('data-theme', action.payload);
     },
     toggleTheme: (state) => {
       const newMode = state.mode === 'light' ? 'dark' : 'light';
       state.mode = newMode;
-      localStorage.setItem('theme', newMode);
+      storage.setItem('theme', newMode);
       document.documentElement.setAttribute('data-theme', newMode);
     },
   },

@@ -41,7 +41,7 @@ const SettingsPage: React.FC = () => {
   React.useEffect(() => {
     if (user?.id) {
       const settingsKey = `user_settings_${user.id}`;
-      const savedSettings = localStorage.getItem(settingsKey);
+      const savedSettings = storage.getItem(settingsKey);
       if (savedSettings) {
         try {
           const settings = JSON.parse(savedSettings);
