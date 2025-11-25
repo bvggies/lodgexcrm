@@ -87,16 +87,22 @@ const UnitDetailPage: React.FC = () => {
                 {unit.availabilityStatus.toUpperCase()}
               </Tag>
             </Descriptions.Item>
-            <Descriptions.Item label="Bedrooms">{unit.bedrooms || 'N/A'}</Descriptions.Item>
-            <Descriptions.Item label="Bathrooms">{unit.bathrooms || 'N/A'}</Descriptions.Item>
+            <Descriptions.Item label="Bedrooms">
+              {(unit as any).bedrooms || 'N/A'}
+            </Descriptions.Item>
+            <Descriptions.Item label="Bathrooms">
+              {(unit as any).bathrooms || 'N/A'}
+            </Descriptions.Item>
             <Descriptions.Item label="Max Occupancy">
-              {unit.maxOccupancy || 'N/A'}
+              {(unit as any).maxOccupancy || 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Size (sqft)">
-              {unit.size ? `${unit.size} sqft` : 'N/A'}
+              {(unit as any).size ? `${(unit as any).size} sqft` : 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Monthly Rent">
-              {unit.monthlyRent ? `AED ${unit.monthlyRent.toLocaleString()}` : 'N/A'}
+              {(unit as any).monthlyRent
+                ? `AED ${(unit as any).monthlyRent.toLocaleString()}`
+                : 'N/A'}
             </Descriptions.Item>
             <Descriptions.Item label="Created At">
               {new Date(unit.createdAt).toLocaleString()}
