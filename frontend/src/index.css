@@ -334,6 +334,220 @@ body > .ant-dropdown {
   position: fixed !important;
 }
 
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+  /* Reduce padding and margins on mobile */
+  .ant-layout-content {
+    padding: 12px !important;
+  }
+
+  /* Smaller font sizes on mobile */
+  .ant-typography h1 {
+    font-size: 24px !important;
+  }
+
+  .ant-typography h2 {
+    font-size: 20px !important;
+  }
+
+  .ant-typography h3 {
+    font-size: 18px !important;
+  }
+
+  /* Optimize cards for mobile */
+  .ant-card {
+    margin-bottom: 12px !important;
+  }
+
+  .ant-card-head {
+    padding: 12px 16px !important;
+    min-height: 48px !important;
+  }
+
+  .ant-card-head-title {
+    font-size: 16px !important;
+  }
+
+  .ant-card-body {
+    padding: 16px !important;
+  }
+
+  /* Optimize tables for mobile */
+  .ant-table {
+    font-size: 12px !important;
+  }
+
+  .ant-table-thead > tr > th {
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+  }
+
+  .ant-table-tbody > tr > td {
+    padding: 8px 4px !important;
+    font-size: 12px !important;
+  }
+
+  /* Stack buttons on mobile */
+  .ant-space {
+    flex-wrap: wrap !important;
+  }
+
+  /* Optimize modals for mobile */
+  .ant-modal {
+    margin: 0 !important;
+    max-width: 100% !important;
+    top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .ant-modal-content {
+    border-radius: 0 !important;
+    min-height: 100vh !important;
+  }
+
+  .ant-modal-header {
+    padding: 16px !important;
+  }
+
+  .ant-modal-body {
+    padding: 16px !important;
+    max-height: calc(100vh - 120px) !important;
+    overflow-y: auto !important;
+  }
+
+  .ant-modal-footer {
+    padding: 12px 16px !important;
+  }
+
+  /* Optimize forms for mobile */
+  .ant-form-item {
+    margin-bottom: 16px !important;
+  }
+
+  .ant-form-item-label {
+    padding-bottom: 4px !important;
+  }
+
+  .ant-form-item-label > label {
+    font-size: 14px !important;
+    height: auto !important;
+  }
+
+  /* Optimize inputs for mobile */
+  .ant-input,
+  .ant-select-selector,
+  .ant-picker {
+    font-size: 16px !important; /* Prevents zoom on iOS */
+    padding: 8px 12px !important;
+  }
+
+  /* Optimize buttons for mobile */
+  .ant-btn {
+    height: 40px !important;
+    padding: 0 16px !important;
+    font-size: 14px !important;
+  }
+
+  .ant-btn-lg {
+    height: 44px !important;
+  }
+
+  .ant-btn-sm {
+    height: 32px !important;
+    padding: 0 12px !important;
+    font-size: 12px !important;
+  }
+
+  /* Optimize statistics for mobile */
+  .ant-statistic-title {
+    font-size: 12px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .ant-statistic-content {
+    font-size: 20px !important;
+  }
+
+  /* Optimize tabs for mobile */
+  .ant-tabs-tab {
+    padding: 8px 12px !important;
+    font-size: 14px !important;
+  }
+
+  /* Optimize drawer for mobile */
+  .ant-drawer-body {
+    padding: 0 !important;
+  }
+
+  /* Hide scrollbars on mobile for cleaner look */
+  ::-webkit-scrollbar {
+    width: 4px !important;
+    height: 4px !important;
+  }
+
+  /* Optimize spacing */
+  .ant-row {
+    margin-left: -8px !important;
+    margin-right: -8px !important;
+  }
+
+  .ant-row > .ant-col {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+  }
+
+  /* Optimize charts for mobile */
+  .recharts-wrapper {
+    width: 100% !important;
+  }
+
+  /* Optimize list items */
+  .ant-list-item {
+    padding: 12px 0 !important;
+  }
+
+  /* Optimize tags */
+  .ant-tag {
+    font-size: 11px !important;
+    padding: 2px 8px !important;
+    margin: 2px !important;
+  }
+
+  /* Optimize badges */
+  .ant-badge {
+    font-size: 12px !important;
+  }
+
+  /* Optimize tooltips */
+  .ant-tooltip {
+    font-size: 12px !important;
+  }
+
+  /* Full width selects and inputs on mobile */
+  .ant-select,
+  .ant-input,
+  .ant-picker,
+  .ant-input-number {
+    width: 100% !important;
+  }
+
+  /* Stack form items vertically on mobile */
+  .ant-form-horizontal .ant-form-item-label {
+    text-align: left !important;
+  }
+}
+
+/* Tablet optimizations */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .ant-layout-content {
+    padding: 16px !important;
+  }
+
+  .ant-card-body {
+    padding: 20px !important;
+  }
+}
+
 /* Reduce motion for better performance */
 @media (prefers-reduced-motion: reduce) {
   *,

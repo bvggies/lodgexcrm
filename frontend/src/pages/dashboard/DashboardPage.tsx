@@ -36,6 +36,7 @@ import {
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../../store/hooks';
+import { useMobile } from '../../hooks/useMobile';
 import { analyticsApi } from '../../services/api/analyticsApi';
 import { bookingsApi } from '../../services/api/bookingsApi';
 import {
@@ -98,6 +99,7 @@ const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d'
 const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { mode: themeMode } = useAppSelector((state) => state.theme);
+  const isMobile = useMobile();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<DashboardData>({
@@ -399,7 +401,7 @@ const DashboardPage: React.FC = () => {
       style={{
         minHeight: '100vh',
         background: backgroundGradient,
-        padding: '24px',
+        padding: isMobile ? '12px' : '24px',
         position: 'relative',
         width: '100%',
         overflowX: 'hidden',
@@ -412,13 +414,15 @@ const DashboardPage: React.FC = () => {
         <div
           style={{
             display: 'flex',
+            flexDirection: isMobile ? 'column' : 'row',
             justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 32,
+            alignItems: isMobile ? 'flex-start' : 'center',
+            gap: isMobile ? 16 : 0,
+            marginBottom: isMobile ? 16 : 32,
             background:
               themeMode === 'light' ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.1)',
             backdropFilter: 'blur(10px)',
-            padding: '20px 24px',
+            padding: isMobile ? '12px 16px' : '20px 24px',
             borderRadius: '16px',
             border:
               themeMode === 'light'
@@ -432,13 +436,17 @@ const DashboardPage: React.FC = () => {
               margin: 0,
               color: themeMode === 'light' ? '#1e293b' : '#fff',
               textShadow: themeMode === 'light' ? 'none' : '0 2px 10px rgba(0, 0, 0, 0.2)',
-              fontSize: '32px',
+              fontSize: isMobile ? '24px' : '32px',
               fontWeight: 700,
             }}
           >
             Dashboard
           </Title>
-          <Space>
+          <Space
+            direction={isMobile ? 'vertical' : 'horizontal'}
+            style={{ width: isMobile ? '100%' : 'auto' }}
+            size={isMobile ? 'small' : 'middle'}
+          >
             <Select
               value={timeRange}
               onChange={(value) => {
@@ -487,11 +495,16 @@ const DashboardPage: React.FC = () => {
                 Refresh
               </Button>
             </Tooltip>
-            <Space>
+            <Space
+              direction={isMobile ? 'vertical' : 'horizontal'}
+              style={{ width: isMobile ? '100%' : 'auto' }}
+              size="small"
+            >
               <Button
                 type="primary"
                 icon={<PlusOutlined />}
                 onClick={() => navigate('/bookings')}
+                block={isMobile}
                 style={{
                   background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
                   border: 'none',
@@ -503,38 +516,42 @@ const DashboardPage: React.FC = () => {
               >
                 Add Booking
               </Button>
-              <Button
-                type="default"
-                icon={<ToolOutlined />}
-                onClick={() => navigate('/cleaning')}
-                style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  border: 'none',
-                  color: 'white',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
-                  cursor: 'pointer',
-                }}
-              >
-                Add Cleaning Task
-              </Button>
-              <Button
-                type="default"
-                icon={<CheckCircleOutlined />}
-                onClick={() => navigate('/maintenance')}
-                style={{
-                  background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
-                  border: 'none',
-                  color: 'white',
-                  borderRadius: '8px',
-                  fontWeight: 600,
-                  boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
-                  cursor: 'pointer',
-                }}
-              >
-                Add Maintenance Task
-              </Button>
+              {!isMobile && (
+                <>
+                  <Button
+                    type="default"
+                    icon={<ToolOutlined />}
+                    onClick={() => navigate('/cleaning')}
+                    style={{
+                      background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                      border: 'none',
+                      color: 'white',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      boxShadow: '0 4px 15px rgba(16, 185, 129, 0.4)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Add Cleaning Task
+                  </Button>
+                  <Button
+                    type="default"
+                    icon={<CheckCircleOutlined />}
+                    onClick={() => navigate('/maintenance')}
+                    style={{
+                      background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+                      border: 'none',
+                      color: 'white',
+                      borderRadius: '8px',
+                      fontWeight: 600,
+                      boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Add Maintenance Task
+                  </Button>
+                </>
+              )}
             </Space>
           </Space>
         </div>

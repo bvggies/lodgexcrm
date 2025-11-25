@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Layout, Menu, Avatar, Dropdown, Space } from 'antd';
+import React, { useState, useEffect } from 'react';
+import { Layout, Menu, Avatar, Dropdown, Space, Drawer, Button } from 'antd';
 import { motion } from 'framer-motion';
+import { MenuOutlined } from '@ant-design/icons';
 import {
   DashboardOutlined,
   HomeOutlined,
@@ -26,6 +27,7 @@ import { logout } from '../../store/slices/authSlice';
 import NotificationsDropdown from '../NotificationsDropdown';
 import GlobalSearch from '../GlobalSearch';
 import ThemeToggle from '../ThemeToggle';
+import { useMobile } from '../../hooks/useMobile';
 import type { MenuProps } from 'antd';
 
 const { Header, Sider, Content } = Layout;
@@ -36,13 +38,22 @@ interface AppLayoutProps {
 
 const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
   const { mode: themeMode } = useAppSelector((state) => state.theme);
+  const isMobile = useMobile();
   const isGuest = user?.role === 'guest';
   const isStaff = user?.role !== 'guest' && user?.role !== 'admin';
+
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    if (isMobile) {
+      setCollapsed(true);
+    }
+  }, [isMobile]);
 
   const getMenuItems = (): MenuProps['items'] => {
     // Guest menu - only dashboard
@@ -214,6 +225,9 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const handleMenuClick = ({ key }: { key: string }) => {
     navigate(key);
+    if (isMobile) {
+      setMobileMenuOpen(false);
+    }
   };
 
   const handleUserMenuClick: MenuProps['onClick'] = ({ key }) => {
@@ -228,45 +242,38 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     }
   };
 
-  return (
-    <Layout style={{ minHeight: '100vh' }}>
-      <Sider
-        collapsible
-        collapsed={collapsed}
-        onCollapse={setCollapsed}
-        theme={themeMode === 'light' ? 'light' : 'dark'}
-        width={250}
-        style={{ display: 'flex', flexDirection: 'column' }}
+  const menuContent = (
+    <>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+        style={{
+          height: isMobile ? 56 : 64,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: themeMode === 'light' ? '#1e293b' : 'white',
+          gap: 8,
+          padding: '0 12px',
+        }}
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            height: 64,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            color: themeMode === 'light' ? '#1e293b' : 'white',
-            gap: 8,
-            padding: '0 12px',
-          }}
-        >
-          {collapsed ? (
-            <span style={{ fontSize: 20, fontWeight: 'bold' }}>CH</span>
-          ) : (
-            <>
-              <img
-                src="/chlogo.png"
-                alt="Creative Homes Vacation Rental LLC"
-                style={{ height: 32, width: 'auto', flexShrink: 0 }}
-                onError={(e) => {
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
+        {collapsed && !isMobile ? (
+          <span style={{ fontSize: 20, fontWeight: 'bold' }}>CH</span>
+        ) : (
+          <>
+            <img
+              src="/chlogo.png"
+              alt="Creative Homes Vacation Rental LLC"
+              style={{ height: isMobile ? 28 : 32, width: 'auto', flexShrink: 0 }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+            {!isMobile && (
               <span
                 style={{
-                  fontSize: 14,
+                  fontSize: isMobile ? 12 : 14,
                   fontWeight: 'bold',
                   lineHeight: 1.2,
                   textAlign: 'center',
@@ -276,20 +283,22 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
               >
                 Creative Homes Vacation Rental LLC
               </span>
-            </>
-          )}
-        </motion.div>
-        <div style={{ flex: 1, overflow: 'auto' }}>
-          <Menu
-            theme={themeMode === 'light' ? 'light' : 'dark'}
-            mode="inline"
-            selectedKeys={[location.pathname]}
-            items={menuItems}
-            onClick={handleMenuClick}
-            style={{ borderRight: 0 }}
-          />
-        </div>
-        {/* Bottom section with notifications and profile */}
+            )}
+          </>
+        )}
+      </motion.div>
+      <div style={{ flex: 1, overflow: 'auto' }}>
+        <Menu
+          theme={themeMode === 'light' ? 'light' : 'dark'}
+          mode="inline"
+          selectedKeys={[location.pathname]}
+          items={menuItems}
+          onClick={handleMenuClick}
+          style={{ borderRight: 0 }}
+        />
+      </div>
+      {/* Bottom section with notifications and profile */}
+      {!isMobile && (
         <div
           style={{
             borderTop: themeMode === 'light' ? '1px solid #e2e8f0' : '1px solid #334155',
@@ -352,21 +361,66 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             </Dropdown>
           </div>
         </div>
-      </Sider>
+      )}
+    </>
+  );
+
+  return (
+    <Layout style={{ minHeight: '100vh' }}>
+      {isMobile ? (
+        <Drawer
+          title={
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <img src="/chlogo.png" alt="Creative Homes" style={{ height: 28, width: 'auto' }} />
+              <span style={{ fontSize: 14, fontWeight: 'bold' }}>
+                Creative Homes Vacation Rental LLC
+              </span>
+            </div>
+          }
+          placement="left"
+          onClose={() => setMobileMenuOpen(false)}
+          open={mobileMenuOpen}
+          bodyStyle={{ padding: 0 }}
+          width={280}
+        >
+          {menuContent}
+        </Drawer>
+      ) : (
+        <Sider
+          collapsible
+          collapsed={collapsed}
+          onCollapse={setCollapsed}
+          theme={themeMode === 'light' ? 'light' : 'dark'}
+          width={250}
+          style={{ display: 'flex', flexDirection: 'column' }}
+        >
+          {menuContent}
+        </Sider>
+      )}
       <Layout style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
         <Header
           style={{
-            padding: '0 24px',
+            padding: isMobile ? '0 12px' : '0 24px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
             flexShrink: 0,
+            height: isMobile ? 56 : 64,
           }}
         >
-          <GlobalSearch />
-          <Space>
+          {isMobile ? (
+            <Button
+              type="text"
+              icon={<MenuOutlined />}
+              onClick={() => setMobileMenuOpen(true)}
+              style={{ fontSize: 18, color: 'inherit' }}
+            />
+          ) : (
+            <GlobalSearch />
+          )}
+          <Space size={isMobile ? 'small' : 'middle'}>
             <ThemeToggle />
-            <NotificationsDropdown collapsed={collapsed} />
+            {isMobile && <NotificationsDropdown collapsed={false} />}
             <Dropdown
               menu={{
                 items: userMenuItems,
@@ -379,8 +433,8 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                   display: 'flex',
                   alignItems: 'center',
                   cursor: 'pointer',
-                  gap: 8,
-                  padding: '4px 8px',
+                  gap: isMobile ? 4 : 8,
+                  padding: isMobile ? '2px 4px' : '4px 8px',
                   borderRadius: 8,
                   transition: 'background 0.2s',
                 }}
@@ -392,14 +446,15 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
                 }}
               >
                 <Avatar
+                  size={isMobile ? 'small' : 'default'}
                   style={{
                     backgroundColor: '#6366f1',
                   }}
                 >
                   {user?.firstName?.[0] || 'U'}
                 </Avatar>
-                {!collapsed && (
-                  <span style={{ color: 'inherit' }}>
+                {!isMobile && !collapsed && (
+                  <span style={{ color: 'inherit', fontSize: 14 }}>
                     {user?.firstName} {user?.lastName}
                   </span>
                 )}
