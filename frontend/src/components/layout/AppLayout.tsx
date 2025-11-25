@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Layout, Menu, Avatar, Dropdown, Space, Drawer, Button } from 'antd';
-import { motion } from 'framer-motion';
 import { MenuOutlined } from '@ant-design/icons';
 import {
   DashboardOutlined,
@@ -244,10 +243,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
 
   const menuContent = (
     <>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
+      <div
         style={{
           height: isMobile ? 56 : 64,
           display: 'flex',
@@ -286,7 +282,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             )}
           </>
         )}
-      </motion.div>
+      </div>
       <div style={{ flex: 1, overflow: 'auto' }}>
         <Menu
           theme={themeMode === 'light' ? 'light' : 'dark'}

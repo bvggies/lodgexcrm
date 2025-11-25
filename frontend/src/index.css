@@ -11,7 +11,7 @@ body {
     'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.1s ease, color 0.1s ease;
 }
 
 /* Light theme */
@@ -34,38 +34,11 @@ code {
   min-height: 100vh;
 }
 
-/* Animation keyframes */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* Animations removed */
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-/* Smooth transitions - optimized for performance */
+/* Cards - animations removed */
 .ant-card {
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease,
-    border-color 0.2s ease,
-    background-color 0.3s ease !important;
-  will-change: transform;
-  cursor: pointer;
+  background-color: 0.1s ease !important;
 }
 
 [data-theme='light'] .ant-card {
@@ -76,7 +49,6 @@ code {
 
 [data-theme='light'] .ant-card:hover {
   box-shadow: 0 12px 40px rgba(99, 102, 241, 0.15) !important;
-  transform: translateY(-2px) !important;
   border-color: #cbd5e1 !important;
 }
 
@@ -88,32 +60,21 @@ code {
 
 [data-theme='dark'] .ant-card:hover {
   box-shadow: 0 12px 40px rgba(99, 102, 241, 0.2) !important;
-  transform: translateY(-2px) !important;
   border-color: #475569 !important;
 }
 
 .ant-btn {
-  transition:
-    transform 0.15s ease,
-    box-shadow 0.15s ease !important;
   font-weight: 500;
-  will-change: transform;
   cursor: pointer !important;
   pointer-events: auto !important;
 }
 
 .ant-btn:hover {
-  transform: translateY(-1px) !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
 }
 
-.ant-btn:active {
-  transform: translateY(0) !important;
-}
-
 .ant-table-tbody > tr {
-  transition: background-color 0.15s ease;
-  will-change: background-color;
+  /* Animations removed */
 }
 
 .ant-table-tbody > tr:hover {
@@ -123,7 +84,7 @@ code {
 .ant-select-selector,
 .ant-input,
 .ant-picker {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  /* Animations removed */
 }
 
 .ant-select-selector:hover,
@@ -140,32 +101,7 @@ code {
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
 }
 
-/* AOS custom animations */
-[data-aos] {
-  pointer-events: auto !important;
-}
-
-[data-aos].aos-animate {
-  pointer-events: auto !important;
-}
-
-/* Ensure framer motion elements are visible - fallback for animation issues */
-[data-framer-name] {
-  opacity: 1 !important;
-}
-
-/* Force visibility for motion divs after a short delay */
-@keyframes forceVisible {
-  to {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
-}
-
-/* Apply force visibility to motion elements after 1 second */
-motion.div {
-  animation: forceVisible 0.1s 1s forwards;
-}
+/* Animations removed */
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {

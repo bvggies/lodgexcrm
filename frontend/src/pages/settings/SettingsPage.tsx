@@ -24,7 +24,6 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
-import FadeIn from '../../components/animations/FadeIn';
 import { useAppSelector } from '../../store/hooks';
 import { storage } from '../../utils/storage';
 
@@ -294,7 +293,6 @@ const SettingsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -318,7 +316,6 @@ const SettingsPage: React.FC = () => {
         </div>
 
         <Tabs items={tabItems} size="large" activeKey={activeTab} onChange={handleTabChange} />
-      </FadeIn>
     </div>
   );
 };

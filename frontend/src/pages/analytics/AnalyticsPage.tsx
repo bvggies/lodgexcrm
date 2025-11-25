@@ -12,7 +12,6 @@ import {
   Tabs,
   message,
 } from 'antd';
-import { motion } from 'framer-motion';
 import {
   DollarOutlined,
   HomeOutlined,
@@ -20,9 +19,6 @@ import {
   ReloadOutlined,
   DownloadOutlined,
 } from '@ant-design/icons';
-import FadeIn from '../../components/animations/FadeIn';
-import StaggerContainer from '../../components/animations/StaggerContainer';
-import AnimatedCard from '../../components/animations/AnimatedCard';
 import {
   LineChart,
   Line,
@@ -142,7 +138,6 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -186,7 +181,6 @@ const AnalyticsPage: React.FC = () => {
             </Button>
           </Space>
         </div>
-      </FadeIn>
 
       <Tabs defaultActiveKey="financial">
         <TabPane tab="Financial Analytics" key="financial">

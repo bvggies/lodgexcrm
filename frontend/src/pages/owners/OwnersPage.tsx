@@ -8,10 +8,8 @@ import {
   FileTextOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import type { ColumnsType } from 'antd/es/table';
 import { ownersApi, Owner } from '../../services/api/ownersApi';
-import FadeIn from '../../components/animations/FadeIn';
 
 const { Title } = Typography;
 
@@ -130,7 +128,6 @@ const OwnersPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -155,7 +152,6 @@ const OwnersPage: React.FC = () => {
           style={{ width: 400, marginBottom: 16 }}
           allowClear
         />
-      </FadeIn>
 
       <div>
         <Table

@@ -14,13 +14,11 @@ import {
   Popconfirm,
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { motion } from 'framer-motion';
 import type { ColumnsType } from 'antd/es/table';
 import { maintenanceApi, MaintenanceTask } from '../../services/api/maintenanceApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { unitsApi, Unit } from '../../services/api/unitsApi';
 import { staffApi } from '../../services/api/staffApi';
-import FadeIn from '../../components/animations/FadeIn';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { addNotification } from '../../store/slices/notificationsSlice';
 
@@ -290,7 +288,6 @@ const MaintenanceTasksPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -336,7 +333,6 @@ const MaintenanceTasksPage: React.FC = () => {
             <Option value="urgent">Urgent</Option>
           </Select>
         </Space>
-      </FadeIn>
 
       <div>
         <Table

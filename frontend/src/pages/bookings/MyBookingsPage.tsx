@@ -24,11 +24,9 @@ import {
   EyeOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
-import FadeIn from '../../components/animations/FadeIn';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { useAppSelector } from '../../store/hooks';
@@ -215,7 +213,6 @@ const MyBookingsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -284,7 +281,6 @@ const MyBookingsPage: React.FC = () => {
             )}
           </Card>
         </div>
-      </FadeIn>
 
       <Modal
         title="Create New Booking"

@@ -15,7 +15,6 @@ import {
   Popconfirm,
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, CheckCircleOutlined } from '@ant-design/icons';
-import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 import { cleaningApi, CleaningTask } from '../../services/api/cleaningApi';
@@ -23,7 +22,6 @@ import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { unitsApi, Unit } from '../../services/api/unitsApi';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { staffApi } from '../../services/api/staffApi';
-import FadeIn from '../../components/animations/FadeIn';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { addNotification } from '../../store/slices/notificationsSlice';
 
@@ -302,7 +300,6 @@ const CleaningTasksPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -332,7 +329,6 @@ const CleaningTasksPage: React.FC = () => {
           <Option value="in_progress">In Progress</Option>
           <Option value="completed">Completed</Option>
         </Select>
-      </FadeIn>
 
       <div>
         <Table

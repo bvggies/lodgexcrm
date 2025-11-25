@@ -31,12 +31,10 @@ import {
   ClockCircleOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
 import { archiveApi } from '../../services/api/archiveApi';
-import FadeIn from '../../components/animations/FadeIn';
 import { Calendar, dateFnsLocalizer, Views, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
@@ -311,7 +309,6 @@ const BookingsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -351,7 +348,6 @@ const BookingsPage: React.FC = () => {
             <Option value="refunded">Refunded</Option>
           </Select>
         </Space>
-      </FadeIn>
 
       <div>
         <Tabs activeKey={activeTab} onChange={setActiveTab}>

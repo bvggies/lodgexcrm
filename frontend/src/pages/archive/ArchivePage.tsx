@@ -11,12 +11,10 @@ import {
   Descriptions,
   Pagination,
 } from 'antd';
-import { motion } from 'framer-motion';
 import { InboxOutlined, UndoOutlined, DeleteOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { archiveApi, ArchivedBooking } from '../../services/api/archiveApi';
 import dayjs from 'dayjs';
-import FadeIn from '../../components/animations/FadeIn';
 
 const { Title } = Typography;
 
@@ -142,7 +140,6 @@ const ArchivePage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -158,7 +155,6 @@ const ArchivePage: React.FC = () => {
             Refresh
           </Button>
         </div>
-      </FadeIn>
 
       <div>
         <Card>

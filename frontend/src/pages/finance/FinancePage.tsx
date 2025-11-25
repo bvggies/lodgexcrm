@@ -18,7 +18,6 @@ import {
   Card,
   Statistic,
 } from 'antd';
-import { motion } from 'framer-motion';
 import { PlusOutlined, DownloadOutlined, DollarOutlined } from '@ant-design/icons';
 import {
   LineChart,
@@ -35,9 +34,6 @@ import type { ColumnsType } from 'antd/es/table';
 import { financeApi, FinanceRecord } from '../../services/api/financeApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
-import FadeIn from '../../components/animations/FadeIn';
-import StaggerContainer from '../../components/animations/StaggerContainer';
-import AnimatedCard from '../../components/animations/AnimatedCard';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -241,7 +237,6 @@ const FinancePage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -265,7 +260,6 @@ const FinancePage: React.FC = () => {
             </Button>
           </Space>
         </div>
-      </FadeIn>
 
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={8}>

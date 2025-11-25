@@ -12,11 +12,9 @@ import {
   Descriptions,
 } from 'antd';
 import { SearchOutlined, ReloadOutlined, EyeOutlined } from '@ant-design/icons';
-import { motion } from 'framer-motion';
 import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 import { auditApi, AuditLog } from '../../services/api/auditApi';
-import FadeIn from '../../components/animations/FadeIn';
 
 const { Title } = Typography;
 const { RangePicker } = DatePicker;
@@ -125,7 +123,6 @@ const AuditLogPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <Title level={2}>Audit Log</Title>
 
         <Space style={{ marginBottom: 16 }}>
@@ -165,7 +162,6 @@ const AuditLogPage: React.FC = () => {
             Refresh
           </Button>
         </Space>
-      </FadeIn>
 
       <Table
         columns={columns}

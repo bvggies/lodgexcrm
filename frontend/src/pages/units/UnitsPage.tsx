@@ -15,10 +15,8 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { unitsApi, Unit } from '../../services/api/unitsApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
-import FadeIn from '../../components/animations/FadeIn';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
@@ -173,7 +171,6 @@ const UnitsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -189,7 +186,6 @@ const UnitsPage: React.FC = () => {
             Add Unit
           </Button>
         </div>
-      </FadeIn>
 
       <Space style={{ marginBottom: 16 }}>
         <Input

@@ -14,9 +14,7 @@ import {
 } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
-import FadeIn from '../../components/animations/FadeIn';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
@@ -151,7 +149,6 @@ const GuestsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -176,7 +173,6 @@ const GuestsPage: React.FC = () => {
           style={{ width: 400, marginBottom: 16 }}
           allowClear
         />
-      </FadeIn>
 
       <div>
         <Table

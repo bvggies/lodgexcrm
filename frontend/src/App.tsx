@@ -2,7 +2,6 @@ import React from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { Layout } from 'antd';
 import AppLayout from './components/layout/AppLayout';
-import PageTransition from './components/animations/PageTransition';
 import ErrorBoundary from './components/ErrorBoundary';
 import NotFound from './components/NotFound';
 import LoginPage from './pages/auth/LoginPage';
@@ -54,22 +53,8 @@ function App() {
                     {/* Guest Routes */}
                     {user?.role === 'guest' && (
                       <>
-                        <Route
-                          path="/guest/dashboard"
-                          element={
-                            <PageTransition>
-                              <GuestDashboardPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/settings"
-                          element={
-                            <PageTransition>
-                              <SettingsPage />
-                            </PageTransition>
-                          }
-                        />
+                        <Route path="/guest/dashboard" element={<GuestDashboardPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/" element={<Navigate to="/guest/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/guest/dashboard" replace />} />
                       </>
@@ -77,30 +62,9 @@ function App() {
                     {/* Owner Routes */}
                     {user?.role === 'owner_view' && (
                       <>
-                        <Route
-                          path="/owner/dashboard"
-                          element={
-                            <PageTransition>
-                              <OwnerDashboardPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/owner/statements"
-                          element={
-                            <PageTransition>
-                              <OwnerMyStatementsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/settings"
-                          element={
-                            <PageTransition>
-                              <SettingsPage />
-                            </PageTransition>
-                          }
-                        />
+                        <Route path="/owner/dashboard" element={<OwnerDashboardPage />} />
+                        <Route path="/owner/statements" element={<OwnerMyStatementsPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                         <Route path="/" element={<Navigate to="/owner/dashboard" replace />} />
                         <Route path="*" element={<Navigate to="/owner/dashboard" replace />} />
                       </>
@@ -110,22 +74,8 @@ function App() {
                       user?.role !== 'admin' &&
                       user?.role !== 'owner_view' && (
                         <>
-                          <Route
-                            path="/staff/dashboard"
-                            element={
-                              <PageTransition>
-                                <StaffDashboardPage />
-                              </PageTransition>
-                            }
-                          />
-                          <Route
-                            path="/settings"
-                            element={
-                              <PageTransition>
-                                <SettingsPage />
-                              </PageTransition>
-                            }
-                          />
+                          <Route path="/staff/dashboard" element={<StaffDashboardPage />} />
+                          <Route path="/settings" element={<SettingsPage />} />
                           <Route path="/" element={<Navigate to="/staff/dashboard" replace />} />
                           <Route path="*" element={<Navigate to="/staff/dashboard" replace />} />
                         </>
@@ -133,182 +83,28 @@ function App() {
                     {/* Admin Routes */}
                     {user?.role === 'admin' && (
                       <>
-                        <Route
-                          path="/"
-                          element={
-                            <PageTransition>
-                              <DashboardPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/properties"
-                          element={
-                            <PageTransition>
-                              <PropertiesPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/properties/:id"
-                          element={
-                            <PageTransition>
-                              <PropertyDetailPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/units"
-                          element={
-                            <PageTransition>
-                              <UnitsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/guests"
-                          element={
-                            <PageTransition>
-                              <GuestsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/guests/:id"
-                          element={
-                            <PageTransition>
-                              <GuestDetailPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/bookings"
-                          element={
-                            <PageTransition>
-                              <BookingsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/bookings/:id"
-                          element={
-                            <PageTransition>
-                              <BookingDetailPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/my-bookings"
-                          element={
-                            <PageTransition>
-                              <MyBookingsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/owners"
-                          element={
-                            <PageTransition>
-                              <OwnersPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/owners/:id/statements"
-                          element={
-                            <PageTransition>
-                              <OwnerStatementsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/cleaning"
-                          element={
-                            <PageTransition>
-                              <CleaningTasksPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/maintenance"
-                          element={
-                            <PageTransition>
-                              <MaintenanceTasksPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/finance"
-                          element={
-                            <PageTransition>
-                              <FinancePage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/staff"
-                          element={
-                            <PageTransition>
-                              <StaffPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/analytics"
-                          element={
-                            <PageTransition>
-                              <AnalyticsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/audit"
-                          element={
-                            <PageTransition>
-                              <AuditLogPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/integrations"
-                          element={
-                            <PageTransition>
-                              <IntegrationsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/automations"
-                          element={
-                            <PageTransition>
-                              <AutomationsPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/archive"
-                          element={
-                            <PageTransition>
-                              <ArchivePage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/import"
-                          element={
-                            <PageTransition>
-                              <ImportPage />
-                            </PageTransition>
-                          }
-                        />
-                        <Route
-                          path="/settings"
-                          element={
-                            <PageTransition>
-                              <SettingsPage />
-                            </PageTransition>
-                          }
-                        />
+                        <Route path="/" element={<DashboardPage />} />
+                        <Route path="/properties" element={<PropertiesPage />} />
+                        <Route path="/properties/:id" element={<PropertyDetailPage />} />
+                        <Route path="/units" element={<UnitsPage />} />
+                        <Route path="/guests" element={<GuestsPage />} />
+                        <Route path="/guests/:id" element={<GuestDetailPage />} />
+                        <Route path="/bookings" element={<BookingsPage />} />
+                        <Route path="/bookings/:id" element={<BookingDetailPage />} />
+                        <Route path="/my-bookings" element={<MyBookingsPage />} />
+                        <Route path="/owners" element={<OwnersPage />} />
+                        <Route path="/owners/:id/statements" element={<OwnerStatementsPage />} />
+                        <Route path="/cleaning" element={<CleaningTasksPage />} />
+                        <Route path="/maintenance" element={<MaintenanceTasksPage />} />
+                        <Route path="/finance" element={<FinancePage />} />
+                        <Route path="/staff" element={<StaffPage />} />
+                        <Route path="/analytics" element={<AnalyticsPage />} />
+                        <Route path="/audit" element={<AuditLogPage />} />
+                        <Route path="/integrations" element={<IntegrationsPage />} />
+                        <Route path="/automations" element={<AutomationsPage />} />
+                        <Route path="/archive" element={<ArchivePage />} />
+                        <Route path="/import" element={<ImportPage />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                         <Route path="*" element={<NotFound />} />
                       </>
                     )}

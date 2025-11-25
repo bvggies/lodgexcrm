@@ -18,7 +18,6 @@ import { ArrowLeftOutlined, DownloadOutlined, DollarOutlined } from '@ant-design
 import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 import { ownersApi } from '../../services/api/ownersApi';
-import FadeIn from '../../components/animations/FadeIn';
 import GlassCard from '../../components/animations/GlassCard';
 
 const { Title, Text } = Typography;
@@ -184,7 +183,6 @@ const OwnerStatementsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <Space direction="vertical" size="large" style={{ width: '100%' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <Space>
@@ -274,7 +272,6 @@ const OwnerStatementsPage: React.FC = () => {
             />
           </GlassCard>
         </Space>
-      </FadeIn>
     </div>
   );
 };

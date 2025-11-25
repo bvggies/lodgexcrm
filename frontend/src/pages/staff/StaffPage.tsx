@@ -25,10 +25,8 @@ import {
   UserOutlined,
   EyeOutlined,
 } from '@ant-design/icons';
-import { motion } from 'framer-motion';
 import type { ColumnsType } from 'antd/es/table';
 import { staffApi, Staff } from '../../services/api/staffApi';
-import FadeIn from '../../components/animations/FadeIn';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -187,7 +185,6 @@ const StaffPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -203,7 +200,6 @@ const StaffPage: React.FC = () => {
             Add Staff
           </Button>
         </div>
-      </FadeIn>
 
       <Space style={{ marginBottom: 16 }}>
         <Input

@@ -17,7 +17,6 @@ import {
   Select,
   Spin,
 } from 'antd';
-import { motion } from 'framer-motion';
 import {
   ApiOutlined,
   CheckCircleOutlined,
@@ -32,7 +31,6 @@ import {
   IntegrationDetail,
 } from '../../services/api/integrationsApi';
 import { propertiesApi } from '../../services/api/propertiesApi';
-import FadeIn from '../../components/animations/FadeIn';
 
 const { Title, Text } = Typography;
 
@@ -185,7 +183,6 @@ const IntegrationsPage: React.FC = () => {
 
   return (
     <div>
-      <FadeIn>
         <div
           style={{
             display: 'flex',
@@ -201,7 +198,6 @@ const IntegrationsPage: React.FC = () => {
             Refresh
           </Button>
         </div>
-      </FadeIn>
 
       <Alert
         message="Integration Setup"
