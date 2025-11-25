@@ -138,49 +138,49 @@ const AnalyticsPage: React.FC = () => {
 
   return (
     <div>
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: 24,
-          }}
-        >
-          <Title level={2} style={{ margin: 0 }}>
-            Analytics
-          </Title>
-          <Space>
-            <Select
-              value={timeRange}
-              onChange={(value) => {
-                setTimeRange(value);
-                if (value !== 'custom') {
-                  setCustomDateRange(null);
-                }
-              }}
-              style={{ width: 150 }}
-            >
-              <Option value="1m">Last Month</Option>
-              <Option value="3m">Last 3 Months</Option>
-              <Option value="6m">Last 6 Months</Option>
-              <Option value="1y">Last Year</Option>
-              <Option value="custom">Custom Range</Option>
-            </Select>
-            {timeRange === 'custom' && (
-              <RangePicker
-                value={customDateRange}
-                onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
-                getPopupContainer={() => document.body}
-              />
-            )}
-            <Button icon={<ReloadOutlined />} onClick={loadAnalytics} loading={loading}>
-              Refresh
-            </Button>
-            <Button icon={<DownloadOutlined />} onClick={handleExport}>
-              Export
-            </Button>
-          </Space>
-        </div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: 24,
+        }}
+      >
+        <Title level={2} style={{ margin: 0 }}>
+          Analytics
+        </Title>
+        <Space>
+          <Select
+            value={timeRange}
+            onChange={(value) => {
+              setTimeRange(value);
+              if (value !== 'custom') {
+                setCustomDateRange(null);
+              }
+            }}
+            style={{ width: 150 }}
+          >
+            <Option value="1m">Last Month</Option>
+            <Option value="3m">Last 3 Months</Option>
+            <Option value="6m">Last 6 Months</Option>
+            <Option value="1y">Last Year</Option>
+            <Option value="custom">Custom Range</Option>
+          </Select>
+          {timeRange === 'custom' && (
+            <RangePicker
+              value={customDateRange}
+              onChange={(dates) => setCustomDateRange(dates as [dayjs.Dayjs, dayjs.Dayjs] | null)}
+              getPopupContainer={() => document.body}
+            />
+          )}
+          <Button icon={<ReloadOutlined />} onClick={loadAnalytics} loading={loading}>
+            Refresh
+          </Button>
+          <Button icon={<DownloadOutlined />} onClick={handleExport}>
+            Export
+          </Button>
+        </Space>
+      </div>
 
       <Tabs defaultActiveKey="financial">
         <TabPane tab="Financial Analytics" key="financial">
