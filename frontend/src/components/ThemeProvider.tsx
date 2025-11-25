@@ -15,8 +15,29 @@ const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     <ConfigProvider
       theme={themeConfig}
       getPopupContainer={(trigger) => {
-        // Always use document.body to ensure dropdowns are never clipped
-        // This fixes issues with overflow: hidden containers
+        // Find the closest scrollable container or modal
+        // This ensures dropdowns are visible and can properly detect click-outside events
+        if (!trigger) return document.body;
+        
+        // Check if trigger is inside a modal
+        const modal = trigger.closest('.ant-modal');
+        if (modal) return modal;
+        
+        // Find closest scrollable container
+        let parent = trigger.parentElement;
+        while (parent && parent !== document.body) {
+          const overflow = window.getComputedStyle(parent).overflow;
+          if (overflow === 'auto' || overflow === 'scroll' || overflow === 'hidden') {
+            // If it's a clipped container, use body instead
+            if (overflow === 'hidden') {
+              return document.body;
+            }
+            return parent;
+          }
+          parent = parent.parentElement;
+        }
+        
+        // Default to body for maximum compatibility
         return document.body;
       }}
     >

@@ -254,10 +254,8 @@ body {
 .ant-select-dropdown,
 .ant-picker-dropdown,
 .ant-dropdown {
-  pointer-events: auto !important;
   visibility: visible !important;
   opacity: 1 !important;
-  display: block !important;
 }
 
 /* Ensure dropdowns render outside clipped containers */
