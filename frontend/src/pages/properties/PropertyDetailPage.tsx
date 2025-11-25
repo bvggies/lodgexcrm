@@ -226,11 +226,13 @@ const PropertyDetailPage: React.FC = () => {
             <strong>{property.name}</strong>
           </Descriptions.Item>
           <Descriptions.Item label="Code">{property.code}</Descriptions.Item>
-          <Descriptions.Item label="Type">{property.type || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Address">{property.address || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="City">{property.city || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Country">{property.country || 'N/A'}</Descriptions.Item>
-          <Descriptions.Item label="Postal Code">{property.postalCode || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Type">{(property as any).type || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Address">{(property as any).address || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="City">{(property as any).city || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Country">{(property as any).country || 'N/A'}</Descriptions.Item>
+          <Descriptions.Item label="Postal Code">
+            {(property as any).postalCode || 'N/A'}
+          </Descriptions.Item>
           <Descriptions.Item label="Owner">
             {(property as any)?.owner
               ? `${(property as any).owner.firstName} ${(property as any).owner.lastName}`
@@ -241,8 +243,8 @@ const PropertyDetailPage: React.FC = () => {
               {property.status?.toUpperCase()}
             </Tag>
           </Descriptions.Item>
-          {property.description && (
-            <Descriptions.Item label="Description">{property.description}</Descriptions.Item>
+          {(property as any).description && (
+            <Descriptions.Item label="Description">{(property as any).description}</Descriptions.Item>
           )}
           <Descriptions.Item label="Created At">
             {dayjs(property.createdAt).format('MMMM DD, YYYY HH:mm')}
