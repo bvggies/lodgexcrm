@@ -19,7 +19,13 @@ import {
   Statistic,
   Popconfirm,
 } from 'antd';
-import { PlusOutlined, DownloadOutlined, DollarOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  DownloadOutlined,
+  DollarOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from '@ant-design/icons';
 import {
   LineChart,
   Line,
@@ -36,7 +42,7 @@ import { financeApi, FinanceRecord } from '../../services/api/financeApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { useAppSelector } from '../../store/hooks';
-import { permissions } from '../../utils/permissions';
+import { permissions, StaffRole } from '../../utils/permissions';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -44,7 +50,7 @@ const { RangePicker } = DatePicker;
 
 const FinancePage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
-  const isAdmin = permissions.isAdmin(user?.role);
+  const isAdmin = permissions.isAdmin(user?.role as StaffRole | undefined);
   const [records, setRecords] = useState<FinanceRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
@@ -123,7 +129,8 @@ const FinancePage: React.FC = () => {
       if (!monthlyData[month]) {
         monthlyData[month] = { revenue: 0, expense: 0 };
       }
-      const amount = typeof record.amount === 'number' ? record.amount : parseFloat(String(record.amount)) || 0;
+      const amount =
+        typeof record.amount === 'number' ? record.amount : parseFloat(String(record.amount)) || 0;
       if (record.type === 'revenue') {
         monthlyData[month].revenue += amount;
       } else {
@@ -226,7 +233,8 @@ const FinancePage: React.FC = () => {
     form.setFieldsValue({
       ...record,
       date: dayjs(record.date),
-      amount: typeof record.amount === 'number' ? record.amount : parseFloat(String(record.amount)) || 0,
+      amount:
+        typeof record.amount === 'number' ? record.amount : parseFloat(String(record.amount)) || 0,
     });
     setIsModalVisible(true);
   };
