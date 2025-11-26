@@ -94,8 +94,8 @@ const PropertiesPage: React.FC = () => {
       await propertiesApi.delete(id);
       message.success('Property deleted successfully');
       loadProperties();
-    } catch (error) {
-      message.error('Failed to delete property');
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to delete property');
     }
   };
 

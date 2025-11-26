@@ -65,8 +65,8 @@ const GuestsPage: React.FC = () => {
       await guestsApi.delete(id);
       message.success('Guest deleted successfully');
       loadGuests();
-    } catch (error) {
-      message.error('Failed to delete guest');
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to delete guest');
     }
   };
 

@@ -164,8 +164,8 @@ const BookingsPage: React.FC = () => {
       message.success('Booking deleted successfully');
       loadBookings();
       loadCalendar();
-    } catch (error) {
-      message.error('Failed to delete booking');
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to delete booking');
     }
   };
 

@@ -17,8 +17,9 @@ import {
   Col,
   Card,
   Statistic,
+  Popconfirm,
 } from 'antd';
-import { PlusOutlined, DownloadOutlined, DollarOutlined } from '@ant-design/icons';
+import { PlusOutlined, DownloadOutlined, DollarOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import {
   LineChart,
   Line,
@@ -34,17 +35,22 @@ import type { ColumnsType } from 'antd/es/table';
 import { financeApi, FinanceRecord } from '../../services/api/financeApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
+import { useAppSelector } from '../../store/hooks';
+import { permissions } from '../../utils/permissions';
 
 const { Title } = Typography;
 const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const FinancePage: React.FC = () => {
+  const { user } = useAppSelector((state) => state.auth);
+  const isAdmin = permissions.isAdmin(user?.role);
   const [records, setRecords] = useState<FinanceRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs, dayjs.Dayjs] | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [editingRecord, setEditingRecord] = useState<FinanceRecord | null>(null);
   const [properties, setProperties] = useState<Property[]>([]);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [selectedPropertyId, setSelectedPropertyId] = useState<string | undefined>();
@@ -117,18 +123,19 @@ const FinancePage: React.FC = () => {
       if (!monthlyData[month]) {
         monthlyData[month] = { revenue: 0, expense: 0 };
       }
+      const amount = typeof record.amount === 'number' ? record.amount : parseFloat(String(record.amount)) || 0;
       if (record.type === 'revenue') {
-        monthlyData[month].revenue += record.amount;
+        monthlyData[month].revenue += amount;
       } else {
-        monthlyData[month].expense += record.amount;
+        monthlyData[month].expense += amount;
       }
     });
 
     const chartDataArray = Object.entries(monthlyData)
       .map(([month, data]) => ({
         month,
-        revenue: data.revenue,
-        expense: data.expense,
+        revenue: Number(data.revenue.toFixed(2)),
+        expense: Number(data.expense.toFixed(2)),
       }))
       .sort((a, b) => dayjs(a.month, 'MMM YYYY').valueOf() - dayjs(b.month, 'MMM YYYY').valueOf());
 
@@ -179,12 +186,59 @@ const FinancePage: React.FC = () => {
       key: 'property',
       render: (_, record: any) => record.property?.name || 'N/A',
     },
+    ...(isAdmin
+      ? [
+          {
+            title: 'Actions',
+            key: 'actions',
+            render: (_: any, record: FinanceRecord) => (
+              <Space>
+                <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
+                  Edit
+                </Button>
+                <Popconfirm
+                  title="Are you sure you want to delete this finance record?"
+                  onConfirm={() => handleDelete(record.id)}
+                  okText="Yes"
+                  cancelText="No"
+                >
+                  <Button type="link" danger icon={<DeleteOutlined />}>
+                    Delete
+                  </Button>
+                </Popconfirm>
+              </Space>
+            ),
+          },
+        ]
+      : []),
   ];
 
   const handleCreate = () => {
+    setEditingRecord(null);
     setSelectedPropertyId(undefined);
     form.resetFields();
     setIsModalVisible(true);
+  };
+
+  const handleEdit = (record: FinanceRecord) => {
+    setEditingRecord(record);
+    setSelectedPropertyId(record.propertyId || undefined);
+    form.setFieldsValue({
+      ...record,
+      date: dayjs(record.date),
+      amount: typeof record.amount === 'number' ? record.amount : parseFloat(String(record.amount)) || 0,
+    });
+    setIsModalVisible(true);
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await financeApi.delete(id);
+      message.success('Finance record deleted successfully');
+      loadRecords();
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to delete finance record');
+    }
   };
 
   const handleExport = async (format: 'csv' | 'pdf') => {
@@ -226,9 +280,15 @@ const FinancePage: React.FC = () => {
         date: values.date ? values.date.toISOString() : new Date().toISOString(),
       };
 
-      await financeApi.create(submitData);
-      message.success('Finance record created successfully');
+      if (editingRecord) {
+        await financeApi.update(editingRecord.id, submitData);
+        message.success('Finance record updated successfully');
+      } else {
+        await financeApi.create(submitData);
+        message.success('Finance record created successfully');
+      }
       setIsModalVisible(false);
+      setEditingRecord(null);
       loadRecords();
     } catch (error: any) {
       message.error(error.response?.data?.error?.message || 'Operation failed');
@@ -329,25 +389,54 @@ const FinancePage: React.FC = () => {
         </Tabs.TabPane>
         <Tabs.TabPane tab="Charts" key="charts">
           <Card title="Revenue vs Expenses" style={{ marginBottom: 16 }}>
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Line type="monotone" dataKey="revenue" stroke="#3f8600" name="Revenue" />
-                <Line type="monotone" dataKey="expense" stroke="#cf1322" name="Expenses" />
-              </LineChart>
-            </ResponsiveContainer>
+            {chartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={400}>
+                <LineChart data={chartData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip
+                    formatter={(value: any) => {
+                      const numValue = typeof value === 'number' ? value : parseFloat(value) || 0;
+                      return `${numValue.toFixed(2)} AED`;
+                    }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#3f8600"
+                    name="Revenue"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="expense"
+                    stroke="#cf1322"
+                    name="Expenses"
+                    strokeWidth={2}
+                    dot={{ r: 4 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                No data available for the selected period
+              </div>
+            )}
           </Card>
         </Tabs.TabPane>
       </Tabs>
 
       <Modal
-        title="Add Finance Record"
+        title={editingRecord ? 'Edit Finance Record' : 'Add Finance Record'}
         open={isModalVisible}
-        onCancel={() => setIsModalVisible(false)}
+        onCancel={() => {
+          setIsModalVisible(false);
+          setEditingRecord(null);
+          form.resetFields();
+        }}
         onOk={() => form.submit()}
         width={600}
       >
