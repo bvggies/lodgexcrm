@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { voiceService, CallState } from '../services/twilio/voiceService';
 import DialerPanel from '../components/calling/DialerPanel';
 import IncomingCallPopup from '../components/calling/IncomingCallPopup';
+import { useAppSelector } from '../store/hooks';
 
 interface CallingContextType {
   openDialer: (phoneNumber?: string, guestId?: string) => void;
@@ -25,6 +26,7 @@ interface CallingProviderProps {
 }
 
 export const CallingProvider: React.FC<CallingProviderProps> = ({ children }) => {
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
   const [isDialerOpen, setIsDialerOpen] = useState(false);
   const [dialerPhoneNumber, setDialerPhoneNumber] = useState<string>('');
   const [dialerGuestId, setDialerGuestId] = useState<string | undefined>();
@@ -34,10 +36,16 @@ export const CallingProvider: React.FC<CallingProviderProps> = ({ children }) =>
   });
 
   useEffect(() => {
-    // Initialize voice service on mount
+    // Only initialize voice service if user is authenticated
+    if (!isAuthenticated) {
+      return;
+    }
+
+    // Initialize voice service on mount (only when authenticated)
     if (!voiceService.isInitialized()) {
       voiceService.initialize().catch((error) => {
         console.error('Failed to initialize voice service:', error);
+        // Don't throw or cause redirects - just log the error
       });
     }
 
@@ -57,9 +65,12 @@ export const CallingProvider: React.FC<CallingProviderProps> = ({ children }) =>
 
     return () => {
       unsubscribe();
-      voiceService.destroy();
+      // Only destroy if authenticated
+      if (isAuthenticated) {
+        voiceService.destroy();
+      }
     };
-  }, []);
+  }, [isAuthenticated]);
 
   const openDialer = (phoneNumber?: string, guestId?: string) => {
     setDialerPhoneNumber(phoneNumber || '');

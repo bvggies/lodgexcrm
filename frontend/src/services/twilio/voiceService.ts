@@ -29,9 +29,13 @@ class VoiceService {
       });
 
       this.setupDeviceListeners();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to initialize Twilio device:', error);
-      throw error;
+      // Don't throw - just log the error to prevent redirect loops
+      // The calling features will gracefully degrade if initialization fails
+      if (error.response?.status === 401) {
+        console.warn('Twilio token request failed: User not authenticated');
+      }
     }
   }
 
