@@ -30,37 +30,65 @@ class VoiceService {
         codecPreferences: ['opus', 'pcmu'],
       });
 
-      // Set up listeners (they will handle ready state)
-      this.setupDeviceListeners();
+      // Create promise to wait for device ready BEFORE setting up listeners
+      // This prevents race condition where ready event fires before we set up the promise
+      const callbacks: {
+        resolve: (() => void) | null;
+        reject: ((error: any) => void) | null;
+      } = {
+        resolve: null,
+        reject: null,
+      };
 
-      // Wait for device to be ready
       this.readyPromise = new Promise<void>((resolve, reject) => {
-        if (!this.device) {
-          reject(new Error('Device not created'));
-          return;
-        }
-
-        const timeout = setTimeout(() => {
-          reject(new Error('Device initialization timeout'));
-        }, 10000);
-
-        // Listen for ready event
-        const readyHandler = () => {
-          this.isDeviceReady = true;
-          clearTimeout(timeout);
-          resolve();
-        };
-
-        this.device.on('ready', readyHandler);
-
-        // Also handle error during initialization
-        const errorHandler = (error: any) => {
-          clearTimeout(timeout);
-          reject(error);
-        };
-
-        this.device.on('error', errorHandler);
+        callbacks.resolve = () => resolve();
+        callbacks.reject = (error: any) => reject(error);
       });
+
+      // Set up permanent listeners (they will also trigger the promise)
+      this.setupDeviceListeners(callbacks.resolve, callbacks.reject);
+
+      // Check if device is already ready (it might be ready immediately)
+      if ((this.device as any).isReady === true) {
+        console.log('Twilio device is already ready');
+        this.isDeviceReady = true;
+        this.notifyStatus({ status: 'idle' });
+        if (callbacks.resolve) {
+          callbacks.resolve();
+        }
+        return;
+      }
+
+      // Wait for device to be ready with a longer timeout
+      const timeout = setTimeout(() => {
+        console.error('Device initialization timeout - device state:', (this.device as any)?.state);
+        if (callbacks.reject) {
+          callbacks.reject(
+            new Error(
+              'Device initialization timeout. Please check your internet connection and try again.'
+            )
+          );
+        }
+      }, 20000); // Increased to 20 seconds
+
+      // Check periodically if device becomes ready (in case event was missed)
+      const checkInterval = setInterval(() => {
+        if ((this.device as any)?.isReady === true && !this.isDeviceReady) {
+          console.log('Twilio device became ready (polled)');
+          this.isDeviceReady = true;
+          this.notifyStatus({ status: 'idle' });
+          clearTimeout(timeout);
+          clearInterval(checkInterval);
+          if (callbacks.resolve) {
+            callbacks.resolve();
+          }
+        }
+      }, 500);
+
+      // Clean up interval on timeout
+      setTimeout(() => {
+        clearInterval(checkInterval);
+      }, 20000);
 
       await this.readyPromise;
     } catch (error: any) {
@@ -74,12 +102,19 @@ class VoiceService {
     }
   }
 
-  private setupDeviceListeners(): void {
+  private setupDeviceListeners(
+    readyResolve?: (() => void) | null,
+    readyReject?: ((error: any) => void) | null
+  ): void {
     if (!this.device) return;
 
     this.device.on('ready', () => {
+      console.log('Twilio device ready event received');
       this.isDeviceReady = true;
       this.notifyStatus({ status: 'idle' });
+      if (readyResolve) {
+        readyResolve();
+      }
     });
 
     this.device.on('error', (error: any) => {
@@ -89,6 +124,9 @@ class VoiceService {
         status: 'disconnected',
         error: error.message || 'Device error occurred',
       });
+      if (readyReject) {
+        readyReject(error);
+      }
     });
 
     this.device.on('incoming', (connection: Connection) => {
