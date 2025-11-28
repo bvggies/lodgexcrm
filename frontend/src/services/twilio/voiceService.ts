@@ -48,6 +48,10 @@ class VoiceService {
       // Set up permanent listeners (they will also trigger the promise)
       this.setupDeviceListeners(callbacks.resolve, callbacks.reject);
 
+      // Check device state
+      const deviceState = (this.device as any)?.state;
+      console.log('Initial device state:', deviceState);
+
       // Check if device is already ready (it might be ready immediately)
       if ((this.device as any).isReady === true) {
         console.log('Twilio device is already ready');
@@ -61,19 +65,36 @@ class VoiceService {
 
       // Wait for device to be ready with a longer timeout
       const timeout = setTimeout(() => {
-        console.error('Device initialization timeout - device state:', (this.device as any)?.state);
-        if (callbacks.reject) {
-          callbacks.reject(
-            new Error(
-              'Device initialization timeout. Please check your internet connection and try again.'
-            )
-          );
+        const currentState = (this.device as any)?.state;
+        console.error('Device initialization timeout - device state:', currentState);
+
+        let errorMessage = 'Device initialization timeout. ';
+        if (currentState === 'unregistered') {
+          errorMessage +=
+            'Device failed to register with Twilio. Please check your network connection and Twilio configuration.';
+        } else if (currentState === 'registering') {
+          errorMessage +=
+            'Device is still registering. This may indicate network issues or firewall blocking WebRTC connections.';
+        } else {
+          errorMessage += 'Please check your internet connection and try again.';
         }
-      }, 20000); // Increased to 20 seconds
+
+        if (callbacks.reject) {
+          callbacks.reject(new Error(errorMessage));
+        }
+      }, 30000); // Increased to 30 seconds to allow for registration
 
       // Check periodically if device becomes ready (in case event was missed)
       const checkInterval = setInterval(() => {
-        if ((this.device as any)?.isReady === true && !this.isDeviceReady) {
+        const currentState = (this.device as any)?.state;
+        const isReady = (this.device as any)?.isReady === true;
+
+        // Log state changes for debugging
+        if (currentState !== deviceState) {
+          console.log('Device state changed:', currentState);
+        }
+
+        if (isReady && !this.isDeviceReady) {
           console.log('Twilio device became ready (polled)');
           this.isDeviceReady = true;
           this.notifyStatus({ status: 'idle' });
@@ -108,6 +129,21 @@ class VoiceService {
   ): void {
     if (!this.device) return;
 
+    // Listen for registered event (device must register before becoming ready)
+    this.device.on('registered', () => {
+      console.log('Twilio device registered event received');
+    });
+
+    this.device.on('unregistered', () => {
+      console.warn('Twilio device unregistered');
+      this.isDeviceReady = false;
+    });
+
+    this.device.on('tokenWillExpire', () => {
+      console.warn('Twilio token will expire soon');
+      // Token refresh should be handled automatically, but we can log it
+    });
+
     this.device.on('ready', () => {
       console.log('Twilio device ready event received');
       this.isDeviceReady = true;
@@ -119,6 +155,7 @@ class VoiceService {
 
     this.device.on('error', (error: any) => {
       console.error('Twilio Device Error:', error);
+      console.error('Device state:', (this.device as any)?.state);
       this.isDeviceReady = false;
       this.notifyStatus({
         status: 'disconnected',
@@ -136,6 +173,7 @@ class VoiceService {
     });
 
     this.device.on('offline', () => {
+      console.warn('Twilio device offline');
       this.isDeviceReady = false;
       this.notifyStatus({ status: 'disconnected', error: 'Device offline' });
     });
