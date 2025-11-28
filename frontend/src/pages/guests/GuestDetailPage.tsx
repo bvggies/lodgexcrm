@@ -13,9 +13,11 @@ import {
   Table,
   Tabs,
 } from 'antd';
-import { ArrowLeftOutlined, EditOutlined } from '@ant-design/icons';
+import { ArrowLeftOutlined, EditOutlined, PhoneOutlined } from '@ant-design/icons';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
 import { bookingsApi } from '../../services/api/bookingsApi';
+import { useCalling } from '../../contexts/CallingContext';
+import CallHistoryComponent from '../../components/calling/CallHistory';
 import dayjs from 'dayjs';
 import type { ColumnsType } from 'antd/es/table';
 
@@ -25,6 +27,7 @@ const { TabPane } = Tabs;
 const GuestDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { openDialer } = useCalling();
   const [guest, setGuest] = useState<Guest | null>(null);
   const [bookings, setBookings] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -146,6 +149,16 @@ const GuestDetailPage: React.FC = () => {
         <Button icon={<ArrowLeftOutlined />} onClick={() => navigate('/guests')}>
           Back to Guests
         </Button>
+        {guest?.phone && (
+          <Button
+            type="primary"
+            icon={<PhoneOutlined />}
+            onClick={() => openDialer(guest.phone || '', id)}
+            style={{ backgroundColor: '#52c41a', borderColor: '#52c41a' }}
+          >
+            Call {guest.firstName}
+          </Button>
+        )}
         <Button
           type="primary"
           icon={<EditOutlined />}
@@ -215,6 +228,12 @@ const GuestDetailPage: React.FC = () => {
               loading={bookingsLoading}
               rowKey="id"
               pagination={{ pageSize: 10 }}
+            />
+          </TabPane>
+          <TabPane tab="Call History" key="calls">
+            <CallHistoryComponent
+              guestId={id}
+              onCall={(phoneNumber) => openDialer(phoneNumber, id)}
             />
           </TabPane>
         </Tabs>

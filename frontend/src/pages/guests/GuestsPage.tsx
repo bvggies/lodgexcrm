@@ -13,15 +13,23 @@ import {
   Switch,
   InputNumber,
 } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
+import {
+  PlusOutlined,
+  EditOutlined,
+  DeleteOutlined,
+  SearchOutlined,
+  PhoneOutlined,
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
+import { useCalling } from '../../contexts/CallingContext';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
 
 const GuestsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { openDialer } = useCalling();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -127,6 +135,16 @@ const GuestsPage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
+          {record.phone && (
+            <Button
+              type="link"
+              icon={<PhoneOutlined />}
+              onClick={() => openDialer(record.phone || '', record.id)}
+              style={{ color: '#52c41a' }}
+            >
+              Call
+            </Button>
+          )}
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Edit
           </Button>

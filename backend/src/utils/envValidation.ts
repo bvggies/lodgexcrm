@@ -27,6 +27,10 @@ const optionalEnvVars = [
   'TWILIO_ACCOUNT_SID',
   'TWILIO_AUTH_TOKEN',
   'TWILIO_PHONE_NUMBER',
+  'TWILIO_API_KEY',
+  'TWILIO_API_SECRET',
+  'TWILIO_TWIML_APP_SID',
+  'API_URL',
 ];
 
 export function validateEnv(): void {

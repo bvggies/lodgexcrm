@@ -19,6 +19,7 @@ import {
   AppstoreOutlined,
   ApiOutlined,
   UploadOutlined,
+  PhoneOutlined,
 } from '@ant-design/icons';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
@@ -159,6 +160,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         key: '/finance',
         icon: <DollarOutlined />,
         label: 'Finance',
+      },
+      {
+        key: '/calls',
+        icon: <PhoneOutlined />,
+        label: 'Calls',
       },
       {
         key: '/staff',

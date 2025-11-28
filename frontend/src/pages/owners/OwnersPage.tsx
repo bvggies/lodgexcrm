@@ -6,15 +6,18 @@ import {
   DeleteOutlined,
   SearchOutlined,
   FileTextOutlined,
+  PhoneOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
 import { ownersApi, Owner } from '../../services/api/ownersApi';
+import { useCalling } from '../../contexts/CallingContext';
 
 const { Title } = Typography;
 
 const OwnersPage: React.FC = () => {
   const navigate = useNavigate();
+  const { openDialer } = useCalling();
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -63,6 +66,16 @@ const OwnersPage: React.FC = () => {
       key: 'actions',
       render: (_, record) => (
         <Space>
+          {record.phone && (
+            <Button
+              type="link"
+              icon={<PhoneOutlined />}
+              onClick={() => openDialer(record.phone || '')}
+              style={{ color: '#52c41a' }}
+            >
+              Call
+            </Button>
+          )}
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
             Edit
           </Button>

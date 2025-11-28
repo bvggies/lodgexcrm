@@ -25,6 +25,7 @@ import automationsRoutes from './routes/automations.routes';
 import auditRoutes from './routes/audit.routes';
 import archiveRoutes from './routes/archive.routes';
 import importRoutes from './routes/import.routes';
+import twilioRoutes from './routes/twilio.routes';
 
 // Load environment variables
 dotenv.config();
@@ -151,6 +152,7 @@ app.use('/api/webhooks', webhooksRoutes);
 app.use('/api/automations', automationsRoutes);
 app.use('/api/audit', auditRoutes);
 app.use('/api/archive', archiveRoutes);
+app.use('/api/twilio', twilioRoutes);
 
 // Import routes (admin only)
 app.use('/api/import', importRoutes);

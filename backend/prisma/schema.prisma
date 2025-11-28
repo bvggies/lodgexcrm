@@ -105,6 +105,7 @@ model User {
   auditLogs     AuditLog[]
   assignedCleaningTasks CleaningTask[]
   assignedMaintenanceTasks MaintenanceTask[]
+  callHistory   CallHistory[]
 
   @@map("users")
 }
@@ -182,6 +183,7 @@ model Guest {
   user          User?
   bookings      Booking[]
   financeRecords FinanceRecord[]
+  callHistory   CallHistory[]
 
   @@index([email])
   @@index([blacklist])
@@ -436,5 +438,34 @@ model Automation {
   @@index([trigger])
   @@index([enabled])
   @@map("automations")
+}
+
+model CallHistory {
+  id              String    @id @default(uuid())
+  userId          String
+  guestId         String?
+  phoneNumber     String
+  direction       String    // inbound, outbound
+  status          String    // initiated, ringing, in-progress, completed, busy, no-answer, failed, canceled
+  callSid         String?
+  duration        Int?      // Duration in seconds
+  recordingSid    String?
+  recordingUrl    String?
+  recordingDuration Int?
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relations
+  user            User      @relation(fields: [userId], references: [id])
+  guest           Guest?    @relation(fields: [guestId], references: [id])
+
+  @@index([userId])
+  @@index([guestId])
+  @@index([phoneNumber])
+  @@index([startedAt])
+  @@index([status])
+  @@map("call_history")
 }
 
