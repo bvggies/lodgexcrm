@@ -35,6 +35,7 @@ import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
 import { archiveApi } from '../../services/api/archiveApi';
+import { useTranslation } from 'react-i18next';
 import { Calendar, dateFnsLocalizer, Views, View } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
@@ -59,6 +60,7 @@ const localizer = dateFnsLocalizer({
 
 const BookingsPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [calendarEvents, setCalendarEvents] = useState<any[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
@@ -329,7 +331,7 @@ const BookingsPage: React.FC = () => {
 
       <Space style={{ marginBottom: 16 }}>
         <Input
-          placeholder="Search bookings..."
+          placeholder={t('bookings.searchBookings')}
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -337,17 +339,17 @@ const BookingsPage: React.FC = () => {
           allowClear
         />
         <Select
-          placeholder="Filter by status"
+          placeholder={t('bookings.filterByStatus')}
           style={{ width: 200 }}
           allowClear
           value={statusFilter}
           onChange={setStatusFilter}
           getPopupContainer={() => document.body}
         >
-          <Option value="paid">Paid</Option>
-          <Option value="pending">Pending</Option>
-          <Option value="partial">Partial</Option>
-          <Option value="refunded">Refunded</Option>
+          <Option value="paid">{t('bookings.paid')}</Option>
+          <Option value="pending">{t('bookings.pending')}</Option>
+          <Option value="partial">{t('bookings.partial')}</Option>
+          <Option value="refunded">{t('bookings.refunded')}</Option>
         </Select>
       </Space>
 

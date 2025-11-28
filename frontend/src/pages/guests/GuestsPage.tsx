@@ -23,6 +23,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
 import { useCalling } from '../../contexts/CallingContext';
+import { useTranslation } from 'react-i18next';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
@@ -30,6 +31,7 @@ const { Title } = Typography;
 const GuestsPage: React.FC = () => {
   const navigate = useNavigate();
   const { openDialer } = useCalling();
+  const { t } = useTranslation();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -50,7 +52,7 @@ const GuestsPage: React.FC = () => {
       const response = await guestsApi.getAll(params);
       setGuests(response.data.data.guests);
     } catch (error) {
-      message.error('Failed to load guests');
+      message.error(t('guests.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -71,10 +73,10 @@ const GuestsPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await guestsApi.delete(id);
-      message.success('Guest deleted successfully');
+      message.success(t('guests.guestDeleted'));
       loadGuests();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to delete guest');
+      message.error(error.response?.data?.error?.message || t('guests.failedToDelete'));
     }
   };
 
@@ -82,33 +84,33 @@ const GuestsPage: React.FC = () => {
     try {
       if (editingGuest) {
         await guestsApi.update(editingGuest.id, values);
-        message.success('Guest updated successfully');
+        message.success(t('guests.guestUpdated'));
       } else {
         await guestsApi.create(values);
-        message.success('Guest created successfully');
+        message.success(t('guests.guestCreated'));
       }
       setIsModalVisible(false);
       loadGuests();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Operation failed');
+      message.error(error.response?.data?.error?.message || t('common.operationFailed'));
     }
   };
 
   const columns: ColumnsType<Guest> = [
     {
-      title: 'Name',
+      title: t('common.name'),
       key: 'name',
       render: (_, record) => `${record.firstName} ${record.lastName}`,
       sorter: (a, b) =>
         `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
     },
     {
-      title: 'Email',
+      title: t('common.email'),
       dataIndex: 'email',
       key: 'email',
     },
     {
-      title: 'Phone',
+      title: t('common.phone'),
       dataIndex: 'phone',
       key: 'phone',
     },
@@ -127,11 +129,13 @@ const GuestsPage: React.FC = () => {
       dataIndex: 'blacklist',
       key: 'blacklist',
       render: (blacklist: boolean) => (
-        <Tag color={blacklist ? 'red' : 'green'}>{blacklist ? 'Yes' : 'No'}</Tag>
+        <Tag color={blacklist ? 'red' : 'green'}>
+          {blacklist ? t('common.yes') : t('common.no')}
+        </Tag>
       ),
     },
     {
-      title: 'Actions',
+      title: t('common.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
@@ -142,23 +146,23 @@ const GuestsPage: React.FC = () => {
               onClick={() => openDialer(record.phone || '', record.id)}
               style={{ color: '#52c41a' }}
             >
-              Call
+              {t('guests.call')}
             </Button>
           )}
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
+            {t('common.edit')}
           </Button>
           <Button type="link" onClick={() => navigate(`/guests/${record.id}`)}>
-            View
+            {t('common.view')}
           </Button>
           <Popconfirm
-            title="Are you sure you want to delete this guest?"
+            title={t('common.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('common.yes')}
+            cancelText={t('common.no')}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
+              {t('common.delete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -177,15 +181,15 @@ const GuestsPage: React.FC = () => {
         }}
       >
         <Title level={2} style={{ margin: 0 }}>
-          Guests
+          {t('guests.title')}
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Add Guest
+          {t('guests.addGuest')}
         </Button>
       </div>
 
       <Input
-        placeholder="Search guests by name, email, or phone..."
+        placeholder={t('guests.searchGuests')}
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}

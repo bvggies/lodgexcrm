@@ -39,6 +39,7 @@ import { useAppSelector } from '../../store/hooks';
 import { useMobile } from '../../hooks/useMobile';
 import { analyticsApi } from '../../services/api/analyticsApi';
 import { bookingsApi } from '../../services/api/bookingsApi';
+import { useTranslation } from 'react-i18next';
 import {
   LineChart,
   Line,
@@ -100,6 +101,7 @@ const DashboardPage: React.FC = () => {
   const navigate = useNavigate();
   const { mode: themeMode } = useAppSelector((state) => state.theme);
   const isMobile = useMobile();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [data, setData] = useState<DashboardData>({
@@ -478,7 +480,7 @@ const DashboardPage: React.FC = () => {
                 }}
               />
             )}
-            <Tooltip title="Refresh Data">
+            <Tooltip title={t('dashboard.refreshData')}>
               <Button
                 icon={<ReloadOutlined spin={refreshing} />}
                 onClick={handleRefresh}
@@ -492,7 +494,7 @@ const DashboardPage: React.FC = () => {
                   cursor: 'pointer',
                 }}
               >
-                Refresh
+                {t('common.refresh')}
               </Button>
             </Tooltip>
             <Space
@@ -514,7 +516,7 @@ const DashboardPage: React.FC = () => {
                   cursor: 'pointer',
                 }}
               >
-                Add Booking
+                {t('dashboard.addBooking')}
               </Button>
               {!isMobile && (
                 <>
@@ -560,7 +562,7 @@ const DashboardPage: React.FC = () => {
         <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Monthly Revenue"
+              title={t('dashboard.monthlyRevenue')}
               value={data?.financial.monthlyRevenue || 0}
               prefix="AED "
               precision={2}
@@ -572,7 +574,7 @@ const DashboardPage: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Active Bookings"
+              title={t('dashboard.activeBookings')}
               value={data?.summary.activeBookings || 0}
               loading={loading}
               icon={<CalendarOutlined />}
@@ -581,7 +583,7 @@ const DashboardPage: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Properties"
+              title={t('dashboard.totalProperties')}
               value={data?.summary.totalProperties || 0}
               loading={loading}
               icon={<HomeOutlined />}
@@ -590,7 +592,7 @@ const DashboardPage: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Occupancy Rate"
+              title={t('dashboard.occupancyRate')}
               value={data?.occupancy.rate || 0}
               suffix="%"
               precision={1}
@@ -606,7 +608,7 @@ const DashboardPage: React.FC = () => {
         <Row gutter={[20, 20]} style={{ marginBottom: 32, display: 'flex', flexWrap: 'wrap' }}>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Monthly Expenses"
+              title={t('dashboard.monthlyExpenses')}
               value={data?.financial.monthlyExpenses || 0}
               prefix="AED "
               precision={2}
@@ -618,7 +620,7 @@ const DashboardPage: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Net Income"
+              title={t('dashboard.monthlyNetIncome')}
               value={data?.financial.monthlyNetIncome || 0}
               prefix="AED "
               precision={2}
@@ -632,7 +634,7 @@ const DashboardPage: React.FC = () => {
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Pending Cleaning"
+              title={t('dashboard.pendingCleaningTasks')}
               value={data?.summary.pendingCleaningTasks || 0}
               loading={loading}
               gradient="linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)"
@@ -643,14 +645,14 @@ const DashboardPage: React.FC = () => {
                   onClick={() => navigate('/cleaning')}
                   style={{ padding: 0, fontSize: '12px' }}
                 >
-                  View
+                  {t('common.view')}
                 </Button>
               }
             />
           </Col>
           <Col xs={24} sm={12} lg={6}>
             <ModernStatCard
-              title="Pending Maintenance"
+              title={t('dashboard.pendingMaintenanceTasks')}
               value={data?.summary.pendingMaintenanceTasks || 0}
               loading={loading}
               gradient="linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)"
@@ -661,7 +663,7 @@ const DashboardPage: React.FC = () => {
                   onClick={() => navigate('/maintenance')}
                   style={{ padding: 0, fontSize: '12px' }}
                 >
-                  View
+                  {t('common.view')}
                 </Button>
               }
             />

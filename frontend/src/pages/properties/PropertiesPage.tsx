@@ -16,6 +16,7 @@ import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant
 import { useNavigate } from 'react-router-dom';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { ownersApi, Owner } from '../../services/api/ownersApi';
+import { useTranslation } from 'react-i18next';
 import type { ColumnsType } from 'antd/es/table';
 
 const { Title } = Typography;
@@ -23,6 +24,7 @@ const { Option } = Select;
 
 const PropertiesPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [properties, setProperties] = useState<Property[]>([]);
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(false);
@@ -69,7 +71,7 @@ const PropertiesPage: React.FC = () => {
 
       setProperties(filteredProperties);
     } catch (error) {
-      message.error('Failed to load properties');
+      message.error(t('properties.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -92,10 +94,10 @@ const PropertiesPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await propertiesApi.delete(id);
-      message.success('Property deleted successfully');
+      message.success(t('properties.propertyDeleted'));
       loadProperties();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to delete property');
+      message.error(error.response?.data?.error?.message || t('properties.failedToDelete'));
     }
   };
 
@@ -103,37 +105,37 @@ const PropertiesPage: React.FC = () => {
     try {
       if (editingProperty) {
         await propertiesApi.update(editingProperty.id, values);
-        message.success('Property updated successfully');
+        message.success(t('properties.propertyUpdated'));
       } else {
         await propertiesApi.create(values);
-        message.success('Property created successfully');
+        message.success(t('properties.propertyCreated'));
       }
       setIsModalVisible(false);
       loadProperties();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Operation failed');
+      message.error(error.response?.data?.error?.message || t('common.operationFailed'));
     }
   };
 
   const columns: ColumnsType<Property> = [
     {
-      title: 'Name',
+      title: t('common.name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: 'Code',
+      title: t('properties.code'),
       dataIndex: 'code',
       key: 'code',
     },
     {
-      title: 'Unit Type',
+      title: t('properties.unitType'),
       dataIndex: 'unitType',
       key: 'unitType',
     },
     {
-      title: 'Status',
+      title: t('common.status'),
       dataIndex: 'status',
       key: 'status',
       render: (status: string) => (
@@ -141,24 +143,24 @@ const PropertiesPage: React.FC = () => {
       ),
     },
     {
-      title: 'Actions',
+      title: t('common.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
+            {t('common.edit')}
           </Button>
           <Button type="link" onClick={() => navigate(`/properties/${record.id}`)}>
-            View
+            {t('common.view')}
           </Button>
           <Popconfirm
-            title="Are you sure you want to delete this property?"
+            title={t('common.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('common.yes')}
+            cancelText={t('common.no')}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
+              {t('common.delete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -177,16 +179,16 @@ const PropertiesPage: React.FC = () => {
         }}
       >
         <Title level={2} style={{ margin: 0 }}>
-          Properties
+          {t('properties.title')}
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Add Property
+          {t('properties.addProperty')}
         </Button>
       </div>
 
       <Space style={{ marginBottom: 16, width: '100%', flexWrap: 'wrap' }}>
         <Input
-          placeholder="Search properties..."
+          placeholder={t('properties.searchProperties')}
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
@@ -194,17 +196,17 @@ const PropertiesPage: React.FC = () => {
           allowClear
         />
         <Select
-          placeholder="Filter by status"
+          placeholder={t('properties.filterByStatus')}
           style={{ width: 180 }}
           allowClear
           value={statusFilter}
           onChange={setStatusFilter}
         >
-          <Option value="active">Active</Option>
-          <Option value="inactive">Inactive</Option>
+          <Option value="active">{t('common.active')}</Option>
+          <Option value="inactive">{t('common.inactive')}</Option>
         </Select>
         <Select
-          placeholder="Filter by owner"
+          placeholder={t('properties.filterByOwner')}
           style={{ width: 200 }}
           allowClear
           value={ownerFilter}
@@ -223,7 +225,7 @@ const PropertiesPage: React.FC = () => {
           ))}
         </Select>
         <Select
-          placeholder="Filter by unit type"
+          placeholder={t('properties.filterByUnitType')}
           style={{ width: 180 }}
           allowClear
           value={unitTypeFilter}
@@ -246,47 +248,59 @@ const PropertiesPage: React.FC = () => {
       />
 
       <Modal
-        title={editingProperty ? 'Edit Property' : 'Create Property'}
+        title={editingProperty ? t('properties.editProperty') : t('properties.addProperty')}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
         width={600}
+        okText={t('common.save')}
+        cancelText={t('common.cancel')}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
             name="name"
-            label="Property Name"
-            rules={[{ required: true, message: 'Please enter property name' }]}
+            label={t('properties.propertyName')}
+            rules={[
+              {
+                required: true,
+                message: t('properties.propertyName') + ' ' + t('common.required'),
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="code"
-            label="Property Code"
-            rules={[{ required: true, message: 'Please enter property code' }]}
+            label={t('properties.propertyCode')}
+            rules={[
+              {
+                required: true,
+                message: t('properties.propertyCode') + ' ' + t('common.required'),
+              },
+            ]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="unitType"
-            label="Unit Type"
-            rules={[{ required: true, message: 'Please enter unit type' }]}
+            label={t('properties.unitType')}
+            rules={[
+              { required: true, message: t('properties.unitType') + ' ' + t('common.required') },
+            ]}
           >
             <Input placeholder="e.g., Studio, 1BR, 2BR" />
           </Form.Item>
           <Form.Item
             name="ownerId"
-            label="Owner"
-            rules={[{ required: true, message: 'Please select an owner' }]}
+            label={t('properties.owner')}
+            rules={[
+              { required: true, message: t('common.pleaseSelect') + ' ' + t('properties.owner') },
+            ]}
           >
             <Select
-              placeholder="Select an owner"
+              placeholder={t('common.pleaseSelect') + ' ' + t('properties.owner')}
               showSearch
-              notFoundContent={
-                owners.length === 0
-                  ? 'No owners available. Please create an owner first.'
-                  : undefined
-              }
+              notFoundContent={owners.length === 0 ? t('common.noData') : undefined}
               filterOption={(input, option) =>
                 String(option?.label ?? '')
                   .toLowerCase()
@@ -298,10 +312,10 @@ const PropertiesPage: React.FC = () => {
               }))}
             />
           </Form.Item>
-          <Form.Item name="status" label="Status" initialValue="active">
+          <Form.Item name="status" label={t('common.status')} initialValue="active">
             <Select getPopupContainer={() => document.body}>
-              <Option value="active">Active</Option>
-              <Option value="inactive">Inactive</Option>
+              <Option value="active">{t('common.active')}</Option>
+              <Option value="inactive">{t('common.inactive')}</Option>
             </Select>
           </Form.Item>
           <Form.Item name="dewaNumber" label="DEWA Number">

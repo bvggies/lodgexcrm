@@ -43,6 +43,7 @@ import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { useAppSelector } from '../../store/hooks';
 import { permissions, StaffRole } from '../../utils/permissions';
+import { useTranslation } from 'react-i18next';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -51,6 +52,7 @@ const { RangePicker } = DatePicker;
 const FinancePage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
   const isAdmin = permissions.isAdmin(user?.role as StaffRole | undefined);
+  const { t } = useTranslation();
   const [records, setRecords] = useState<FinanceRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [typeFilter, setTypeFilter] = useState<string | undefined>();
@@ -333,7 +335,7 @@ const FinancePage: React.FC = () => {
         <Col xs={24} sm={8}>
           <Card>
             <Statistic
-              title="Total Revenue"
+              title={t('finance.totalRevenue')}
               value={summary.revenue}
               prefix="AED "
               precision={2}
@@ -345,7 +347,7 @@ const FinancePage: React.FC = () => {
         <Col xs={24} sm={8}>
           <Card>
             <Statistic
-              title="Total Expenses"
+              title={t('finance.totalExpenses')}
               value={summary.expenses}
               prefix="AED "
               precision={2}
@@ -357,7 +359,7 @@ const FinancePage: React.FC = () => {
         <Col xs={24} sm={8}>
           <Card>
             <Statistic
-              title="Net Income"
+              title={t('finance.netIncome')}
               value={summary.netIncome}
               prefix="AED "
               precision={2}
