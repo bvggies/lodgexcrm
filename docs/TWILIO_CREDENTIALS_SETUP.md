@@ -114,3 +114,30 @@ If you see the error "Device initialization timeout" and the device state is "un
 - Safari: Requires iOS 11+ or macOS 10.13+
 - Mobile browsers: May have limitations
 
+## ⚠️ Twilio Demo Account Limitations
+
+If you see the error message: **"You are using a demo account, please upgrade to a full account"**, this means:
+
+### What This Means:
+- Your Twilio account is in **Trial/Demo mode**
+- Trial accounts have limitations on making calls
+- You need to **upgrade to a paid Twilio account** to use calling features
+
+### How to Upgrade:
+1. Go to [Twilio Console](https://console.twilio.com/)
+2. Navigate to **Billing** → **Upgrade Account**
+3. Add a payment method
+4. Complete the upgrade process
+5. Your account will be upgraded to a full account
+
+### What Happens After Upgrade:
+- You can make calls to verified phone numbers
+- You can receive calls
+- Full access to all Twilio Voice features
+- Pay-as-you-go pricing (you only pay for what you use)
+
+### Note:
+- The application will show a user-friendly error message when this limitation is detected
+- Users will be informed to contact their administrator
+- The error message will be: "Twilio account limitation: Please upgrade your Twilio account to use calling features. Contact your administrator."
+

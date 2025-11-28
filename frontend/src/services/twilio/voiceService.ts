@@ -233,12 +233,31 @@ class VoiceService {
       console.error('Twilio Device Error:', error);
       console.error('Device state:', (this.device as any)?.state);
       this.isDeviceReady = false;
+
+      // Handle specific Twilio errors
+      let errorMessage = error.message || 'Device error occurred';
+      const errorCode = error.code || error.twilioErrorCode;
+
+      // Check for demo account or account limitation errors
+      if (
+        errorMessage.toLowerCase().includes('demo account') ||
+        errorMessage.toLowerCase().includes('upgrade') ||
+        errorCode === 20003 || // Account suspended
+        errorCode === 20008 || // Account not active
+        errorCode === 21211 || // Invalid 'To' Phone Number
+        errorCode === 21215 || // Account not provisioned
+        errorCode === 21216 // Account suspended
+      ) {
+        errorMessage =
+          'Twilio account limitation: Please upgrade your Twilio account to use calling features. Contact your administrator.';
+      }
+
       this.notifyStatus({
         status: 'disconnected',
-        error: error.message || 'Device error occurred',
+        error: errorMessage,
       });
       if (readyReject) {
-        readyReject(error);
+        readyReject(new Error(errorMessage));
       }
     });
 

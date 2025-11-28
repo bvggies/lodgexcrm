@@ -62,7 +62,17 @@ const DialerPanel: React.FC<DialerPanelProps> = ({
       await voiceService.makeCall(phoneNumber, guestId);
       message.success('Calling...');
     } catch (error: any) {
-      message.error('Failed to make call: ' + (error.message || 'Unknown error'));
+      const errorMessage = error.message || 'Unknown error';
+
+      // Show appropriate error message
+      if (errorMessage.includes('Twilio account limitation') || errorMessage.includes('upgrade')) {
+        message.error({
+          content: errorMessage,
+          duration: 8, // Show longer for important messages
+        });
+      } else {
+        message.error('Failed to make call: ' + errorMessage);
+      }
       console.error('Call error:', error);
     }
   };
