@@ -50,6 +50,7 @@ export const generateToken = async (
 
     token.addGrant(voiceGrant);
 
+    // Return token in the format expected by Twilio SDK
     res.json({
       success: true,
       data: {

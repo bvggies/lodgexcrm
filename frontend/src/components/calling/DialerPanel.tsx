@@ -28,10 +28,8 @@ const DialerPanel: React.FC<DialerPanelProps> = ({
   }, [defaultNumber, form]);
 
   useEffect(() => {
-    if (visible && !voiceService.isInitialized()) {
-      initializeVoice();
-    }
-
+    // Don't auto-initialize - wait for user to click call button
+    // This ensures user gesture for AudioContext
     const unsubscribe = voiceService.onStatusChange((status) => {
       setCallState(status);
       if (status.status === 'disconnected') {
@@ -44,15 +42,6 @@ const DialerPanel: React.FC<DialerPanelProps> = ({
     };
   }, [visible]);
 
-  const initializeVoice = async () => {
-    try {
-      await voiceService.initialize();
-      message.success('Phone ready');
-    } catch (error: any) {
-      message.error('Failed to initialize phone: ' + (error.message || 'Unknown error'));
-    }
-  };
-
   const handleCall = async () => {
     if (!phoneNumber.trim()) {
       message.error('Please enter a phone number');
@@ -60,7 +49,7 @@ const DialerPanel: React.FC<DialerPanelProps> = ({
     }
 
     try {
-      // Ensure device is initialized and ready
+      // Ensure device is initialized and ready (this will request mic permission)
       if (!voiceService.isInitialized()) {
         message.loading('Initializing phone...', 0);
         await voiceService.initialize();
@@ -74,6 +63,7 @@ const DialerPanel: React.FC<DialerPanelProps> = ({
       message.success('Calling...');
     } catch (error: any) {
       message.error('Failed to make call: ' + (error.message || 'Unknown error'));
+      console.error('Call error:', error);
     }
   };
 

@@ -37,16 +37,10 @@ export const CallingProvider: React.FC<CallingProviderProps> = ({ children }) =>
 
   useEffect(() => {
     // Only initialize voice service if user is authenticated
+    // BUT: Don't auto-initialize - wait for user gesture (click) to avoid AudioContext blocking
+    // The device will be initialized when user tries to make a call
     if (!isAuthenticated) {
       return;
-    }
-
-    // Initialize voice service on mount (only when authenticated)
-    if (!voiceService.isInitialized()) {
-      voiceService.initialize().catch((error) => {
-        console.error('Failed to initialize voice service:', error);
-        // Don't throw or cause redirects - just log the error
-      });
     }
 
     const unsubscribe = voiceService.onStatusChange((status) => {

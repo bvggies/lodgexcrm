@@ -20,15 +20,43 @@ class VoiceService {
 
   async initialize(): Promise<void> {
     try {
+      // Request microphone permission first (required for WebRTC)
+      try {
+        await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('Microphone permission granted');
+      } catch (mediaError: any) {
+        console.warn('Microphone permission denied or not available:', mediaError);
+        throw new Error(
+          'Microphone access is required for calling. Please grant microphone permissions.'
+        );
+      }
+
       const response = await twilioApi.getToken();
+
+      if (!response.data?.data?.token) {
+        throw new Error('Invalid token response from server');
+      }
+
       this.token = response.data.data.token;
       this.identity = response.data.data.identity;
+
+      if (!this.token) {
+        throw new Error('Token is empty or invalid');
+      }
+
+      console.log('Token received, creating device...');
 
       // Initialize Twilio Device
       this.device = new Device(this.token, {
         logLevel: 1,
         codecPreferences: ['opus', 'pcmu'],
       });
+
+      // Explicitly register the device
+      if (this.device && typeof (this.device as any).register === 'function') {
+        (this.device as any).register();
+        console.log('Device registration initiated');
+      }
 
       // Create promise to wait for device ready BEFORE setting up listeners
       // This prevents race condition where ready event fires before we set up the promise
@@ -132,11 +160,13 @@ class VoiceService {
     // Listen for registered event (device must register before becoming ready)
     this.device.on('registered', () => {
       console.log('Twilio device registered event received');
+      // Device is registered, now it should become ready
     });
 
     this.device.on('unregistered', () => {
       console.warn('Twilio device unregistered');
       this.isDeviceReady = false;
+      this.notifyStatus({ status: 'disconnected', error: 'Device unregistered' });
     });
 
     this.device.on('tokenWillExpire', () => {
