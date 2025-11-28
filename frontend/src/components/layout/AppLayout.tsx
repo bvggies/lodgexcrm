@@ -29,6 +29,7 @@ import GlobalSearch from '../GlobalSearch';
 import ThemeToggle from '../ThemeToggle';
 import LanguageSwitcher from '../LanguageSwitcher';
 import { useMobile } from '../../hooks/useMobile';
+import { useTranslation } from 'react-i18next';
 import type { MenuProps } from 'antd';
 
 const { Header, Sider, Content } = Layout;
@@ -48,6 +49,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   const isMobile = useMobile();
   const isGuest = user?.role === 'guest';
   const isStaff = user?.role !== 'guest' && user?.role !== 'admin';
+  const { t } = useTranslation();
 
   // Auto-collapse sidebar on mobile
   useEffect(() => {
@@ -63,7 +65,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {
           key: '/guest/dashboard',
           icon: <DashboardOutlined />,
-          label: 'Dashboard',
+          label: t('menu.dashboard'),
         },
       ];
     }
@@ -74,12 +76,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {
           key: '/owner/dashboard',
           icon: <DashboardOutlined />,
-          label: 'Dashboard',
+          label: t('menu.dashboard'),
         },
         {
           key: '/owner/statements',
           icon: <DollarOutlined />,
-          label: 'Statements',
+          label: t('menu.statements'),
         },
       ];
     }
@@ -90,7 +92,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         {
           key: '/staff/dashboard',
           icon: <DashboardOutlined />,
-          label: 'Dashboard',
+          label: t('menu.dashboard'),
         },
       ];
 
@@ -99,7 +101,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         items.push({
           key: '/cleaning',
           icon: <ToolOutlined />,
-          label: 'Cleaning Tasks',
+          label: t('menu.cleaningTasks'),
         });
       }
 
@@ -108,7 +110,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         items.push({
           key: '/maintenance',
           icon: <ToolOutlined />,
-          label: 'Maintenance Tasks',
+          label: t('menu.maintenanceTasks'),
         });
       }
 
@@ -120,87 +122,87 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       {
         key: '/',
         icon: <DashboardOutlined />,
-        label: 'Dashboard',
+        label: t('menu.dashboard'),
       },
       {
         key: '/properties',
         icon: <HomeOutlined />,
-        label: 'Properties',
+        label: t('menu.properties'),
       },
       {
         key: '/units',
         icon: <AppstoreOutlined />,
-        label: 'Units',
+        label: t('menu.units'),
       },
       {
         key: '/guests',
         icon: <UserOutlined />,
-        label: 'Guests',
+        label: t('menu.guests'),
       },
       {
         key: '/bookings',
         icon: <CalendarOutlined />,
-        label: 'Bookings',
+        label: t('menu.bookings'),
       },
       {
         key: '/owners',
         icon: <TeamOutlined />,
-        label: 'Owners',
+        label: t('menu.owners'),
       },
       {
         key: '/cleaning',
         icon: <ToolOutlined />,
-        label: 'Cleaning',
+        label: t('menu.cleaning'),
       },
       {
         key: '/maintenance',
         icon: <ToolOutlined />,
-        label: 'Maintenance',
+        label: t('menu.maintenance'),
       },
       {
         key: '/finance',
         icon: <DollarOutlined />,
-        label: 'Finance',
+        label: t('menu.finance'),
       },
       {
         key: '/calls',
         icon: <PhoneOutlined />,
-        label: 'Calls',
+        label: t('menu.calls'),
       },
       {
         key: '/staff',
         icon: <UsergroupAddOutlined />,
-        label: 'Staff',
+        label: t('menu.staff'),
       },
       {
         key: '/analytics',
         icon: <BarChartOutlined />,
-        label: 'Analytics',
+        label: t('menu.analytics'),
       },
       {
         key: '/audit',
         icon: <FileTextOutlined />,
-        label: 'Audit Log',
+        label: t('menu.audit'),
       },
       {
         key: '/integrations',
         icon: <ApiOutlined />,
-        label: 'Integrations',
+        label: t('menu.integrations'),
       },
       {
         key: '/automations',
         icon: <RobotOutlined />,
-        label: 'Automations',
+        label: t('menu.automations'),
       },
       {
         key: '/archive',
         icon: <InboxOutlined />,
-        label: 'Archive',
+        label: t('menu.archive'),
       },
       {
         key: '/import',
         icon: <UploadOutlined />,
-        label: 'Data Import',
+        label: t('menu.dataImport'),
       },
     ];
   };
@@ -211,12 +213,12 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     {
       key: 'profile',
       icon: <UserOutlined />,
-      label: 'Profile',
+      label: t('auth.profile'),
     },
     {
       key: 'settings',
       icon: <SettingOutlined />,
-      label: 'Settings',
+      label: t('menu.settings'),
     },
     {
       type: 'divider',
@@ -224,7 +226,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     {
       key: 'logout',
       icon: <LogoutOutlined />,
-      label: 'Logout',
+      label: t('auth.logout'),
       danger: true,
     },
   ];

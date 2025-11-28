@@ -27,7 +27,12 @@
     "rememberMe": "تذكرني",
     "forgotPassword": "نسيت كلمة المرور؟",
     "signIn": "تسجيل الدخول",
-    "welcome": "مرحباً بك في LODGEX CRM"
+    "welcome": "مرحباً بك في LODGEX CRM",
+    "signInToAccount": "تسجيل الدخول إلى حسابك",
+    "pleaseInputEmail": "الرجاء إدخال بريدك الإلكتروني!",
+    "pleaseEnterValidEmail": "الرجاء إدخال بريد إلكتروني صحيح!",
+    "pleaseInputPassword": "الرجاء إدخال كلمة المرور!",
+    "profile": "الملف الشخصي"
   },
   "menu": {
     "dashboard": "لوحة التحكم",
@@ -37,7 +42,9 @@
     "bookings": "الحجوزات",
     "owners": "الملاك",
     "cleaning": "التنظيف",
+    "cleaningTasks": "مهام التنظيف",
     "maintenance": "الصيانة",
+    "maintenanceTasks": "مهام الصيانة",
     "finance": "المالية",
     "staff": "الموظفين",
     "analytics": "التحليلات",
@@ -46,7 +53,9 @@
     "automations": "الأتمتة",
     "archive": "الأرشيف",
     "settings": "الإعدادات",
-    "calls": "المكالمات"
+    "calls": "المكالمات",
+    "statements": "الكشوفات",
+    "dataImport": "استيراد البيانات"
   },
   "theme": {
     "switchToDark": "التبديل إلى الوضع الداكن",

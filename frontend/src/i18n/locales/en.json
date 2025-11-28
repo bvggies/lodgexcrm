@@ -27,7 +27,12 @@
     "rememberMe": "Remember me",
     "forgotPassword": "Forgot password?",
     "signIn": "Sign In",
-    "welcome": "Welcome to LODGEX CRM"
+    "welcome": "Welcome to LODGEX CRM",
+    "signInToAccount": "Sign in to your account",
+    "pleaseInputEmail": "Please input your email!",
+    "pleaseEnterValidEmail": "Please enter a valid email!",
+    "pleaseInputPassword": "Please input your password!",
+    "profile": "Profile"
   },
   "menu": {
     "dashboard": "Dashboard",
@@ -37,7 +42,9 @@
     "bookings": "Bookings",
     "owners": "Owners",
     "cleaning": "Cleaning",
+    "cleaningTasks": "Cleaning Tasks",
     "maintenance": "Maintenance",
+    "maintenanceTasks": "Maintenance Tasks",
     "finance": "Finance",
     "staff": "Staff",
     "analytics": "Analytics",
@@ -46,7 +53,9 @@
     "automations": "Automations",
     "archive": "Archive",
     "settings": "Settings",
-    "calls": "Calls"
+    "calls": "Calls",
+    "statements": "Statements",
+    "dataImport": "Data Import"
   },
   "theme": {
     "switchToDark": "Switch to Dark Mode",

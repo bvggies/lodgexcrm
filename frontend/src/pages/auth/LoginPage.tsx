@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useMobile } from '../../hooks/useMobile';
 import ThemeToggle from '../../components/ThemeToggle';
 import LanguageSwitcher from '../../components/LanguageSwitcher';
+import { useTranslation } from 'react-i18next';
 
 const { Title, Text } = Typography;
 
@@ -77,6 +78,7 @@ const LoginPage: React.FC = () => {
   const { isLoading, error } = useAppSelector((state) => state.auth);
   const isMobile = useMobile();
   const [form] = Form.useForm();
+  const { t } = useTranslation();
 
   const onFinish = async (values: { email: string; password: string }) => {
     const result = await dispatch(loginUser(values));
@@ -202,7 +204,7 @@ const LoginPage: React.FC = () => {
             <Title level={2} style={{ marginTop: 16 }}>
               Lodgex CRM
             </Title>
-            <p style={{ color: '#666' }}>Sign in to your account</p>
+            <p style={{ color: '#666' }}>{t('auth.signInToAccount')}</p>
           </div>
 
           {error && (
@@ -213,23 +215,23 @@ const LoginPage: React.FC = () => {
             <Form.Item
               name="email"
               rules={[
-                { required: true, message: 'Please input your email!' },
-                { type: 'email', message: 'Please enter a valid email!' },
+                { required: true, message: t('auth.pleaseInputEmail') },
+                { type: 'email', message: t('auth.pleaseEnterValidEmail') },
               ]}
             >
-              <Input prefix={<UserOutlined />} placeholder="Email" />
+              <Input prefix={<UserOutlined />} placeholder={t('auth.email')} />
             </Form.Item>
 
             <Form.Item
               name="password"
-              rules={[{ required: true, message: 'Please input your password!' }]}
+              rules={[{ required: true, message: t('auth.pleaseInputPassword') }]}
             >
-              <Input.Password prefix={<LockOutlined />} placeholder="Password" />
+              <Input.Password prefix={<LockOutlined />} placeholder={t('auth.password')} />
             </Form.Item>
 
             <Form.Item>
               <Button type="primary" htmlType="submit" block loading={isLoading}>
-                Sign In
+                {t('auth.signIn')}
               </Button>
             </Form.Item>
           </Form>
