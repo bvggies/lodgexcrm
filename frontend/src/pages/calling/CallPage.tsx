@@ -14,6 +14,7 @@ import { voiceService, CallState } from '../../services/twilio/voiceService';
 import { twilioApi } from '../../services/api/twilioApi';
 import { guestsApi } from '../../services/api/guestsApi';
 import type { Guest } from '../../services/api/guestsApi';
+import { useTranslation } from 'react-i18next';
 import dayjs from 'dayjs';
 
 const { Title, Text } = Typography;
@@ -21,6 +22,7 @@ const { TabPane } = Tabs;
 
 const CallPage: React.FC = () => {
   const { openDialer, callState } = useCalling();
+  const { t } = useTranslation();
   const [isDialerOpen, setIsDialerOpen] = useState(false);
   const [recentCalls, setRecentCalls] = useState<any[]>([]);
   const [favoriteContacts, setFavoriteContacts] = useState<Guest[]>([]);
@@ -101,10 +103,10 @@ const CallPage: React.FC = () => {
               <Col>
                 <Space direction="vertical" size="small">
                   <Title level={2} style={{ color: 'white', margin: 0 }}>
-                    <PhoneOutlined /> Phone System
+                    <PhoneOutlined /> {t('calls.phoneSystem')}
                   </Title>
                   <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: '16px' }}>
-                    Make and receive calls directly from your CRM
+                    {t('calls.makeAndReceiveCalls')}
                   </Text>
                 </Space>
               </Col>
@@ -125,7 +127,7 @@ const CallPage: React.FC = () => {
                     boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
                   }}
                 >
-                  New Call
+                  {t('calls.newCall')}
                 </Button>
               </Col>
             </Row>

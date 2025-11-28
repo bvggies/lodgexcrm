@@ -12,12 +12,14 @@ import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
 import { ownersApi, Owner } from '../../services/api/ownersApi';
 import { useCalling } from '../../contexts/CallingContext';
+import { useTranslation } from 'react-i18next';
 
 const { Title } = Typography;
 
 const OwnersPage: React.FC = () => {
   const navigate = useNavigate();
   const { openDialer } = useCalling();
+  const { t } = useTranslation();
   const [owners, setOwners] = useState<Owner[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -38,7 +40,7 @@ const OwnersPage: React.FC = () => {
       const response = await ownersApi.getAll(params);
       setOwners(response.data.data.owners);
     } catch (error) {
-      message.error('Failed to load owners');
+      message.error(t('owners.failedToLoad'));
     } finally {
       setLoading(false);
     }
@@ -46,23 +48,23 @@ const OwnersPage: React.FC = () => {
 
   const columns: ColumnsType<Owner> = [
     {
-      title: 'Name',
+      title: t('common.name'),
       dataIndex: 'name',
       key: 'name',
       sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: 'Email',
+      title: t('common.email'),
       dataIndex: 'email',
       key: 'email',
     },
     {
-      title: 'Phone',
+      title: t('common.phone'),
       dataIndex: 'phone',
       key: 'phone',
     },
     {
-      title: 'Actions',
+      title: t('common.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
@@ -73,27 +75,27 @@ const OwnersPage: React.FC = () => {
               onClick={() => openDialer(record.phone || '')}
               style={{ color: '#52c41a' }}
             >
-              Call
+              {t('owners.call')}
             </Button>
           )}
           <Button type="link" icon={<EditOutlined />} onClick={() => handleEdit(record)}>
-            Edit
+            {t('common.edit')}
           </Button>
           <Button
             type="link"
             icon={<FileTextOutlined />}
             onClick={() => navigate(`/owners/${record.id}/statements`)}
           >
-            Statements
+            {t('menu.statements')}
           </Button>
           <Popconfirm
-            title="Are you sure you want to delete this owner?"
+            title={t('common.deleteConfirm')}
             onConfirm={() => handleDelete(record.id)}
-            okText="Yes"
-            cancelText="No"
+            okText={t('common.yes')}
+            cancelText={t('common.no')}
           >
             <Button type="link" danger icon={<DeleteOutlined />}>
-              Delete
+              {t('common.delete')}
             </Button>
           </Popconfirm>
         </Space>
@@ -116,10 +118,10 @@ const OwnersPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await ownersApi.delete(id);
-      message.success('Owner deleted successfully');
+      message.success(t('owners.ownerDeleted'));
       loadOwners();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to delete owner');
+      message.error(error.response?.data?.error?.message || t('owners.failedToDelete'));
     }
   };
 
@@ -127,15 +129,15 @@ const OwnersPage: React.FC = () => {
     try {
       if (editingOwner) {
         await ownersApi.update(editingOwner.id, values);
-        message.success('Owner updated successfully');
+        message.success(t('owners.ownerUpdated'));
       } else {
         await ownersApi.create(values);
-        message.success('Owner created successfully');
+        message.success(t('owners.ownerCreated'));
       }
       setIsModalVisible(false);
       loadOwners();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Operation failed');
+      message.error(error.response?.data?.error?.message || t('common.operationFailed'));
     }
   };
 
@@ -150,15 +152,15 @@ const OwnersPage: React.FC = () => {
         }}
       >
         <Title level={2} style={{ margin: 0 }}>
-          Owners
+          {t('owners.title')}
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Add Owner
+          {t('owners.addOwner')}
         </Button>
       </div>
 
       <Input
-        placeholder="Search owners..."
+        placeholder={t('owners.searchOwners')}
         prefix={<SearchOutlined />}
         value={searchText}
         onChange={(e) => setSearchText(e.target.value)}
@@ -177,28 +179,30 @@ const OwnersPage: React.FC = () => {
       </div>
 
       <Modal
-        title={editingOwner ? 'Edit Owner' : 'Create Owner'}
+        title={editingOwner ? t('owners.editOwner') : t('owners.addOwner')}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
         width={600}
+        okText={t('common.save')}
+        cancelText={t('common.cancel')}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item
             name="name"
-            label="Owner Name"
-            rules={[{ required: true, message: 'Please enter owner name' }]}
+            label={t('common.name')}
+            rules={[{ required: true, message: t('common.name') + ' ' + t('common.required') }]}
           >
             <Input />
           </Form.Item>
           <Form.Item
             name="email"
-            label="Email"
-            rules={[{ type: 'email', message: 'Please enter a valid email' }]}
+            label={t('common.email')}
+            rules={[{ type: 'email', message: t('auth.pleaseEnterValidEmail') }]}
           >
             <Input />
           </Form.Item>
-          <Form.Item name="phone" label="Phone">
+          <Form.Item name="phone" label={t('common.phone')}>
             <Input />
           </Form.Item>
         </Form>

@@ -27,11 +27,13 @@ import {
 } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
 import { staffApi, Staff } from '../../services/api/staffApi';
+import { useTranslation } from 'react-i18next';
 
 const { Title } = Typography;
 const { Option } = Select;
 
 const StaffPage: React.FC = () => {
+  const { t } = useTranslation();
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
@@ -58,7 +60,7 @@ const StaffPage: React.FC = () => {
       const response = await staffApi.getAll(params);
       setStaff(response.data.data.staff);
     } catch (error) {
-      message.error('Failed to load staff');
+      message.error(t('staff.failedToLoad'));
     } finally {
       setLoading(false);
     }

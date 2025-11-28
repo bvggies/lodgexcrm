@@ -24,6 +24,7 @@ import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { staffApi } from '../../services/api/staffApi';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { addNotification } from '../../store/slices/notificationsSlice';
+import { useTranslation } from 'react-i18next';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -31,6 +32,7 @@ const { Option } = Select;
 const CleaningTasksPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { t } = useTranslation();
   const isManagerOrAdmin = user?.role === 'admin' || user?.role === 'assistant';
   const isCleaner = user?.role === 'cleaner';
 
@@ -76,7 +78,7 @@ const CleaningTasksPage: React.FC = () => {
       const response = await cleaningApi.getAll(params);
       setTasks(response.data.data.tasks);
     } catch (error) {
-      message.error('Failed to load cleaning tasks');
+      message.error(t('cleaning.failedToLoad'));
     } finally {
       setLoading(false);
     }

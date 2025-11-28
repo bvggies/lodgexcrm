@@ -21,6 +21,7 @@ import { unitsApi, Unit } from '../../services/api/unitsApi';
 import { staffApi } from '../../services/api/staffApi';
 import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { addNotification } from '../../store/slices/notificationsSlice';
+import { useTranslation } from 'react-i18next';
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -28,6 +29,7 @@ const { Option } = Select;
 const MaintenanceTasksPage: React.FC = () => {
   const dispatch = useAppDispatch();
   const { user } = useAppSelector((state) => state.auth);
+  const { t } = useTranslation();
   const isManagerOrAdmin = user?.role === 'admin' || user?.role === 'assistant';
   const isMaintenance = user?.role === 'maintenance';
 
@@ -72,7 +74,7 @@ const MaintenanceTasksPage: React.FC = () => {
       const response = await maintenanceApi.getAll(params);
       setTasks(response.data.data.tasks);
     } catch (error) {
-      message.error('Failed to load maintenance tasks');
+      message.error(t('maintenance.failedToLoad'));
     } finally {
       setLoading(false);
     }
