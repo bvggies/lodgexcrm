@@ -299,11 +299,11 @@ const MaintenanceTasksPage: React.FC = () => {
         }}
       >
         <Title level={2} style={{ margin: 0 }}>
-          Maintenance Tasks
+          {t('maintenance.title')}
         </Title>
         {isManagerOrAdmin && (
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Task
+            {t('maintenance.addTask')}
           </Button>
         )}
       </div>

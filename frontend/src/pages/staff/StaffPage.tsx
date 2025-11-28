@@ -196,16 +196,16 @@ const StaffPage: React.FC = () => {
         }}
       >
         <Title level={2} style={{ margin: 0 }}>
-          Staff
+          {t('staff.title')}
         </Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-          Add Staff
+          {t('staff.addStaff')}
         </Button>
       </div>
 
       <Space style={{ marginBottom: 16 }}>
         <Input
-          placeholder="Search staff..."
+          placeholder={t('staff.searchStaff')}
           prefix={<SearchOutlined />}
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
