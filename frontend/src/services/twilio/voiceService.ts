@@ -73,26 +73,10 @@ class VoiceService {
         callbacks.reject = (error: any) => reject(error);
       });
 
-      // Set up permanent listeners (they will also trigger the promise)
-      this.setupDeviceListeners(callbacks.resolve, callbacks.reject);
-
-      // Check device state
-      const deviceState = (this.device as any)?.state;
-      console.log('Initial device state:', deviceState);
-
-      // Check if device is already ready (it might be ready immediately)
-      if ((this.device as any).isReady === true) {
-        console.log('Twilio device is already ready');
-        this.isDeviceReady = true;
-        this.notifyStatus({ status: 'idle' });
-        if (callbacks.resolve) {
-          callbacks.resolve();
-        }
-        return;
-      }
-
-      // Wait for device to be ready with a longer timeout
+      // Wait for device to be ready/registered with a longer timeout
+      let timeoutCleared = false;
       const timeout = setTimeout(() => {
+        if (timeoutCleared) return;
         const currentState = (this.device as any)?.state;
         console.error('Device initialization timeout - device state:', currentState);
 
@@ -103,6 +87,15 @@ class VoiceService {
         } else if (currentState === 'registering') {
           errorMessage +=
             'Device is still registering. This may indicate network issues or firewall blocking WebRTC connections.';
+        } else if (currentState === 'registered') {
+          // Device is registered but we didn't get the event - accept it as ready
+          console.log('Device is registered, accepting as ready despite timeout');
+          this.isDeviceReady = true;
+          this.notifyStatus({ status: 'idle' });
+          if (callbacks.resolve) {
+            callbacks.resolve();
+          }
+          return;
         } else {
           errorMessage += 'Please check your internet connection and try again.';
         }
@@ -110,23 +103,63 @@ class VoiceService {
         if (callbacks.reject) {
           callbacks.reject(new Error(errorMessage));
         }
-      }, 30000); // Increased to 30 seconds to allow for registration
+      }, 20000); // 20 seconds should be enough
 
-      // Check periodically if device becomes ready (in case event was missed)
+      // Store timeout reference for cleanup
+      const clearTimeoutSafe = () => {
+        if (!timeoutCleared) {
+          clearTimeout(timeout);
+          timeoutCleared = true;
+        }
+      };
+
+      // Wrap resolve to clear timeout
+      const wrappedResolve = () => {
+        clearTimeoutSafe();
+        if (callbacks.resolve) {
+          callbacks.resolve();
+        }
+      };
+
+      // Set up permanent listeners (they will also trigger the promise)
+      this.setupDeviceListeners(wrappedResolve, callbacks.reject);
+
+      // Check device state
+      const deviceState = (this.device as any)?.state;
+      console.log('Initial device state:', deviceState);
+
+      // Check if device is already ready or registered (it might be ready immediately)
+      const initialState = (this.device as any)?.state;
+      const isReady = (this.device as any)?.isReady === true;
+
+      if (isReady || initialState === 'registered') {
+        console.log('Twilio device is already ready/registered');
+        this.isDeviceReady = true;
+        this.notifyStatus({ status: 'idle' });
+        if (callbacks.resolve) {
+          callbacks.resolve();
+        }
+        return;
+      }
+
+      // Check periodically if device becomes ready or registered (in case event was missed)
+      let lastLoggedState = deviceState;
       const checkInterval = setInterval(() => {
         const currentState = (this.device as any)?.state;
-        const isReady = (this.device as any)?.isReady === true;
+        const isReadyNow = (this.device as any)?.isReady === true;
 
-        // Log state changes for debugging
-        if (currentState !== deviceState) {
+        // Log state changes for debugging (but not repeatedly for the same state)
+        if (currentState !== lastLoggedState && currentState !== 'registered') {
           console.log('Device state changed:', currentState);
+          lastLoggedState = currentState;
         }
 
-        if (isReady && !this.isDeviceReady) {
-          console.log('Twilio device became ready (polled)');
+        // Accept "registered" or "ready" state as sufficient
+        if ((isReadyNow || currentState === 'registered') && !this.isDeviceReady) {
+          console.log('Twilio device became ready/registered (polled)');
           this.isDeviceReady = true;
           this.notifyStatus({ status: 'idle' });
-          clearTimeout(timeout);
+          clearTimeoutSafe();
           clearInterval(checkInterval);
           if (callbacks.resolve) {
             callbacks.resolve();
@@ -158,10 +191,20 @@ class VoiceService {
     if (!this.device) return;
 
     // Listen for registered event (device must register before becoming ready)
-    this.device.on('registered', () => {
+    // Store resolve/reject in a way that can be accessed by the registered handler
+    const registeredHandler = () => {
       console.log('Twilio device registered event received');
-      // Device is registered, now it should become ready
-    });
+      // Device is registered - this is sufficient to make calls
+      // The "ready" event may not always fire, so we accept "registered" as ready
+      if (!this.isDeviceReady) {
+        this.isDeviceReady = true;
+        this.notifyStatus({ status: 'idle' });
+        if (readyResolve) {
+          readyResolve();
+        }
+      }
+    };
+    this.device.on('registered', registeredHandler);
 
     this.device.on('unregistered', () => {
       console.warn('Twilio device unregistered');
@@ -176,10 +219,13 @@ class VoiceService {
 
     this.device.on('ready', () => {
       console.log('Twilio device ready event received');
-      this.isDeviceReady = true;
-      this.notifyStatus({ status: 'idle' });
-      if (readyResolve) {
-        readyResolve();
+      // Device is ready - this is the final state
+      if (!this.isDeviceReady) {
+        this.isDeviceReady = true;
+        this.notifyStatus({ status: 'idle' });
+        if (readyResolve) {
+          readyResolve();
+        }
       }
     });
 
