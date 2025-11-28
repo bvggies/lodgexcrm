@@ -14,6 +14,7 @@ import { loginUser } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
 import { useMobile } from '../../hooks/useMobile';
 import ThemeToggle from '../../components/ThemeToggle';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
 
 const { Title, Text } = Typography;
 
@@ -164,7 +165,10 @@ const LoginPage: React.FC = () => {
           zIndex: 2,
         }}
       >
-        <ThemeToggle />
+        <Space size="small">
+          <LanguageSwitcher />
+          <ThemeToggle />
+        </Space>
       </div>
       <div
         style={{

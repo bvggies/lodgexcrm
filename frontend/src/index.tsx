@@ -6,6 +6,7 @@ import App from './App';
 import { store } from './store/store';
 import ThemeProvider from './components/ThemeProvider';
 import { storage } from './utils/storage';
+import './i18n/config';
 import './index.css';
 
 // Initialize theme attribute on document

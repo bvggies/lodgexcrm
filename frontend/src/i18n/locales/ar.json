@@ -1,0 +1,61 @@
+{
+  "common": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف",
+    "edit": "تعديل",
+    "add": "إضافة",
+    "search": "بحث",
+    "filter": "تصفية",
+    "export": "تصدير",
+    "import": "استيراد",
+    "close": "إغلاق",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "loading": "جاري التحميل...",
+    "error": "خطأ",
+    "success": "نجح",
+    "warning": "تحذير",
+    "info": "معلومات"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "rememberMe": "تذكرني",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "signIn": "تسجيل الدخول",
+    "welcome": "مرحباً بك في LODGEX CRM"
+  },
+  "menu": {
+    "dashboard": "لوحة التحكم",
+    "properties": "العقارات",
+    "units": "الوحدات",
+    "guests": "الضيوف",
+    "bookings": "الحجوزات",
+    "owners": "الملاك",
+    "cleaning": "التنظيف",
+    "maintenance": "الصيانة",
+    "finance": "المالية",
+    "staff": "الموظفين",
+    "analytics": "التحليلات",
+    "audit": "سجل التدقيق",
+    "integrations": "التكاملات",
+    "automations": "الأتمتة",
+    "archive": "الأرشيف",
+    "settings": "الإعدادات",
+    "calls": "المكالمات"
+  },
+  "theme": {
+    "switchToDark": "التبديل إلى الوضع الداكن",
+    "switchToLight": "التبديل إلى الوضع الفاتح"
+  },
+  "language": {
+    "switchLanguage": "تغيير اللغة",
+    "english": "الإنجليزية",
+    "arabic": "العربية"
+  }
+}
+

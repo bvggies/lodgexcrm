@@ -27,6 +27,7 @@ import { logout } from '../../store/slices/authSlice';
 import NotificationsDropdown from '../NotificationsDropdown';
 import GlobalSearch from '../GlobalSearch';
 import ThemeToggle from '../ThemeToggle';
+import LanguageSwitcher from '../LanguageSwitcher';
 import { useMobile } from '../../hooks/useMobile';
 import type { MenuProps } from 'antd';
 
@@ -431,6 +432,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
             <GlobalSearch />
           )}
           <Space size={isMobile ? 'small' : 'middle'}>
+            <LanguageSwitcher />
             <ThemeToggle />
             {isMobile && <NotificationsDropdown collapsed={false} />}
             <Dropdown

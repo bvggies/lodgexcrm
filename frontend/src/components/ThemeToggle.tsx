@@ -3,17 +3,19 @@ import { Button, Tooltip } from 'antd';
 import { SunOutlined, MoonOutlined } from '@ant-design/icons';
 import { useAppSelector, useAppDispatch } from '../store/hooks';
 import { toggleTheme } from '../store/slices/themeSlice';
+import { useTranslation } from 'react-i18next';
 
 const ThemeToggle: React.FC = () => {
   const dispatch = useAppDispatch();
   const { mode } = useAppSelector((state) => state.theme);
+  const { t } = useTranslation();
 
   const handleToggle = () => {
     dispatch(toggleTheme());
   };
 
   return (
-    <Tooltip title={mode === 'light' ? 'Switch to Dark Mode' : 'Switch to Light Mode'}>
+    <Tooltip title={mode === 'light' ? t('theme.switchToDark') : t('theme.switchToLight')}>
       <Button
         type="text"
         icon={mode === 'light' ? <MoonOutlined /> : <SunOutlined />}
