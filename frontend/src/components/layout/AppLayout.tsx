@@ -207,6 +207,7 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     ];
   };
 
+  // Re-compute menu items when language changes
   const menuItems = getMenuItems();
 
   const userMenuItems: MenuProps['items'] = [
