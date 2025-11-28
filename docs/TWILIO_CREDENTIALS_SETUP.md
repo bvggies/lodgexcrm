@@ -67,3 +67,50 @@ Make sure your TwiML App "LODGEX" has:
 2. Try making a call from the frontend
 3. Check Twilio Console → **Monitor** → **Logs** → **Calls** for activity
 
+## Troubleshooting: Device Stays in "Unregistered" State
+
+If you see the error "Device initialization timeout" and the device state is "unregistered", this means the device cannot connect to Twilio's WebRTC servers. Common causes:
+
+### 1. **Network/Firewall Issues**
+   - WebRTC requires UDP connections to Twilio's servers
+   - Corporate firewalls or VPNs may block WebRTC traffic
+   - Try from a different network (e.g., mobile hotspot)
+   - Check if your firewall allows outbound UDP connections
+
+### 2. **Browser Permissions**
+   - Ensure microphone permissions are granted
+   - Some browsers block WebRTC in certain contexts
+   - Try in an incognito/private window
+   - Check browser console for permission errors
+
+### 3. **HTTPS Requirement**
+   - WebRTC requires HTTPS (except localhost)
+   - Ensure your frontend is served over HTTPS
+   - Vercel deployments are HTTPS by default
+
+### 4. **Token Issues**
+   - Verify the token is being generated correctly
+   - Check backend logs for token generation errors
+   - Ensure TwiML App SID is correct
+   - Token should be valid (not expired)
+
+### 5. **Twilio Configuration**
+   - Verify TwiML App is configured correctly
+   - Check that Voice Request URL is accessible
+   - Ensure API Key has Voice permissions
+   - Verify Account SID and credentials are correct
+
+### Debug Steps:
+1. Open browser console and check for WebRTC errors
+2. Check network tab for failed WebSocket/WebRTC connections
+3. Verify token is being received: Check Network tab → `/api/twilio/token` request
+4. Check Twilio Console → Monitor → Logs for any errors
+5. Try from a different browser or device
+6. Test with Twilio's test credentials to isolate the issue
+
+### Browser Compatibility:
+- Chrome/Edge: Full support
+- Firefox: Full support
+- Safari: Requires iOS 11+ or macOS 10.13+
+- Mobile browsers: May have limitations
+
