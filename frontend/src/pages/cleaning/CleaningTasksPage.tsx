@@ -249,10 +249,10 @@ const CleaningTasksPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await cleaningApi.delete(id);
-      message.success('Cleaning task deleted successfully');
+      message.success(t('cleaning.taskDeleted'));
       loadTasks();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to delete task');
+      message.error(error.response?.data?.error?.message || t('cleaning.failedToDelete'));
     }
   };
 
@@ -266,7 +266,7 @@ const CleaningTasksPage: React.FC = () => {
       if (editingTask) {
         const oldStatus = editingTask.status;
         await cleaningApi.update(editingTask.id, submitData);
-        message.success('Cleaning task updated successfully');
+        message.success(t('cleaning.taskUpdated'));
 
         // Add notification if status changed
         if (values.status && values.status !== oldStatus) {
@@ -281,7 +281,7 @@ const CleaningTasksPage: React.FC = () => {
         }
       } else {
         await cleaningApi.create(submitData);
-        message.success('Cleaning task created successfully');
+        message.success(t('cleaning.taskCreated'));
 
         // Add notification for new task
         dispatch(
@@ -311,11 +311,11 @@ const CleaningTasksPage: React.FC = () => {
         }}
       >
         <Title level={2} style={{ margin: 0 }}>
-          Cleaning Tasks
+          {t('cleaning.title')}
         </Title>
         {isManagerOrAdmin && (
           <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate}>
-            Add Task
+            {t('cleaning.addTask')}
           </Button>
         )}
       </div>
@@ -343,11 +343,13 @@ const CleaningTasksPage: React.FC = () => {
       </div>
 
       <Modal
-        title={editingTask ? 'Edit Cleaning Task' : 'Create Cleaning Task'}
+        title={editingTask ? t('cleaning.editTask') : t('cleaning.addTask')}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
         width={600}
+        okText={t('common.save')}
+        cancelText={t('common.cancel')}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item

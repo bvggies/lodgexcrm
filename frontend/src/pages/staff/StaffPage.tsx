@@ -162,10 +162,10 @@ const StaffPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await staffApi.delete(id);
-      message.success('Staff member deleted successfully');
+      message.success(t('staff.staffDeleted'));
       loadStaff();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to delete staff member');
+      message.error(error.response?.data?.error?.message || t('staff.failedToDelete'));
     }
   };
 
@@ -173,10 +173,10 @@ const StaffPage: React.FC = () => {
     try {
       if (editingStaff) {
         await staffApi.update(editingStaff.id, values);
-        message.success('Staff member updated successfully');
+        message.success(t('staff.staffUpdated'));
       } else {
         await staffApi.create(values);
-        message.success('Staff member created successfully');
+        message.success(t('staff.staffCreated'));
       }
       setIsModalVisible(false);
       loadStaff();
@@ -236,11 +236,13 @@ const StaffPage: React.FC = () => {
       />
 
       <Modal
-        title={editingStaff ? 'Edit Staff Member' : 'Create Staff Member'}
+        title={editingStaff ? t('staff.editStaff') : t('staff.addStaff')}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
         width={600}
+        okText={t('common.save')}
+        cancelText={t('common.cancel')}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item

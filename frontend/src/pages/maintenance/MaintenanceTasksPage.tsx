@@ -242,10 +242,10 @@ const MaintenanceTasksPage: React.FC = () => {
   const handleDelete = async (id: string) => {
     try {
       await maintenanceApi.delete(id);
-      message.success('Maintenance task deleted successfully');
+      message.success(t('maintenance.taskDeleted'));
       loadTasks();
     } catch (error: any) {
-      message.error(error.response?.data?.error?.message || 'Failed to delete task');
+      message.error(error.response?.data?.error?.message || t('maintenance.failedToDelete'));
     }
   };
 
@@ -254,7 +254,7 @@ const MaintenanceTasksPage: React.FC = () => {
       if (editingTask) {
         const oldStatus = editingTask.status;
         await maintenanceApi.update(editingTask.id, values);
-        message.success('Maintenance task updated successfully');
+        message.success(t('maintenance.taskUpdated'));
 
         // Add notification if status changed
         if (values.status && values.status !== oldStatus) {
@@ -269,7 +269,7 @@ const MaintenanceTasksPage: React.FC = () => {
         }
       } else {
         await maintenanceApi.create(values);
-        message.success('Maintenance task created successfully');
+        message.success(t('maintenance.taskCreated'));
 
         // Add notification for new task
         dispatch(
@@ -347,11 +347,13 @@ const MaintenanceTasksPage: React.FC = () => {
       </div>
 
       <Modal
-        title={editingTask ? 'Edit Maintenance Task' : 'Create Maintenance Task'}
+        title={editingTask ? t('maintenance.editTask') : t('maintenance.addTask')}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
         width={600}
+        okText={t('common.save')}
+        cancelText={t('common.cancel')}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item name="title" label="Title" rules={[{ required: true }]}>
