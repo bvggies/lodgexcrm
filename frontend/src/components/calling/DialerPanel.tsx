@@ -60,6 +60,16 @@ const DialerPanel: React.FC<DialerPanelProps> = ({
     }
 
     try {
+      // Ensure device is initialized and ready
+      if (!voiceService.isInitialized()) {
+        message.loading('Initializing phone...', 0);
+        await voiceService.initialize();
+        message.destroy();
+      }
+
+      // Wait for device to be ready
+      await voiceService.waitForReady();
+
       await voiceService.makeCall(phoneNumber, guestId);
       message.success('Calling...');
     } catch (error: any) {
