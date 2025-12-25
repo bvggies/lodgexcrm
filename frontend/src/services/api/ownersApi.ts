@@ -69,4 +69,37 @@ export const ownersApi = {
       responseType: 'blob',
     });
   },
+
+  getDetails: (id: string) => {
+    return apiClient.get<{
+      success: boolean;
+      data: {
+        owner: Owner;
+        properties: any[];
+        units: any[];
+        financeRecords: any[];
+        summary: {
+          totalProperties: number;
+          totalUnits: number;
+          totalRevenue: number;
+          totalExpenses: number;
+          netIncome: number;
+        };
+      };
+    }>(`/owners/${id}/details`);
+  },
+
+  assignProperties: (id: string, propertyIds: string[]) => {
+    return apiClient.post<{ success: boolean; message: string; data: { assignedCount: number } }>(
+      `/owners/${id}/assign-properties`,
+      { propertyIds }
+    );
+  },
+
+  unassignProperty: (id: string, propertyId: string, newOwnerId: string) => {
+    return apiClient.post<{ success: boolean; message: string }>(
+      `/owners/${id}/properties/${propertyId}/unassign`,
+      { newOwnerId }
+    );
+  },
 };

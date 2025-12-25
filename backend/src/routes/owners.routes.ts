@@ -6,6 +6,9 @@ import {
   createOwner,
   updateOwner,
   deleteOwner,
+  getOwnerDetails,
+  assignPropertiesToOwner,
+  unassignPropertyFromOwner,
   getOwnerStatements,
   getMyOwnerData,
   getMyOwnerStatements,
@@ -214,6 +217,101 @@ router.get(
  *       200:
  *         description: Statements retrieved successfully
  */
+/**
+ * @swagger
+ * /api/owners/{id}/details:
+ *   get:
+ *     summary: Get owner details with properties, units, and finances
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Owner details retrieved successfully
+ */
+router.get(
+  '/:id/details',
+  authenticate,
+  authorize(StaffRole.admin),
+  [param('id').isUUID()],
+  validateRequest,
+  getOwnerDetails
+);
+
+/**
+ * @swagger
+ * /api/owners/{id}/assign-properties:
+ *   post:
+ *     summary: Assign properties to owner (bulk assignment)
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - propertyIds
+ *             properties:
+ *               propertyIds:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *     responses:
+ *       200:
+ *         description: Properties assigned successfully
+ */
+router.post(
+  '/:id/assign-properties',
+  authenticate,
+  authorize(StaffRole.admin),
+  [
+    param('id').isUUID(),
+    body('propertyIds').isArray().notEmpty(),
+    body('propertyIds.*').isUUID(),
+  ],
+  validateRequest,
+  assignPropertiesToOwner
+);
+
+/**
+ * @swagger
+ * /api/owners/{id}/properties/{propertyId}/unassign:
+ *   post:
+ *     summary: Unassign property from owner (reassign to another owner)
+ *     tags: [Owners]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - newOwnerId
+ *             properties:
+ *               newOwnerId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Property reassigned successfully
+ */
+router.post(
+  '/:id/properties/:propertyId/unassign',
+  authenticate,
+  authorize(StaffRole.admin),
+  [
+    param('id').isUUID(),
+    param('propertyId').isUUID(),
+    body('newOwnerId').isUUID(),
+  ],
+  validateRequest,
+  unassignPropertyFromOwner
+);
+
 router.get(
   '/:id/statements',
   authenticate,

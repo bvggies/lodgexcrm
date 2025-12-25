@@ -287,6 +287,250 @@ export const deleteOwner = async (
   }
 };
 
+// Get owner details with properties, units, and finances
+export const getOwnerDetails = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const owner = await prisma.owner.findUnique({
+      where: { id },
+    });
+
+    if (!owner) {
+      return next(createError('Owner not found', 404));
+    }
+
+    // Get all properties for this owner
+    const properties = await prisma.property.findMany({
+      where: { ownerId: id },
+      include: {
+        _count: {
+          select: {
+            units: true,
+            bookings: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    // Get all units for this owner's properties
+    const propertyIds = properties.map((p) => p.id);
+    const units = propertyIds.length > 0
+      ? await prisma.unit.findMany({
+          where: { propertyId: { in: propertyIds } },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        _count: {
+          select: {
+            bookings: true,
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+        })
+      : [];
+
+    // Get finance records for this owner's properties
+    const financeRecords = propertyIds.length > 0
+      ? await prisma.financeRecord.findMany({
+          where: { propertyId: { in: propertyIds } },
+      include: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            code: true,
+          },
+        },
+        booking: {
+          select: {
+            id: true,
+            reference: true,
+          },
+        },
+      },
+      orderBy: {
+        date: 'desc',
+      },
+        })
+      : [];
+
+    // Calculate financial summary
+    const totalRevenue = financeRecords
+      .filter((f) => f.type === 'revenue')
+      .reduce((sum, f) => sum + Number(f.amount), 0);
+    const totalExpenses = financeRecords
+      .filter((f) => f.type === 'expense')
+      .reduce((sum, f) => sum + Number(f.amount), 0);
+    const netIncome = totalRevenue - totalExpenses;
+
+    res.json({
+      success: true,
+      data: {
+        owner,
+        properties,
+        units,
+        financeRecords,
+        summary: {
+          totalProperties: properties.length,
+          totalUnits: units.length,
+          totalRevenue,
+          totalExpenses,
+          netIncome,
+        },
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// Assign properties to owner (bulk assignment)
+export const assignPropertiesToOwner = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      return next(createError('Authentication required', 401));
+    }
+
+    const { id } = req.params;
+    const { propertyIds } = req.body;
+
+    if (!Array.isArray(propertyIds) || propertyIds.length === 0) {
+      return next(createError('Property IDs array is required', 400));
+    }
+
+    // Verify owner exists
+    const owner = await prisma.owner.findUnique({
+      where: { id },
+    });
+
+    if (!owner) {
+      return next(createError('Owner not found', 404));
+    }
+
+    // Verify all properties exist
+    const properties = await prisma.property.findMany({
+      where: { id: { in: propertyIds } },
+    });
+
+    if (properties.length !== propertyIds.length) {
+      return next(createError('One or more properties not found', 404));
+    }
+
+    // Update all properties to assign them to this owner
+    await prisma.property.updateMany({
+      where: { id: { in: propertyIds } },
+      data: { ownerId: id },
+    });
+
+    // Audit log
+    await auditLog('update', 'properties', propertyIds.join(','), req.user.userId, {
+      action: 'bulk_assign_to_owner',
+      ownerId: id,
+      propertyIds,
+    });
+
+    res.json({
+      success: true,
+      message: `Successfully assigned ${propertyIds.length} properties to owner`,
+      data: {
+        assignedCount: propertyIds.length,
+      },
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// Unassign property from owner (set to null or another owner)
+export const unassignPropertyFromOwner = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      return next(createError('Authentication required', 401));
+    }
+
+    const { id, propertyId } = req.params;
+    const { newOwnerId } = req.body;
+
+    // Verify owner exists
+    const owner = await prisma.owner.findUnique({
+      where: { id },
+    });
+
+    if (!owner) {
+      return next(createError('Owner not found', 404));
+    }
+
+    // Verify property exists and belongs to this owner
+    const property = await prisma.property.findUnique({
+      where: { id: propertyId },
+    });
+
+    if (!property) {
+      return next(createError('Property not found', 404));
+    }
+
+    if (property.ownerId !== id) {
+      return next(createError('Property does not belong to this owner', 400));
+    }
+
+    // If newOwnerId is provided, assign to that owner, otherwise we can't unassign (ownerId is required)
+    if (newOwnerId) {
+      const newOwner = await prisma.owner.findUnique({
+        where: { id: newOwnerId },
+      });
+
+      if (!newOwner) {
+        return next(createError('New owner not found', 404));
+      }
+
+      await prisma.property.update({
+        where: { id: propertyId },
+        data: { ownerId: newOwnerId },
+      });
+
+      // Audit log
+      await auditLog('update', 'properties', propertyId, req.user.userId, {
+        action: 'reassign_owner',
+        fromOwnerId: id,
+        toOwnerId: newOwnerId,
+      });
+
+      res.json({
+        success: true,
+        message: 'Property reassigned successfully',
+      });
+    } else {
+      return next(createError('New owner ID is required', 400));
+    }
+  } catch (error: any) {
+    next(error);
+  }
+};
+
 export const getOwnerStatements = async (
   req: AuthRequest,
   res: Response,

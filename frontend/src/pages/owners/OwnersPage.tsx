@@ -1,5 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Space, Typography, Input, Modal, Form, message, Popconfirm } from 'antd';
+import {
+  Table,
+  Button,
+  Space,
+  Typography,
+  Input,
+  Modal,
+  Form,
+  message,
+  Popconfirm,
+  Tabs,
+  Card,
+  Statistic,
+  Tag,
+  Select,
+  Checkbox,
+  Spin,
+  Empty,
+  Descriptions,
+} from 'antd';
 import {
   PlusOutlined,
   EditOutlined,
@@ -7,14 +26,21 @@ import {
   SearchOutlined,
   FileTextOutlined,
   PhoneOutlined,
+  HomeOutlined,
+  AppstoreOutlined,
+  DollarOutlined,
+  EyeOutlined,
+  CheckOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import type { ColumnsType } from 'antd/es/table';
 import { ownersApi, Owner } from '../../services/api/ownersApi';
+import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { useCalling } from '../../contexts/CallingContext';
 import { useTranslation } from 'react-i18next';
 
-const { Title } = Typography;
+const { Title, Text } = Typography;
+const { Option } = Select;
 
 const OwnersPage: React.FC = () => {
   const navigate = useNavigate();
@@ -24,12 +50,28 @@ const OwnersPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isDetailModalVisible, setIsDetailModalVisible] = useState(false);
   const [editingOwner, setEditingOwner] = useState<Owner | null>(null);
+  const [selectedOwner, setSelectedOwner] = useState<Owner | null>(null);
+  const [ownerDetails, setOwnerDetails] = useState<any>(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
+  const [allProperties, setAllProperties] = useState<Property[]>([]);
+  const [loadingProperties, setLoadingProperties] = useState(false);
+  const [assigningProperties, setAssigningProperties] = useState(false);
+  const [selectedPropertyIds, setSelectedPropertyIds] = useState<string[]>([]);
   const [form] = Form.useForm();
+  const [assignForm] = Form.useForm();
 
   useEffect(() => {
     loadOwners();
   }, [searchText]);
+
+  useEffect(() => {
+    if (isDetailModalVisible && selectedOwner) {
+      loadOwnerDetails(selectedOwner.id);
+      loadAllProperties();
+    }
+  }, [isDetailModalVisible, selectedOwner]);
 
   const loadOwners = async () => {
     try {
@@ -43,6 +85,67 @@ const OwnersPage: React.FC = () => {
       message.error(t('owners.failedToLoad'));
     } finally {
       setLoading(false);
+    }
+  };
+
+  const loadOwnerDetails = async (id: string) => {
+    try {
+      setLoadingDetails(true);
+      const response = await ownersApi.getDetails(id);
+      setOwnerDetails(response.data.data);
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to load owner details');
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
+  const loadAllProperties = async () => {
+    try {
+      setLoadingProperties(true);
+      const response = await propertiesApi.getAll();
+      setAllProperties(response.data.data.properties);
+    } catch (error) {
+      message.error('Failed to load properties');
+    } finally {
+      setLoadingProperties(false);
+    }
+  };
+
+  const handleViewDetails = (owner: Owner) => {
+    setSelectedOwner(owner);
+    setIsDetailModalVisible(true);
+    setSelectedPropertyIds([]);
+  };
+
+  const handleAssignProperties = async () => {
+    if (selectedPropertyIds.length === 0) {
+      message.warning('Please select at least one property');
+      return;
+    }
+
+    try {
+      setAssigningProperties(true);
+      await ownersApi.assignProperties(selectedOwner!.id, selectedPropertyIds);
+      message.success(`Successfully assigned ${selectedPropertyIds.length} properties`);
+      setSelectedPropertyIds([]);
+      loadOwnerDetails(selectedOwner!.id);
+      loadOwners();
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to assign properties');
+    } finally {
+      setAssigningProperties(false);
+    }
+  };
+
+  const handleUnassignProperty = async (propertyId: string, newOwnerId: string) => {
+    try {
+      await ownersApi.unassignProperty(selectedOwner!.id, propertyId, newOwnerId);
+      message.success('Property reassigned successfully');
+      loadOwnerDetails(selectedOwner!.id);
+      loadOwners();
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to reassign property');
     }
   };
 
@@ -64,10 +167,24 @@ const OwnersPage: React.FC = () => {
       key: 'phone',
     },
     {
+      title: 'Properties',
+      key: 'properties',
+      render: (_, record: any) => (
+        <Tag color="blue">{record._count?.properties || 0}</Tag>
+      ),
+    },
+    {
       title: t('common.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
+          <Button
+            type="link"
+            icon={<EyeOutlined />}
+            onClick={() => handleViewDetails(record)}
+          >
+            View Details
+          </Button>
           {record.phone && (
             <Button
               type="link"
@@ -141,6 +258,245 @@ const OwnersPage: React.FC = () => {
     }
   };
 
+  const propertiesColumns: ColumnsType<any> = [
+    {
+      title: 'Property Name',
+      dataIndex: 'name',
+      key: 'name',
+    },
+    {
+      title: 'Code',
+      dataIndex: 'code',
+      key: 'code',
+    },
+    {
+      title: 'Units',
+      key: 'units',
+      render: (_, record) => <Tag>{record._count?.units || 0}</Tag>,
+    },
+    {
+      title: 'Bookings',
+      key: 'bookings',
+      render: (_, record) => <Tag>{record._count?.bookings || 0}</Tag>,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => (
+        <Tag color={status === 'active' ? 'green' : 'red'}>{status.toUpperCase()}</Tag>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_, record) => (
+        <Select
+          placeholder="Reassign to..."
+          style={{ width: 200 }}
+          onChange={(newOwnerId) => handleUnassignProperty(record.id, newOwnerId)}
+        >
+          {owners
+            .filter((o) => o.id !== selectedOwner?.id)
+            .map((owner) => (
+              <Option key={owner.id} value={owner.id}>
+                {owner.name}
+              </Option>
+            ))}
+        </Select>
+      ),
+    },
+  ];
+
+  const unitsColumns: ColumnsType<any> = [
+    {
+      title: 'Unit Code',
+      dataIndex: 'unitCode',
+      key: 'unitCode',
+    },
+    {
+      title: 'Property',
+      key: 'property',
+      render: (_, record) => `${record.property.name} (${record.property.code})`,
+    },
+    {
+      title: 'Floor',
+      dataIndex: 'floor',
+      key: 'floor',
+    },
+    {
+      title: 'Price',
+      dataIndex: 'currentPrice',
+      key: 'currentPrice',
+      render: (price: number) => (price ? `AED ${price.toFixed(2)}` : 'N/A'),
+    },
+    {
+      title: 'Bookings',
+      key: 'bookings',
+      render: (_, record) => <Tag>{record._count?.bookings || 0}</Tag>,
+    },
+  ];
+
+  const financeColumns: ColumnsType<any> = [
+    {
+      title: 'Date',
+      dataIndex: 'date',
+      key: 'date',
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: 'Type',
+      dataIndex: 'type',
+      key: 'type',
+      render: (type: string) => (
+        <Tag color={type === 'revenue' ? 'green' : 'red'}>{type.toUpperCase()}</Tag>
+      ),
+    },
+    {
+      title: 'Category',
+      dataIndex: 'category',
+      key: 'category',
+    },
+    {
+      title: 'Property',
+      key: 'property',
+      render: (_, record) => record.property?.name || 'N/A',
+    },
+    {
+      title: 'Amount',
+      dataIndex: 'amount',
+      key: 'amount',
+      render: (amount: number) => `AED ${Number(amount).toFixed(2)}`,
+    },
+    {
+      title: 'Status',
+      dataIndex: 'status',
+      key: 'status',
+      render: (status: string) => (
+        <Tag color={status === 'paid' ? 'green' : 'orange'}>{status.toUpperCase()}</Tag>
+      ),
+    },
+  ];
+
+  const tabItems = [
+    {
+      key: 'properties',
+      label: (
+        <span>
+          <HomeOutlined /> Properties ({ownerDetails?.properties?.length || 0})
+        </span>
+      ),
+      children: (
+        <div>
+          <Card
+            title="Assign Properties"
+            style={{ marginBottom: 16 }}
+            extra={
+              <Button
+                type="primary"
+                icon={<CheckOutlined />}
+                onClick={handleAssignProperties}
+                loading={assigningProperties}
+                disabled={selectedPropertyIds.length === 0}
+              >
+                Assign Selected ({selectedPropertyIds.length})
+              </Button>
+            }
+          >
+            <div style={{ maxHeight: 200, overflowY: 'auto', marginBottom: 16 }}>
+              {loadingProperties ? (
+                <Spin />
+              ) : (
+                <Checkbox.Group
+                  value={selectedPropertyIds}
+                  onChange={(values) => setSelectedPropertyIds(values as string[])}
+                  style={{ width: '100%' }}
+                >
+                  <Space direction="vertical" style={{ width: '100%' }}>
+                    {allProperties
+                      .filter((p) => p.ownerId !== selectedOwner?.id)
+                      .map((property) => (
+                        <Checkbox key={property.id} value={property.id}>
+                          {property.name} ({property.code})
+                        </Checkbox>
+                      ))}
+                    {allProperties.filter((p) => p.ownerId !== selectedOwner?.id).length === 0 && (
+                      <Empty description="No unassigned properties available" />
+                    )}
+                  </Space>
+                </Checkbox.Group>
+              )}
+            </div>
+          </Card>
+          <Table
+            columns={propertiesColumns}
+            dataSource={ownerDetails?.properties || []}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+          />
+        </div>
+      ),
+    },
+    {
+      key: 'units',
+      label: (
+        <span>
+          <AppstoreOutlined /> Units ({ownerDetails?.units?.length || 0})
+        </span>
+      ),
+      children: (
+        <Table
+          columns={unitsColumns}
+          dataSource={ownerDetails?.units || []}
+          rowKey="id"
+          pagination={{ pageSize: 10 }}
+        />
+      ),
+    },
+    {
+      key: 'finances',
+      label: (
+        <span>
+          <DollarOutlined /> Finances
+        </span>
+      ),
+      children: (
+        <div>
+          <Card style={{ marginBottom: 16 }}>
+            <Space size="large">
+              <Statistic
+                title="Total Revenue"
+                value={ownerDetails?.summary?.totalRevenue || 0}
+                prefix="AED"
+                valueStyle={{ color: '#3f8600' }}
+              />
+              <Statistic
+                title="Total Expenses"
+                value={ownerDetails?.summary?.totalExpenses || 0}
+                prefix="AED"
+                valueStyle={{ color: '#cf1322' }}
+              />
+              <Statistic
+                title="Net Income"
+                value={ownerDetails?.summary?.netIncome || 0}
+                prefix="AED"
+                valueStyle={{
+                  color: (ownerDetails?.summary?.netIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
+                }}
+              />
+            </Space>
+          </Card>
+          <Table
+            columns={financeColumns}
+            dataSource={ownerDetails?.financeRecords || []}
+            rowKey="id"
+            pagination={{ pageSize: 10 }}
+          />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <div>
       <div
@@ -206,6 +562,64 @@ const OwnersPage: React.FC = () => {
             <Input />
           </Form.Item>
         </Form>
+      </Modal>
+
+      <Modal
+        title={
+          <div>
+            <Title level={4} style={{ margin: 0 }}>
+              {selectedOwner?.name} - Details
+            </Title>
+            <Text type="secondary">{selectedOwner?.email}</Text>
+          </div>
+        }
+        open={isDetailModalVisible}
+        onCancel={() => {
+          setIsDetailModalVisible(false);
+          setSelectedOwner(null);
+          setOwnerDetails(null);
+          setSelectedPropertyIds([]);
+        }}
+        footer={null}
+        width={1200}
+        style={{ top: 20 }}
+      >
+        {loadingDetails ? (
+          <div style={{ textAlign: 'center', padding: 40 }}>
+            <Spin size="large" />
+          </div>
+        ) : ownerDetails ? (
+          <div>
+            <Card style={{ marginBottom: 16 }}>
+              <Descriptions column={4}>
+                <Descriptions.Item label="Total Properties">
+                  <Tag color="blue">{ownerDetails.summary?.totalProperties || 0}</Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="Total Units">
+                  <Tag color="green">{ownerDetails.summary?.totalUnits || 0}</Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="Total Revenue">
+                  <Text strong style={{ color: '#3f8600' }}>
+                    AED {ownerDetails.summary?.totalRevenue?.toFixed(2) || '0.00'}
+                  </Text>
+                </Descriptions.Item>
+                <Descriptions.Item label="Net Income">
+                  <Text
+                    strong
+                    style={{
+                      color: (ownerDetails.summary?.netIncome || 0) >= 0 ? '#3f8600' : '#cf1322',
+                    }}
+                  >
+                    AED {ownerDetails.summary?.netIncome?.toFixed(2) || '0.00'}
+                  </Text>
+                </Descriptions.Item>
+              </Descriptions>
+            </Card>
+            <Tabs items={tabItems} />
+          </div>
+        ) : (
+          <Empty description="No details available" />
+        )}
       </Modal>
     </div>
   );
