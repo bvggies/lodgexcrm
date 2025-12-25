@@ -57,4 +57,3 @@ export const usersApi = {
     return apiClient.delete<{ success: boolean; message: string }>(`/users/${id}`);
   },
 };
-

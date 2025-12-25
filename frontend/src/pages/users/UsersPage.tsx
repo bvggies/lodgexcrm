@@ -63,7 +63,8 @@ const UsersPage: React.FC = () => {
       title: 'Name',
       key: 'name',
       render: (_, record) => `${record.firstName} ${record.lastName}`,
-      sorter: (a, b) => `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
+      sorter: (a, b) =>
+        `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`),
     },
     {
       title: 'Email',
@@ -118,7 +119,8 @@ const UsersPage: React.FC = () => {
       title: 'Last Login',
       dataIndex: 'lastLogin',
       key: 'lastLogin',
-      render: (lastLogin: string) => (lastLogin ? new Date(lastLogin).toLocaleDateString() : 'Never'),
+      render: (lastLogin: string) =>
+        lastLogin ? new Date(lastLogin).toLocaleDateString() : 'Never',
     },
     {
       title: 'Actions',
@@ -292,7 +294,9 @@ const UsersPage: React.FC = () => {
             ]}
             help={editingUser ? 'Leave empty to keep current password' : undefined}
           >
-            <Input.Password placeholder={editingUser ? 'Enter new password (optional)' : 'Enter password'} />
+            <Input.Password
+              placeholder={editingUser ? 'Enter new password (optional)' : 'Enter password'}
+            />
           </Form.Item>
           <Form.Item name="role" label="Role" rules={[{ required: true }]}>
             <Select getPopupContainer={() => document.body}>
@@ -317,4 +321,3 @@ const UsersPage: React.FC = () => {
 };
 
 export default UsersPage;
-
