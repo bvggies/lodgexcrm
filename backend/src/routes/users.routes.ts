@@ -6,6 +6,7 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  updateMyProfile,
 } from '../controllers/users.controller';
 import { authenticate, authorize } from '../middleware/auth';
 import { StaffRole } from '@prisma/client';
@@ -204,6 +205,47 @@ router.delete(
   [param('id').isUUID()],
   validateRequest,
   deleteUser
+);
+
+/**
+ * @swagger
+ * /api/users/profile:
+ *   put:
+ *     summary: Update current user's profile (self-service)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               password:
+ *                 type: string
+ *                 minLength: 8
+ *               firstName:
+ *                 type: string
+ *               lastName:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Profile updated successfully
+ */
+router.put(
+  '/profile',
+  authenticate,
+  [
+    body('password').optional().isLength({ min: 8 }),
+    body('firstName').optional().trim().notEmpty(),
+    body('lastName').optional().trim().notEmpty(),
+    body('phone').optional().isString(),
+  ],
+  validateRequest,
+  updateMyProfile
 );
 
 export default router;

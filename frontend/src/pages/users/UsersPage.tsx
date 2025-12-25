@@ -259,6 +259,8 @@ const UsersPage: React.FC = () => {
         width={600}
         okText="Save"
         cancelText="Cancel"
+        style={{ top: 20 }}
+        bodyStyle={{ maxHeight: 'calc(100vh - 200px)', overflowY: 'auto' }}
       >
         <Form form={form} layout="vertical" onFinish={handleSubmit}>
           <Form.Item

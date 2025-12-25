@@ -205,7 +205,19 @@ export const updateUser = async (
       return next(createError('User not found', 404));
     }
 
-    // Validate role if being updated
+    // If user is not admin, they can only update their own profile
+    // and cannot change role, email, or isActive
+    if (req.user.role !== StaffRole.admin) {
+      if (id !== req.user.userId) {
+        return next(createError('You can only update your own profile', 403));
+      }
+      // Remove restricted fields for non-admin users
+      delete updateData.role;
+      delete updateData.email;
+      delete updateData.isActive;
+    }
+
+    // Validate role if being updated (only admins can update role)
     if (updateData.role && !Object.values(StaffRole).includes(updateData.role)) {
       return next(createError('Invalid user role', 400));
     }
@@ -248,6 +260,79 @@ export const updateUser = async (
       success: true,
       data: { user },
       message: 'User updated successfully',
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// Allow users to update their own profile
+export const updateMyProfile = async (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
+  try {
+    if (!req.user) {
+      return next(createError('Authentication required', 401));
+    }
+
+    const updateData: any = { ...req.body };
+    const userId = req.user.userId;
+
+    // Check if user exists
+    const existingUser = await prisma.user.findUnique({
+      where: { id: userId },
+    });
+
+    if (!existingUser) {
+      return next(createError('User not found', 404));
+    }
+
+    // Remove restricted fields - users cannot change these themselves
+    delete updateData.role;
+    delete updateData.email;
+    delete updateData.isActive;
+
+    // If password is being updated, hash it
+    if (updateData.password) {
+      updateData.passwordHash = await hashPassword(updateData.password);
+      delete updateData.password; // Remove plain password
+    }
+
+    // Remove passwordHash from updateData if password is not being updated
+    if (!updateData.passwordHash) {
+      delete updateData.passwordHash;
+    }
+
+    const user = await prisma.user.update({
+      where: { id: userId },
+      data: updateData,
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        phone: true,
+        isActive: true,
+        guestId: true,
+        lastLogin: true,
+        createdAt: true,
+        updatedAt: true,
+      },
+    });
+
+    // Audit log
+    await auditLog('update', 'user', user.id, userId, {
+      changes: Object.keys(updateData),
+      selfUpdate: true,
+    });
+
+    res.json({
+      success: true,
+      data: { user },
+      message: 'Profile updated successfully',
     });
   } catch (error: any) {
     next(error);

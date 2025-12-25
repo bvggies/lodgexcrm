@@ -27,7 +27,7 @@ import {
   BarChartOutlined,
   EditOutlined,
 } from '@ant-design/icons';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { authApi } from '../../services/api/authApi';
 import { cleaningApi, CleaningTask } from '../../services/api/cleaningApi';
 import { maintenanceApi, MaintenanceTask } from '../../services/api/maintenanceApi';
@@ -40,6 +40,7 @@ const { Option } = Select;
 
 const StaffDashboardPage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [cleaningTasks, setCleaningTasks] = useState<CleaningTask[]>([]);
   const [maintenanceTasks, setMaintenanceTasks] = useState<MaintenanceTask[]>([]);
@@ -85,11 +86,20 @@ const StaffDashboardPage: React.FC = () => {
 
   const handleUpdateProfile = async (values: any) => {
     try {
-      // Note: This would need a user update endpoint
-      message.success('Profile update functionality coming soon');
+      const { usersApi } = await import('../../services/api/usersApi');
+      const updateData: any = { ...values };
+      // Only include password if it was provided
+      if (!updateData.password || updateData.password.trim() === '') {
+        delete updateData.password;
+      }
+      await usersApi.updateProfile(updateData);
+      message.success('Profile updated successfully');
       setIsProfileModalVisible(false);
+      // Refresh user data
+      const { getCurrentUser } = await import('../../store/slices/authSlice');
+      dispatch(getCurrentUser());
     } catch (error: any) {
-      message.error(error.response?.data?.message || 'Failed to update profile');
+      message.error(error.response?.data?.error?.message || 'Failed to update profile');
     }
   };
 
@@ -404,6 +414,14 @@ const StaffDashboardPage: React.FC = () => {
           </Form.Item>
           <Form.Item name="phone" label="Phone">
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="New Password"
+            rules={[{ min: 8, message: 'Password must be at least 8 characters' }]}
+            help="Leave empty to keep current password"
+          >
+            <Input.Password placeholder="Enter new password (optional)" />
           </Form.Item>
           <Form.Item>
             <Space>

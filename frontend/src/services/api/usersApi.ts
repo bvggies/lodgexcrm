@@ -56,4 +56,8 @@ export const usersApi = {
   delete: (id: string) => {
     return apiClient.delete<{ success: boolean; message: string }>(`/users/${id}`);
   },
+
+  updateProfile: (data: UpdateUserData) => {
+    return apiClient.put<{ success: boolean; data: { user: User } }>('/users/profile', data);
+  },
 };

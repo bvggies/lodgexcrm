@@ -32,7 +32,7 @@ import {
   HistoryOutlined,
   BarChartOutlined,
 } from '@ant-design/icons';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { bookingsApi, Booking } from '../../services/api/bookingsApi';
 import { propertiesApi, Property } from '../../services/api/propertiesApi';
 import { guestsApi, Guest } from '../../services/api/guestsApi';
@@ -47,6 +47,7 @@ const { RangePicker } = DatePicker;
 
 const GuestDashboardPage: React.FC = () => {
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(true);
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
@@ -137,17 +138,38 @@ const GuestDashboardPage: React.FC = () => {
 
   const handleUpdateProfile = async (values: any) => {
     try {
-      if (!user?.guestId) {
-        message.error('Guest profile not found');
-        return;
+      const { usersApi } = await import('../../services/api/usersApi');
+      const { getCurrentUser } = await import('../../store/slices/authSlice');
+      
+      // Update user account (password, firstName, lastName, phone)
+      const userUpdateData: any = {
+        firstName: values.firstName,
+        lastName: values.lastName,
+        phone: values.phone,
+      };
+      if (values.password && values.password.trim() !== '') {
+        userUpdateData.password = values.password;
+      }
+      await usersApi.updateProfile(userUpdateData);
+
+      // Update guest record if guestId exists
+      if (user?.guestId) {
+        const guestUpdateData: any = {
+          firstName: values.firstName,
+          lastName: values.lastName,
+          phone: values.phone,
+          nationality: values.nationality,
+        };
+        await guestsApi.update(user.guestId, guestUpdateData);
       }
 
-      await guestsApi.update(user.guestId, values);
       message.success('Profile updated successfully');
       setIsProfileModalVisible(false);
+      // Refresh user and guest data
+      await dispatch(getCurrentUser());
       loadGuestData();
     } catch (error: any) {
-      message.error(error.response?.data?.message || 'Failed to update profile');
+      message.error(error.response?.data?.error?.message || 'Failed to update profile');
     }
   };
 
@@ -550,6 +572,14 @@ const GuestDashboardPage: React.FC = () => {
           </Form.Item>
           <Form.Item name="nationality" label="Nationality">
             <Input />
+          </Form.Item>
+          <Form.Item
+            name="password"
+            label="New Password"
+            rules={[{ min: 8, message: 'Password must be at least 8 characters' }]}
+            help="Leave empty to keep current password"
+          >
+            <Input.Password placeholder="Enter new password (optional)" />
           </Form.Item>
           <Form.Item>
             <Space>

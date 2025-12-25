@@ -272,13 +272,7 @@ const LoginPage: React.FC = () => {
           </div>
 
           {error && (
-            <Alert
-              message={error}
-              type="error"
-              showIcon
-              closable
-              style={{ marginBottom: 24 }}
-            />
+            <Alert message={error} type="error" showIcon closable style={{ marginBottom: 24 }} />
           )}
 
           <Form

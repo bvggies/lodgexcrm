@@ -24,18 +24,24 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { useSearchParams } from 'react-router-dom';
-import { useAppSelector } from '../../store/hooks';
+import { useAppSelector, useAppDispatch } from '../../store/hooks';
 import { storage } from '../../utils/storage';
+import { usersApi } from '../../services/api/usersApi';
+import { getCurrentUser } from '../../store/slices/authSlice';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 
 const SettingsPage: React.FC = () => {
   const [form] = Form.useForm();
+  const [profileForm] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [profileLoading, setProfileLoading] = useState(false);
   const { user } = useAppSelector((state) => state.auth);
+  const dispatch = useAppDispatch();
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('tab') || 'profile';
+  const [isProfileEditMode, setIsProfileEditMode] = useState(false);
 
   // Load saved settings from localStorage
   React.useEffect(() => {
@@ -50,8 +56,15 @@ const SettingsPage: React.FC = () => {
           console.error('Failed to load settings:', error);
         }
       }
+      // Load user profile data
+      profileForm.setFieldsValue({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phone: user.phone,
+        email: user.email,
+      });
     }
-  }, [user?.id, form]);
+  }, [user?.id, form, profileForm]);
 
   const handleTabChange = (key: string) => {
     setSearchParams({ tab: key });
@@ -78,6 +91,26 @@ const SettingsPage: React.FC = () => {
     }
   };
 
+  const handleUpdateProfile = async (values: any) => {
+    try {
+      setProfileLoading(true);
+      const updateData: any = { ...values };
+      // Only include password if it was provided
+      if (!updateData.password || updateData.password.trim() === '') {
+        delete updateData.password;
+      }
+      await usersApi.updateProfile(updateData);
+      message.success('Profile updated successfully');
+      setIsProfileEditMode(false);
+      // Refresh user data
+      await dispatch(getCurrentUser());
+    } catch (error: any) {
+      message.error(error.response?.data?.error?.message || 'Failed to update profile');
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   const tabItems = [
     {
       key: 'profile',
@@ -88,27 +121,75 @@ const SettingsPage: React.FC = () => {
       ),
       children: (
         <Card>
-          <Title level={4}>User Profile</Title>
-          <Space direction="vertical" size="large" style={{ width: '100%' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-              <Avatar size={64} icon={<UserOutlined />} />
-              <div>
-                <Title level={4} style={{ margin: 0 }}>
-                  {user?.firstName} {user?.lastName}
-                </Title>
-                <Text type="secondary">{user?.email}</Text>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+            <Title level={4} style={{ margin: 0 }}>User Profile</Title>
+            {!isProfileEditMode && (
+              <Button type="primary" onClick={() => setIsProfileEditMode(true)}>
+                Edit Profile
+              </Button>
+            )}
+          </div>
+          {isProfileEditMode ? (
+            <Form form={profileForm} layout="vertical" onFinish={handleUpdateProfile}>
+              <Form.Item
+                name="firstName"
+                label="First Name"
+                rules={[{ required: true, message: 'Please enter first name' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="lastName"
+                label="Last Name"
+                rules={[{ required: true, message: 'Please enter last name' }]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item name="email" label="Email">
+                <Input disabled />
+              </Form.Item>
+              <Form.Item name="phone" label="Phone">
+                <Input />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                label="New Password"
+                rules={[{ min: 8, message: 'Password must be at least 8 characters' }]}
+                help="Leave empty to keep current password"
+              >
+                <Input.Password placeholder="Enter new password (optional)" />
+              </Form.Item>
+              <Form.Item>
+                <Space>
+                  <Button type="primary" htmlType="submit" loading={profileLoading}>
+                    Save Changes
+                  </Button>
+                  <Button onClick={() => setIsProfileEditMode(false)}>Cancel</Button>
+                </Space>
+              </Form.Item>
+            </Form>
+          ) : (
+            <Space direction="vertical" size="large" style={{ width: '100%' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                <Avatar size={64} icon={<UserOutlined />} />
+                <div>
+                  <Title level={4} style={{ margin: 0 }}>
+                    {user?.firstName} {user?.lastName}
+                  </Title>
+                  <Text type="secondary">{user?.email}</Text>
+                </div>
               </div>
-            </div>
-            <Descriptions bordered column={1}>
-              <Descriptions.Item label="First Name">{user?.firstName || 'N/A'}</Descriptions.Item>
-              <Descriptions.Item label="Last Name">{user?.lastName || 'N/A'}</Descriptions.Item>
-              <Descriptions.Item label="Email">{user?.email || 'N/A'}</Descriptions.Item>
-              <Descriptions.Item label="Role">
-                <span style={{ textTransform: 'capitalize' }}>{user?.role || 'N/A'}</span>
-              </Descriptions.Item>
-              <Descriptions.Item label="Phone">{user?.phone || 'N/A'}</Descriptions.Item>
-            </Descriptions>
-          </Space>
+              <Descriptions bordered column={1}>
+                <Descriptions.Item label="First Name">{user?.firstName || 'N/A'}</Descriptions.Item>
+                <Descriptions.Item label="Last Name">{user?.lastName || 'N/A'}</Descriptions.Item>
+                <Descriptions.Item label="Email">{user?.email || 'N/A'}</Descriptions.Item>
+                <Descriptions.Item label="Role">
+                  <span style={{ textTransform: 'capitalize' }}>{user?.role || 'N/A'}</span>
+                </Descriptions.Item>
+                <Descriptions.Item label="Phone">{user?.phone || 'N/A'}</Descriptions.Item>
+              </Descriptions>
+            </Space>
+          )}
         </Card>
       ),
     },
