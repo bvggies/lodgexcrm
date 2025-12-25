@@ -175,6 +175,11 @@ const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
         label: t('menu.staff'),
       },
       {
+        key: '/users',
+        icon: <UserOutlined />,
+        label: t('menu.users'),
+      },
+      {
         key: '/analytics',
         icon: <BarChartOutlined />,
         label: t('menu.analytics'),

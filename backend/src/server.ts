@@ -26,6 +26,7 @@ import auditRoutes from './routes/audit.routes';
 import archiveRoutes from './routes/archive.routes';
 import importRoutes from './routes/import.routes';
 import twilioRoutes from './routes/twilio.routes';
+import usersRoutes from './routes/users.routes';
 
 // Load environment variables
 dotenv.config();
@@ -156,6 +157,9 @@ app.use('/api/twilio', twilioRoutes);
 
 // Import routes (admin only)
 app.use('/api/import', importRoutes);
+
+// User management routes (admin only)
+app.use('/api/users', usersRoutes);
 
 // Error handling middleware (must be last)
 app.use(errorHandler);

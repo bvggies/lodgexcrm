@@ -17,6 +17,7 @@ import CleaningTasksPage from './pages/cleaning/CleaningTasksPage';
 import MaintenanceTasksPage from './pages/maintenance/MaintenanceTasksPage';
 import FinancePage from './pages/finance/FinancePage';
 import StaffPage from './pages/staff/StaffPage';
+import UsersPage from './pages/users/UsersPage';
 import AnalyticsPage from './pages/analytics/AnalyticsPage';
 import AuditLogPage from './pages/audit/AuditLogPage';
 import UnitsPage from './pages/units/UnitsPage';
@@ -113,6 +114,7 @@ function App() {
                           <Route path="/finance" element={<FinancePage />} />
                           <Route path="/calls" element={<CallPage />} />
                           <Route path="/staff" element={<StaffPage />} />
+                          <Route path="/users" element={<UsersPage />} />
                           <Route path="/analytics" element={<AnalyticsPage />} />
                           <Route path="/audit" element={<AuditLogPage />} />
                           <Route path="/integrations" element={<IntegrationsPage />} />
