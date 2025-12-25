@@ -169,20 +169,14 @@ const OwnersPage: React.FC = () => {
     {
       title: 'Properties',
       key: 'properties',
-      render: (_, record: any) => (
-        <Tag color="blue">{record._count?.properties || 0}</Tag>
-      ),
+      render: (_, record: any) => <Tag color="blue">{record._count?.properties || 0}</Tag>,
     },
     {
       title: t('common.actions'),
       key: 'actions',
       render: (_, record) => (
         <Space>
-          <Button
-            type="link"
-            icon={<EyeOutlined />}
-            onClick={() => handleViewDetails(record)}
-          >
+          <Button type="link" icon={<EyeOutlined />} onClick={() => handleViewDetails(record)}>
             View Details
           </Button>
           {record.phone && (
