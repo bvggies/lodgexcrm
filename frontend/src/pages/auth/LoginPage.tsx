@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Form, Input, Button, Card, Typography, Alert, Space, Divider } from 'antd';
+import React from 'react';
+import { Form, Input, Button, Typography, Alert, Space, Divider, Card } from 'antd';
 import {
   UserOutlined,
   LockOutlined,
@@ -124,10 +124,7 @@ const LoginPage: React.FC = () => {
     }
   };
 
-  // Background image - you can replace this with your own image
-  // Option 1: Use a local image from public folder (e.g., '/real-estate-bg.jpg')
-  // Option 2: Use the Unsplash URL below
-  // To use a local image, place it in frontend/public/ and change the path below
+  // Background image
   const backgroundImage =
     'https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1973&q=80';
 
@@ -136,82 +133,162 @@ const LoginPage: React.FC = () => {
       style={{
         minHeight: '100vh',
         display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        flexDirection: isMobile ? 'column' : 'row',
         position: 'relative',
-        backgroundImage: `url(${backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundAttachment: 'fixed',
       }}
     >
-      {/* Gradient Overlay */}
+      {/* Left Side - Branding Section */}
       <div
         style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          background:
-            'linear-gradient(135deg, rgba(102, 126, 234, 0.85) 0%, rgba(118, 75, 162, 0.85) 100%)',
-          zIndex: 1,
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          top: isMobile ? 12 : 24,
-          right: isMobile ? 12 : 24,
-          zIndex: 2,
-        }}
-      >
-        <Space size="small">
-          <LanguageSwitcher />
-          <ThemeToggle />
-        </Space>
-      </div>
-      <div
-        style={{
-          width: '100%',
-          padding: isMobile ? '12px' : '0',
+          width: isMobile ? '100%' : '50%',
+          height: isMobile ? '40vh' : '100vh',
           position: 'relative',
-          zIndex: 2,
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundRepeat: 'no-repeat',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
       >
-        <Card
+        {/* Gradient Overlay */}
+        <div
           style={{
-            width: isMobile ? '100%' : 500,
-            maxWidth: '90vw',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            backgroundColor: 'rgba(255, 255, 255, 0.98)',
-            backdropFilter: 'blur(10px)',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background:
+              'linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%)',
+            zIndex: 1,
+          }}
+        />
+
+        {/* Branding Content */}
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 2,
+            textAlign: 'center',
+            color: 'white',
+            padding: isMobile ? '20px' : '40px',
           }}
         >
-          <div style={{ textAlign: 'center', marginBottom: isMobile ? 24 : 32 }}>
-            <div style={{ marginBottom: 16 }}>
-              <img
-                src="/logo.svg"
-                alt="Lodgex CRM"
-                style={{ height: 50, width: 'auto' }}
-                onError={(e) => {
-                  // Fallback if logo doesn't load
-                  (e.target as HTMLImageElement).style.display = 'none';
-                }}
-              />
-            </div>
-            <Title level={2} style={{ marginTop: 16 }}>
-              Lodgex CRM
+          <div style={{ marginBottom: 24 }}>
+            <img
+              src="/logo.svg"
+              alt="Lodgex CRM"
+              style={{
+                height: isMobile ? 60 : 80,
+                width: 'auto',
+                filter: 'brightness(0) invert(1)',
+              }}
+              onError={(e) => {
+                (e.target as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
+          <Title
+            level={1}
+            style={{
+              color: 'white',
+              marginBottom: 16,
+              fontSize: isMobile ? 32 : 48,
+              fontWeight: 'bold',
+            }}
+          >
+            Lodgex CRM
+          </Title>
+          <Text
+            style={{
+              color: 'rgba(255, 255, 255, 0.9)',
+              fontSize: isMobile ? 16 : 20,
+              display: 'block',
+              marginBottom: 8,
+            }}
+          >
+            Property Management System
+          </Text>
+          <Text
+            style={{
+              color: 'rgba(255, 255, 255, 0.8)',
+              fontSize: isMobile ? 14 : 16,
+              display: 'block',
+            }}
+          >
+            Manage your properties, bookings, and guests with ease
+          </Text>
+        </div>
+      </div>
+
+      {/* Right Side - Login Form Section */}
+      <div
+        style={{
+          width: isMobile ? '100%' : '50%',
+          height: isMobile ? 'auto' : '100vh',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: '#f5f5f5',
+          padding: isMobile ? '24px' : '40px',
+          position: 'relative',
+        }}
+      >
+        {/* Theme and Language Toggle */}
+        <div
+          style={{
+            position: 'absolute',
+            top: isMobile ? 16 : 24,
+            right: isMobile ? 16 : 24,
+            zIndex: 10,
+          }}
+        >
+          <Space size="small">
+            <LanguageSwitcher />
+            <ThemeToggle />
+          </Space>
+        </div>
+
+        {/* Login Card */}
+        <Card
+          style={{
+            width: '100%',
+            maxWidth: 480,
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            borderRadius: 8,
+            border: 'none',
+          }}
+          bodyStyle={{ padding: isMobile ? 24 : 40 }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <Title level={2} style={{ marginBottom: 8, fontSize: isMobile ? 24 : 28 }}>
+              Welcome Back
             </Title>
-            <p style={{ color: '#666' }}>{t('auth.signInToAccount')}</p>
+            <Text type="secondary" style={{ fontSize: 14 }}>
+              {t('auth.signInToAccount')}
+            </Text>
           </div>
 
           {error && (
-            <Alert message={error} type="error" showIcon closable style={{ marginBottom: 24 }} />
+            <Alert
+              message={error}
+              type="error"
+              showIcon
+              closable
+              style={{ marginBottom: 24 }}
+            />
           )}
 
-          <Form form={form} name="login" onFinish={onFinish} layout="vertical" size="large">
+          <Form
+            form={form}
+            name="login"
+            onFinish={onFinish}
+            layout="vertical"
+            size="large"
+            autoComplete="off"
+          >
             <Form.Item
               name="email"
               rules={[
@@ -219,24 +296,43 @@ const LoginPage: React.FC = () => {
                 { type: 'email', message: t('auth.pleaseEnterValidEmail') },
               ]}
             >
-              <Input prefix={<UserOutlined />} placeholder={t('auth.email')} />
+              <Input
+                prefix={<UserOutlined style={{ color: '#bfbfbf' }} />}
+                placeholder={t('auth.email')}
+                style={{ height: 48 }}
+              />
             </Form.Item>
 
             <Form.Item
               name="password"
               rules={[{ required: true, message: t('auth.pleaseInputPassword') }]}
             >
-              <Input.Password prefix={<LockOutlined />} placeholder={t('auth.password')} />
+              <Input.Password
+                prefix={<LockOutlined style={{ color: '#bfbfbf' }} />}
+                placeholder={t('auth.password')}
+                style={{ height: 48 }}
+              />
             </Form.Item>
 
-            <Form.Item>
-              <Button type="primary" htmlType="submit" block loading={isLoading}>
+            <Form.Item style={{ marginBottom: 16 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                block
+                loading={isLoading}
+                style={{
+                  height: 48,
+                  fontSize: 16,
+                  fontWeight: 500,
+                  borderRadius: 6,
+                }}
+              >
                 {t('auth.signIn')}
               </Button>
             </Form.Item>
           </Form>
 
-          <Divider>
+          <Divider style={{ margin: '24px 0' }}>
             <Text type="secondary" style={{ fontSize: 12 }}>
               Or try a demo account
             </Text>
@@ -246,8 +342,7 @@ const LoginPage: React.FC = () => {
             style={{
               display: 'grid',
               gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
-              gap: 8,
-              marginTop: 16,
+              gap: 12,
             }}
           >
             {demoAccounts.map((account) => (
@@ -259,17 +354,18 @@ const LoginPage: React.FC = () => {
                 block
                 style={{
                   height: 'auto',
-                  padding: '8px 12px',
+                  padding: '12px 16px',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'flex-start',
                   borderColor: account.color,
                   color: account.color,
+                  borderRadius: 6,
                 }}
               >
-                <div style={{ textAlign: 'left', flex: 1 }}>
+                <div style={{ textAlign: 'left', flex: 1, marginLeft: 8 }}>
                   <div style={{ fontWeight: 500, fontSize: 13 }}>{account.role}</div>
-                  <div style={{ fontSize: 10, opacity: 0.7, marginTop: 2 }}>
+                  <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>
                     {account.email.split('@')[0]}
                   </div>
                 </div>
