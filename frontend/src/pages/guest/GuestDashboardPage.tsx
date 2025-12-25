@@ -140,7 +140,7 @@ const GuestDashboardPage: React.FC = () => {
     try {
       const { usersApi } = await import('../../services/api/usersApi');
       const { getCurrentUser } = await import('../../store/slices/authSlice');
-      
+
       // Update user account (password, firstName, lastName, phone)
       const userUpdateData: any = {
         firstName: values.firstName,

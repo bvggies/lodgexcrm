@@ -121,8 +121,17 @@ const SettingsPage: React.FC = () => {
       ),
       children: (
         <Card>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
-            <Title level={4} style={{ margin: 0 }}>User Profile</Title>
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              marginBottom: 24,
+            }}
+          >
+            <Title level={4} style={{ margin: 0 }}>
+              User Profile
+            </Title>
             {!isProfileEditMode && (
               <Button type="primary" onClick={() => setIsProfileEditMode(true)}>
                 Edit Profile
